@@ -1,0 +1,41 @@
+<?php
+include "../Auth/authorization.php";
+include "../Data/database_model.php";
+
+
+$ctl = new QueryCall("localhost", "root", "", "awarena meinu", 3306);
+
+function fast_verification_doc($doc_type, $doc)
+{
+    global $ctl;
+    return [empty($ctl->select("web", ["numero"], [$doc_type, $doc], ["tipo", "numero"])->call())];
+}
+
+function fast_verification_mail($mail)
+{
+    global $ctl;
+    return [empty($ctl->select("web", ["correo"], [$mail], ["correo"])->call())];
+}
+
+function base_session($token)
+{
+    global $ctl;
+    return session($ctl, $token);
+}
+
+
+/*EJEMPLOS:
+
+Usando el formato para select:
+    print_r($ctl->insert("tabla", ["algo loqúisimo"], ["algo"])->call());
+
+    print_r($ctl->select("tabla", [2], ["id"], ["id", "algo"])->call());
+        Resumen: (α∈D): ∀ δ, n = δ -> ∀ δ[n] ∃ γ[n]
+
+    print_r($ctl->update("tabla", [1, "algo cambiado"], ["id"], ["id", "algo"])->call());
+
+    print_r($ctl->delete("tabla", [2], ["id"])->call());
+
+    print_r($ctl->setQuery("SELECT * FROM tabla WHERE id>2")->call());
+
+*/
