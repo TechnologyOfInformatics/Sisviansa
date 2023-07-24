@@ -1,12 +1,15 @@
 <?php
-include "../Data/database_model.php";
-
+include_once "Data/database_model.php";
+header("Access-Control-Allow-Origin: http://localhost:8080");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
 function datatype($var, $type)
 {
     return gettype($var) === $type;
 }
 
-function session_close(QueryCall $ctl, $token)
+function session_close($ctl, $token)
 {
     if (isset($ctl, $token)) {
         return "400, BAD REQUEST: Wrong data type";
@@ -35,7 +38,7 @@ function token_generator()
     return $randomText;
 }
 
-function session(QueryCall $ctl, $token)
+function session($ctl, $token)
 {
     if (isset($ctl, $token)) {
         return "400, BAD REQUEST: Wrong data type";
@@ -80,7 +83,7 @@ function session(QueryCall $ctl, $token)
 
 
 
-function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
+function register_web_first($ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
 {
     $values = func_get_args();
 
@@ -98,12 +101,11 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 
     unset($values[4]);
 
-    $type_verificator = True;
-
-    foreach ($values as $var) {
-        $type_verificator = $type_verificator && datatype($var, "string");
-    }
-    $type_verificator = $type_verificator && is_int($doc);
+   $type_verificator = True;
+foreach ($values as $var) {
+    $type_verificator = $type_verificator && is_string($var);
+}
+$type_verificator = $type_verificator && is_int($doc);
 
     if (isset($ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)) {
         return "400, BAD REQUEST: Wrong data type";
@@ -128,7 +130,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     }
 }
 
-function register_web_second(QueryCall $ctl, $token, $second_name, $second_surname, $street, $neighborhood, $city)
+function register_web_second($ctl, $token, $second_name, $second_surname, $street, $neighborhood, $city)
 {
     $values = func_get_args();
 
@@ -164,7 +166,7 @@ function register_web_second(QueryCall $ctl, $token, $second_name, $second_surna
 }
 
 
-function login(QueryCall $ctl, $mail, $passwd, $token = "")
+function login($ctl, $mail, $passwd, $token = "")
 {
     $values = func_get_args();
 
@@ -176,22 +178,19 @@ function login(QueryCall $ctl, $mail, $passwd, $token = "")
         $length_verificator = $length_verificator && (strlen(strval($var)) <= 30) && (strlen(strval($var)) >= 2);
     }
 
-    $type_verificator = true;
 
-    foreach ($values as $var) {
-        $type_verificator = $type_verificator && is_string($var);
-    }
+    $type_verificator = is_string($mail) && is_string($passwd);
 
-    if (isset($ctl, $mail, $passwd, $token)) {
-        return "400 Bad Request: Wrong data type";
-    } elseif ($type_verificator) {
-        return "400 Bad Request: Wrong data type";
-    } elseif (!$length_verificator) {
-        return "400 Bad Request: Wrong data length";
-    } elseif (strlen($token) < 8 || strlen($token) >= 15) {
 
-        return "400, BAD REQUEST: Wrong data type";
-    }
+if (!isset($ctl, $mail, $passwd)) {
+    return "400 Bad Request: Wrong data type";
+} elseif (!$type_verificator) {
+    return "400 Bad Request: Wrong data wtype";
+} elseif (!$length_verificator) {
+    return "400 Bad Request: Wrong data length";
+} elseif (!isset($token) || strlen($token) < 8 || strlen($token) >= 15) {
+    return "400, BAD REQUEST: Wrong data type";
+}
 
     if ($token) {
         session_close($ctl, $token);
@@ -219,7 +218,7 @@ function login(QueryCall $ctl, $mail, $passwd, $token = "")
     }
 }
 
-function show_shop(QueryCall $ctl, $token = "")
+function show_shop($ctl, $token = "")
 {
     if (isset($ctl,  $token)) {
         return "400 Bad Request: Wrong data type";

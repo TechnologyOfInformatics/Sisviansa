@@ -1,20 +1,63 @@
 <template>
   <div class="sign-in">
-    <form>
+    <form @submit.prevent="login">
       <h1>Inicia sesión</h1>
-
       <p>Coloca los datos de tu cuenta</p>
-      <input type="email" name="email" placeholder="Email" required />
-      <input type="password" name="pswd" placeholder="Password" required />
+      <input
+        v-model="mail"
+        type="email"
+        name="mail"
+        placeholder="Email"
+        required
+        autocomplete="email"
+        id="email"
+      />
+      <input
+        v-model="passwd"
+        type="password"
+        name="pswd"
+        placeholder="Password"
+        required
+        autocomplete="current-password"
+        id="passwd"
+      />
       <a href="#">¿Olvidaste tu contraseña?</a>
-      <button>Inicia Sesión</button>
+      <button type="submit">Inicia Sesión</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "LoginForm",
+  data() {
+    return {
+      mail: "",
+      passwd: "",
+    };
+  },
+
+  methods: {
+    login() {
+      let dataToSend = {
+        functionName: "login_login",
+        mail: this.mail,
+        passwd: this.passwd,
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          // Aquí recibes la respuesta del servidor
+          console.log(response.data);
+
+          // Puedes realizar acciones adicionales en Vue.js según la respuesta del servidor
+        })
+        .catch((error) => {
+          console.error(error);
+          // Manejo de errores si la solicitud falla
+        });
+    },
+  },
 };
 </script>
 
@@ -38,7 +81,6 @@ form {
   padding: 0 50px;
   height: 100%;
   text-align: center;
-
 }
 
 h1 {

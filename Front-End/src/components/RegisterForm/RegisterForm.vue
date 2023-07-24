@@ -1,23 +1,68 @@
 <template>
   <div class="sign-up">
-    <form>
+    <form @submit.prevent="register">
       <h1>Crear cuenta</h1>
+      <input v-model="name" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="first_name" />
+      <input v-model="surname" type="text" name="txt" placeholder="Apellido" required autocomplete="name" id="first_surname" />
+      <input v-model="doc" type="text" name="txt" placeholder="Cedula" required id="doc" />
+      <input v-model="doc_type" type="text" name="txt" placeholder="Tipo de cedula" required id="doc_type" />
+      <input v-model="mail" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email" id="mail" />
+      <input v-model="passwd" type="password" name="pswd" placeholder="Contraseña" required autocomplete="new-password" id="passwd" />
+      <input v-model="confirmPasswd" type="password" name="cmpswd" placeholder="Confirma la contraseña" required autocomplete="new-password" id="cmfpasswd" />
 
-      <p> Agrega tus datos para registrarte</p>
-      <input type="text" name="txt" placeholder="Nombre" required />
-      <input type="text" name="txt" placeholder="Cedula Uruguaya" required />
-      <input type="email" name="email" placeholder="Correo electronico" required />
-      <input type="password" name="pswd" placeholder="Contraseña" required />
-      <input type="password" name="cmpswd" placeholder="Confirma la contraseña" required />
-
-      <button>Registrate</button>
+      <button type="submit">Registrate</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "RegisterForm",
+  data() {
+    return {
+      name: "",
+      surname: "",
+      doc: "",
+      doc_type: "",
+      mail: "",
+      passwd: "",
+      confirmPasswd: "",
+    };
+  },
+
+  methods: {
+    register() {
+      if (this.passwd !== this.confirmPasswd) {
+        // Si las contraseñas no coinciden, muestra un mensaje de error o realiza la acción que desees.
+        console.error("Las contraseñas no coinciden");
+        return;
+      }
+
+      // Datos para enviar en la solicitud HTTP
+      const dataToSend = {
+        functionName: "register_register_web_first",
+        name: this.name,
+        surname: this.surname,
+        doc: this.doc,
+        doc_type: this.doc_type,
+        mail: this.mail,
+        passwd: this.passwd,
+      };
+
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          // Aquí recibes la respuesta del servidor
+          console.log(response.data);
+
+          // Puedes realizar acciones adicionales en Vue.js según la respuesta del servidor
+        })
+        .catch((error) => {
+          console.error(error);
+          // Manejo de errores si la solicitud falla
+        });
+    },
+  },
 };
 </script>
 

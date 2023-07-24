@@ -62,7 +62,7 @@ body {
   position: relative;
   width: 57vw;
   max-width: 100%;
-  min-height: 480px;
+  min-height: 85vh;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
