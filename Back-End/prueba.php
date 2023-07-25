@@ -1,55 +1,24 @@
 <?php
-include_once "./Data/database_model.php";
+include_once "server.php";
 
-#$ctl = new QueryCall("localhost", "root", "", "awarena meinu", 3306);
+echo $base . "<br>";
+echo $index . "<br>";
+echo $login . "<br>";
+echo $menu . "<br>";
+echo $register . "<br>";
+echo $shop . "<br>";
+echo $database_model . "<br>";
+echo $authorization . "<br>";
 
-$rest = substr("abcdefghijk", 0, -4);
-echo $rest;
-function datatype($variable, $tipo)
-{
-    if (gettype($variable) === $tipo) {
-        echo "Es verdadero que la variable es de tipo $tipo <br>";
-    } else {
-        echo "No es verdadero que la variable es de tipo $tipo <br>";
-    }
+$ctl->setQuery("DELETE inicia, sesion, web
+FROM cliente
+LEFT JOIN inicia ON cliente.id = inicia.cliente_id
+LEFT JOIN sesion ON inicia.sesion_token = sesion.token
+LEFT JOIN web ON cliente.id = web.cliente_id OR inicia.cliente_id = web.cliente_id
+WHERE cliente.email = 'amsdassdsasda';")->call();
+$ctl->delete("cliente", ["amsdassdsasda"], ["email"])->call();
 
-    foreach (func_get_args() as $valor) {
-        echo "Valor del argumento " . $valor . "<br>";
-    }
-}
-
-$var1 = 1;
-$var2 = "algo";
-$var3 = [$var1, $var2];
-echo "<br>";
-datatype($var1, "string");
-echo "<br>";
-datatype($var1, "array");
-echo "<br>";
-datatype($var2, "string");
-echo "<br>";
-datatype($var3, "array");
-echo "<br>";
-
-$mail = "algo22332@mail.com";
-$password = "dkapsdjasdjk";
-$first_name = "pedro";
-$first_surname = "vasquez";
-$doc_type = "CI";
-$doc = 12331112;
-
-
-if (True) {
-    $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
-    print_r($id);
-    echo "aca";
-    $response = $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "tipo", "numero"])->call();
-    print_r($response);
-}
-echo "<br>";
-echo date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 day'));
-
-
+print_r(register_register_web_first("maxi", "da silva", "CI", "5088325", "amsdassdsasda", "asdasddasdas"));
 
 
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 

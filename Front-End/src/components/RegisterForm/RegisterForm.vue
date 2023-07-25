@@ -3,12 +3,16 @@
     <form @submit.prevent="register">
       <h1>Crear cuenta</h1>
       <input v-model="name" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="first_name" />
-      <input v-model="surname" type="text" name="txt" placeholder="Apellido" required autocomplete="name" id="first_surname" />
+      <input v-model="surname" type="text" name="txt" placeholder="Apellido" required autocomplete="name"
+        id="first_surname" />
       <input v-model="doc" type="text" name="txt" placeholder="Cedula" required id="doc" />
       <input v-model="doc_type" type="text" name="txt" placeholder="Tipo de cedula" required id="doc_type" />
-      <input v-model="mail" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email" id="mail" />
-      <input v-model="passwd" type="password" name="pswd" placeholder="Contraseña" required autocomplete="new-password" id="passwd" />
-      <input v-model="confirmPasswd" type="password" name="cmpswd" placeholder="Confirma la contraseña" required autocomplete="new-password" id="cmfpasswd" />
+      <input v-model="mail" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email"
+        id="mail" />
+      <input v-model="passwd" type="password" name="pswd" placeholder="Contraseña" required autocomplete="new-password"
+        id="passwd" />
+      <input v-model="confirmPasswd" type="password" name="cmpswd" placeholder="Confirma la contraseña" required
+        autocomplete="new-password" id="cmfpasswd" />
 
       <button type="submit">Registrate</button>
     </form>
@@ -32,34 +36,28 @@ export default {
   methods: {
     register() {
       if (this.passwd !== this.confirmPasswd) {
-        // Si las contraseñas no coinciden, muestra un mensaje de error o realiza la acción que desees.
         console.error("Las contraseñas no coinciden");
         return;
       }
 
-      // Datos para enviar en la solicitud HTTP
       const dataToSend = {
         functionName: "register_register_web_first",
         name: this.name,
         surname: this.surname,
-        doc: this.doc,
         doc_type: this.doc_type,
+        doc: this.doc,
         mail: this.mail,
         passwd: this.passwd,
       };
 
-
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          // Aquí recibes la respuesta del servidor
           console.log(response.data);
-
-          // Puedes realizar acciones adicionales en Vue.js según la respuesta del servidor
+          this.$router.push("/");
         })
         .catch((error) => {
           console.error(error);
-          // Manejo de errores si la solicitud falla
         });
     },
   },

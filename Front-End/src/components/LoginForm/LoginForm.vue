@@ -3,24 +3,9 @@
     <form @submit.prevent="login">
       <h1>Inicia sesión</h1>
       <p>Coloca los datos de tu cuenta</p>
-      <input
-        v-model="mail"
-        type="email"
-        name="mail"
-        placeholder="Email"
-        required
-        autocomplete="email"
-        id="email"
-      />
-      <input
-        v-model="passwd"
-        type="password"
-        name="pswd"
-        placeholder="Password"
-        required
-        autocomplete="current-password"
-        id="passwd"
-      />
+      <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
+      <input v-model="passwd" type="password" name="pswd" placeholder="Password" required autocomplete="current-password"
+        id="passwd" />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
     </form>
@@ -47,17 +32,21 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          // Aquí recibes la respuesta del servidor
-          console.log(response.data);
+          let token = response.data[1];
+          console.log(token);
+          sessionStorage.setItem('miToken', token);
+          this.$router.push("/");
 
-          // Puedes realizar acciones adicionales en Vue.js según la respuesta del servidor
         })
         .catch((error) => {
           console.error(error);
-          // Manejo de errores si la solicitud falla
         });
     },
   },
+
+  // mounted: {
+  //   //si esta iniciado sesion no permite acceder
+  // }
 };
 </script>
 

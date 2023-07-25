@@ -6,7 +6,8 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
-$ctl = new QueryCall("localhost", "root", "", "awarena meinu", 3306);
+$ctl = new QueryCall("localhost", "root", "", "database", 3306);
+$base = __FILE__;
 
 function fast_verification_doc($doc_type, $doc)
 {
@@ -24,6 +25,12 @@ function base_session($token)
 {
     global $ctl;
     return session($ctl, $token);
+}
+
+function base_session_close($token)
+{
+    global $ctl;
+    return session_close($ctl, $token);
 }
 
 

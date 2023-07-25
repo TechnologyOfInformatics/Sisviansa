@@ -3,7 +3,6 @@
     <div class="menu-list">
       <div v-for="menu in menus" :key="menu.title" class="menu-card">
         <div class="menu-top">
-          <img :src="getImgUrl(menu.image)" alt="Menu Image" />
           <div class="menu-top-text">
             <h2>{{ menu.title }}</h2>
             <p>{{ menu.type }}</p>
@@ -21,11 +20,8 @@
               </button>
             </div>
             <div class="footer-buttons-icons">
-              <i
-                class="fa-solid fa-heart"
-                :class="{ favorite: isFavorite(menu.id) }"
-                @click="toggleFavorite(menu.id)"
-              ></i>
+              <i class="fa-solid fa-heart" :class="{ favorite: isFavorite(menu.id) }"
+                @click="toggleFavorite(menu.id)"></i>
               <button class="add-to-cart-btn" @click="selectMenu(menu)">
                 <i class="fa-solid fa-cart-plus"></i>
               </button>
@@ -36,7 +32,9 @@
     </div>
     <transition name="fade" mode="out-in">
       <div v-if="addedToCart" class="added-to-cart-message">
-        <div><p>¡Se ha agregado al carrito!</p></div>
+        <div>
+          <p>¡Se ha agregado al carrito!</p>
+        </div>
       </div>
     </transition>
     <div v-if="showModal" class="modal" @click="closeModal">
@@ -44,7 +42,6 @@
         <div class="menu-details">
           <h2>{{ selectedMenu.title }}</h2>
           <p>{{ selectedMenu.description }}</p>
-          <img :src="getImgUrl(selectedMenu.image)" alt="Menu Image" />
           <p class="price">Precio: {{ selectedMenu.price }} USD</p>
         </div>
         <div class="viandas">
@@ -53,11 +50,12 @@
             <li v-for="vianda in selectedMenu.viandas" :key="vianda.name">
               <span class="vianda-name">{{ vianda.name }}</span>
               <div class="vianda-details">
+                <span class="diet">{{ vianda.diet }}</span>
                 <span class="calories">{{ vianda.calories }} calorías</span>
-                <span class="type">{{ vianda.type }}</span>
               </div>
             </li>
           </ul>
+
         </div>
         <div class="buttons">
           <button class="add-to-cart-btn" @click="addToCart(selectedMenu)">
@@ -79,160 +77,50 @@ export default {
     return {
       cart: [],
       favorites: [],
-      menus: [
-        {
-          id: 1,
-          title: "Menú 1",
-          description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex placeat alias eos, blanditiis temporibus excepturi Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laborum error ex ratione porro animi nobis. Adipisci incidunt culpa rem dolor odio ratione alias sequi vel libero itaque, quis corporis inventore? ",
-          image: "bussiness-banner",
-          price: 10,
-          type: "Standar",
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "Menú 2",
-          description: "Descripción del Menú 2",
-          image: "bussiness-banner",
-          price: 10,
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-        {
-          id: 3,
-          title: "Menú 1",
-          description: "Descripción del Menú 1",
-          image: "bussiness-banner",
-          price: 10,
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-        {
-          id: 4,
-          title: "Menú 1",
-          description: "Descripción del Menú 1",
-          image: "bussiness-banner",
-          price: 10,
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-        {
-          id: 5,
-          title: "Menú 5",
-          description: "Descripción del Menú 1",
-          image: "bussiness-banner",
-          price: 10,
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-        {
-          id: 6,
-          title: "Menú 1",
-          description: "Descripción del Menú 1",
-          image: "bussiness-banner",
-          price: 10,
-          viandas: [
-            {
-              name: "Vianda 1.1",
-              calories: 300,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.2",
-              calories: 250,
-              type: "Vegetariana",
-            },
-            {
-              name: "Vianda 1.3",
-              calories: 200,
-              type: "Vegetariana",
-            },
-          ],
-        },
-      ],
+      menus: [],
       showModal: false,
       selectedMenu: null,
       addedToCart: false,
     };
   },
+  created() {
+    this.fetchUserData();
+  },
   methods: {
+    transformMenusData(data) {
+      return data.map((menuData) => ({
+        id: parseInt(menuData[0]),
+        title: menuData[1],
+        calories: parseInt(menuData[2]),
+        frequency: parseInt(menuData[3]),
+        description: menuData[4],
+        price: parseInt(menuData[5]),
+        viandas: [
+          {
+            name: menuData[6][0],
+            diet: menuData[6][1],
+            calories: parseInt(menuData[6][2]) || 0,
+          },
+        ],
+      }));
+    },
+    fetchUserData() {
+      const dataToSend = {
+        functionName: "shop_show_shop",
+        token: sessionStorage.getItem('miToken'),
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data);
+          this.menus = this.transformMenusData(response.data[0]);
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     openModal(menu) {
       this.selectedMenu = menu;
       this.showModal = true;

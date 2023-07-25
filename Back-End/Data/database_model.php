@@ -3,6 +3,8 @@ header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
+$database_model = __FILE__;
+
 class QueryCall
 {
   private $host, $user, $passwd, $database, $port;
@@ -20,14 +22,13 @@ class QueryCall
 
   ///////////////////////////////////////////////////////////////////////////CREACION//////////////////////////////////////////////////////////////////////////////////C
 
-  public function insert($table, $values = [], $columns = [])
+  public function insert($table, array $values, array $columns)
   {
 
     $string = "";
     $columns_str = "";
     //transforma el array de values en un string ideal para usarlo en sql
     for ($i = 0; $i < count($columns); $i++) {
-      print_r($values[0]);
       $string .= "'" . $values[$i] . "', ";
       $columns_str .= "$columns[$i], ";
     }
@@ -42,7 +43,7 @@ class QueryCall
 
   ///////////////////////////////////////////////////////////////////////////LECTURA/BUSQUEDA////////////////////////////////////////////////////////////////////////R
 
-  public function select($table, $columns = [], $values = [], $identifiers = [])
+  public function select($table, array $columns, array $values, array $identifiers)
   {
 
     $string = '';
@@ -69,7 +70,7 @@ class QueryCall
   }
 
   ///////////////////////////////////////////////////////////////////////////ACTUALIZACION///////////////////////////////////////////////////////////////////////////U
-  public function update($table, $values = [], $identifiers = [], $columns = [])
+  public function update($table, array $values, array $identifiers, array $columns)
   {
     // Esta es medio un embole ya que necesita los valores a cambiar, las casillas a cambiar, el identificador
     //que sera una cantidad de casillas pk, y el valor que han de tener, el cual es parte de columnas y valores
@@ -82,7 +83,7 @@ class QueryCall
 
     $condition = '';
     for ($i = 0; $i < count($identifiers); $i++) {
-      $condition .= "$identifiers[$i]='$values[$i], '";
+      $condition .= "$identifiers[$i]='$values[$i]', ";
     }
     $condition = substr($condition, 0, -2);
     $this->query = "UPDATE $table SET $string WHERE $condition";
@@ -92,7 +93,7 @@ class QueryCall
 
   ///////////////////////////////////////////////////////////////////////////ELIMINACION////////////////////////////////////////////////////////////////////////D
 
-  public function delete($table, $values = [], $identifiers = [])
+  public function delete($table, array $values, array $identifiers)
   {
     $condition = '';
     for ($i = 0; $i < count($identifiers); $i++) {
@@ -133,18 +134,19 @@ class QueryCall
         $result = $connect->query($this->query);
 
         if ($result) {
+
           $lists = $result->fetch_all();
           $response = [];
-          if (gettype($lists[0]) === "array" || count($lists) === 1) {
+
+          if (!empty($lists) && count($lists) === 1) { //Si no esta vacía (osea []) y tiene solo 1 valor dentro
             $response = $lists[0];
           } else {
             $response = $lists;
           }
         } else {
-          $response = "Error en la consulta: " . $connect->error; // Consulta con error
+          $response = "Error en la consulta: " . $connect->error;
         }
       } else {
-        // Consulta INSERT, UPDATE o DELETE
         $result = $connect->query($this->query);
         if ($result && isset($connect->affected_rows)) {
           $response = ["OK", 200];
