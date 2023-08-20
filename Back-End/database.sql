@@ -20,8 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `awarena meinu`
 --
-CREATE DATABASE IF NOT EXISTS `awarena meinu` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `awarena meinu`;
+CREATE DATABASE IF NOT EXISTS `database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `database`;
 
 -- --------------------------------------------------------
 
