@@ -19,7 +19,6 @@
             <h2>Nuestros Valores</h2>
             <ul>
               <li>Salud y Nutrición.</li>
-              <li>Calidad.</li>
               <li>Creatividad y Variedad.</li>
               <li>Excelencia en el Servicio al Cliente.</li>
               <li>Ética Empresarial.</li>
@@ -109,7 +108,7 @@
               <img src="@/assets/page-icons/vegan.png"
                 alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
 
-              <img src="@/assets/icons/isotipo.png" alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
+              <img src="@/assets/icons/logotipo.png" alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
               <img src="@/assets/page-icons/vegetarian.png"
                 alt="Imagen ilustrativa mostrando que ofrecemos productos vegetarianos" />
               <img src="@/assets/page-icons/personalizable.png"
@@ -191,7 +190,7 @@ main .home__company-info div {
   width: 20vw;
   height: 20vw;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: #ebeadf;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -241,6 +240,9 @@ main .home__information .information__function div img:hover {
 main .home__information .information__what div img {
   width: 200px;
   margin: 1em 0;
+}
+main .home__information .information__what div img:nth-child(3){
+  width: 300px;
 }
 
 main .home__beginning {

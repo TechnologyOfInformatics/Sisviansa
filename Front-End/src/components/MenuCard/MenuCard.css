@@ -1,20 +1,19 @@
 .menu-list {
-  margin: 1em 3em;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
 }
 
 .menu-list .menu-card {
-  width: 21vw;
-  height: 60vh;
+  width: 20vw;
+  height: 45vh; 
   clip-path: polygon(0 4%, 4% 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
-  margin: 1em 0;
-
-
+  margin: 1em 1em;
+  background: url('@/assets/page-icons/menu.png');
+  background-size: contain;
 }
 
 .menu-list .menu-card:nth-child(even) {
@@ -27,7 +26,7 @@
 }
 
 .menu-list .menu-card .menu-top .menu-top-text {
-  transform: translate(10%, -200%);
+  transform: translate(10%, 15%);
   color: white;
 }
 
@@ -41,6 +40,7 @@
   font-size: 1.2em;
   width: auto;
   transform: translateX(5%);
+  margin-top: 20px;
 }
 
 .menu-list .menu-card .menu-top img {
@@ -50,20 +50,23 @@
 
 .menu-list .menu-card .menu-footer {
   padding: 1em;
-  background-color: #45a049;
+  background-color: #324b39;
   height: 40%;
+  color: white;
+
 }
 
 .menu-list .menu-card .menu-footer p {
   height: 60%;
+  
 }
 
 .menu-footer-buttons {
-  margin: .5em;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
+
 }
 
 .viewMore {
@@ -74,8 +77,13 @@
 .viewMore i {
   font-size: 1.5vw;
   cursor: pointer;
-}
+  color: white;
 
+}
+.footer-buttons-icons .fa-cart-plus{
+  color: white;
+
+}
 .footer-buttons-icons {
   display: flex;
   justify-content: space-around;
@@ -97,7 +105,7 @@
 }
 
 .added-to-cart-message {
-  z-index: 999;
+  z-index: 9999;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -267,11 +275,11 @@
 
   .menu-list .menu-card {
     width: 70vw;
-    height: 50vh;
+    height: 40vh;
   }
 
   .menu-footer-buttons {
-    padding-bottom: 0.6em;
+    margin-bottom: 1em;
   }
 
   .footer-buttons-icons i,

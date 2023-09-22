@@ -55,3 +55,9 @@ export default {
   },
 };
 </script>
+
+<style>
+body{
+  background-color: #ebeadf;
+}
+</style>

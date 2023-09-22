@@ -9,7 +9,7 @@
           </router-link>
         </div>
         <div class="nav__logo">
-          <img src="@/assets/icons/logotipo.png" alt="Logotipo ilustrativo de la empresa" />
+          <img src="@/assets/icons/logotipo-header.png" alt="Logotipo ilustrativo de la empresa" />
           <p>Sisviansa</p>
         </div>
         <router-link v-if="isAuthenticated" to="/" class="link">

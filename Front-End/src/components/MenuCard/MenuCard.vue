@@ -5,7 +5,7 @@
         <div class="menu-top">
           <div class="menu-top-text">
             <h2>{{ menu.title }}</h2>
-            <p>{{ menu.type }}</p>
+            <p>{{ menu.type }}a</p>
           </div>
         </div>
         <hr />

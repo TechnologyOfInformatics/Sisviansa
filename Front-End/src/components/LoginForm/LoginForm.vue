@@ -63,7 +63,7 @@ export default {
 }
 
 form {
-  background: #fff;
+  background: #ebeadf;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,6 +71,8 @@ form {
   padding: 0 50px;
   height: 100%;
   text-align: center;
+  border-right: 1px solid #243328;
+
 }
 
 h1 {
@@ -87,7 +89,7 @@ p {
 }
 
 input {
-  background: #eee;
+  background: white;
   padding: 12px 15px;
   margin: 8px 15px;
   width: 100%;
@@ -104,9 +106,9 @@ a {
 }
 
 button {
-  border: 1px solid #a2d9ff;
+  border: 1px solid #ebeadf;
   color: white;
-  background: #a2d9ff;
+  background: #243328;
   font-size: 12px;
   font-weight: bold;
   padding: 12px 55px;
