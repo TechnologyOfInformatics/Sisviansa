@@ -33,10 +33,10 @@
           </li>
         </ul>
         <div class="footer-social-media">
-          <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa-solid fa-envelope"></i></a>
+          <a href="https://www.facebook.com/sisviansa" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+          <a href="https://twitter.com/sisviansa" target="_blank"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/sisviansa" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+          <a href="mailto:sisviansa@gmail.com" target="_blank"><i class="fa-solid fa-envelope"></i></a>
         </div>
       </div>
     </div>

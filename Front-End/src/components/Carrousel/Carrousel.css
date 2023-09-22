@@ -117,17 +117,7 @@
  }
 
  @media (max-width: 768px) {
-     main .home__banner div {
-         display: none;
-     }
-
-     main #banner__img {
-         display: block;
-         width: 70vw;
-         height: 20vh;
-         margin-top: 1em;
-     }
      main{
-        height: 30vh;
+         display: none;
      }
  }

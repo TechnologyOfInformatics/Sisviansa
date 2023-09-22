@@ -5,62 +5,73 @@
     <section>
       <HomeBanner />
     </section>
+    <div data-aos="fade-up" data-aos-delay="3500">
+      <section class="home__beginning">
+        <div class="home__beginning_title">
+          <h1>Nuestros principios</h1>
+        </div>
+        <div class="home__beginning_boxes">
+          <article>
+            <h2>Nuestra Visión</h2>
+            <p>Ser líderes en viandas saludables, inspirando un estilo de vida más saludable.</p>
+          </article>
+          <article>
+            <h2>Nuestros Valores</h2>
+            <ul>
+              <li>Salud y Nutrición.</li>
+              <li>Calidad.</li>
+              <li>Creatividad y Variedad.</li>
+              <li>Excelencia en el Servicio al Cliente.</li>
+              <li>Ética Empresarial.</li>
+            </ul>
+          </article>
+          <article>
+            <h2>Nuestra Misión</h2>
+            <p>Ofrecer comidas saludables y deliciosas que promuevan el bienestar.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+    <div data-aos="fade-up">
 
-    <section class="home__beginning">
-      <div class="home__beginning_title">
-        <h1>Nuestros principios</h1>
-      </div>
-      <div class="home__beginning_boxes">
-        <article>
-          <h2>Nuestra Visión</h2>
-          <p>Ser líderes en viandas saludables, inspirando un estilo de vida más saludable.</p>
-        </article>
-        <article>
-          <h2>Nuestros Valores</h2>
-          <ul>
-            <li>Salud y Nutrición.</li>
-            <li>Calidad.</li>
-            <li>Creatividad y Variedad.</li>
-            <li>Excelencia en el Servicio al Cliente.</li>
-            <li>Ética Empresarial.</li>
-          </ul>
-        </article>
-        <article>
-          <h2>Nuestra Misión</h2>
-          <p>Ofrecer comidas saludables y deliciosas que promuevan el bienestar.</p>
-        </article>
-      </div>
-    </section>
-    <section class="home__cards">
-      <div class="home__cards__text">
-        <h1>¡Bienvenidos a Sisviansa!</h1>
-        <p>
-          Nos enorgullece ofrecer nuestros servicios tanto a usuarios
-          individuales como a empresas de todos los tamaños.
-        </p>
-      </div>
-      <article class="home__card">
-        <img src="@/assets/imgs/bussiness-banner.png" alt="Imagen ilustrativa para empresas" />
-        <div>
-          <h2>Empresas</h2>
-          <p>
-            Ofrecemos opciones de comida saludable de alta calidad para empresas de todos los
-            tamaños. Nuestros menús personalizables satisfacen las necesidades de tu equipo y promueven un estilo de vida
-            más saludable.
-          </p>
+      <section class="home__cards">
+        <div data-aos="zoom-in-up">
+
+          <div class="home__cards__text">
+            <h1>¡Bienvenidos a Sisviansa!</h1>
+            <p>
+              Nos enorgullece ofrecer nuestros servicios tanto a usuarios
+              individuales como a empresas de todos los tamaños.
+            </p>
+          </div>
         </div>
-      </article>
-      <article class="home__card">
-        <img src="@/assets/imgs/users-banner.png" alt="Imagen ilustrativa para usuarios" />
-        <div>
-          <h2>Usuarios</h2>
-          <p>
-            Disfruta de opciones deliciosas y saludables, como productos sin gluten, veganos y
-            más. Únete a nuestro viaje hacia un estilo de vida más saludable.
-          </p>
+        <article class="home__card">
+          <img src="@/assets/imgs/bussiness-banner.png" alt="Imagen ilustrativa para empresas" />
+          <div>
+            <h2>Empresas</h2>
+            <p>
+              Ofrecemos opciones de comida saludable de alta calidad para empresas de todos los
+              tamaños. Nuestros menús personalizables satisfacen las necesidades de tu equipo y promueven un estilo de
+              vida
+              más saludable.
+            </p>
+          </div>
+        </article>
+        <div data-aos="flip-right" data-aos-easing="linear" data-aos-duration="440">
+          <article class="home__card">
+            <img src="@/assets/imgs/users-banner.png" alt="Imagen ilustrativa para usuarios" />
+            <div>
+              <h2>Usuarios</h2>
+              <p>
+                Disfruta de opciones deliciosas y saludables, como productos sin gluten, veganos y
+                más. Únete a nuestro viaje hacia un estilo de vida más saludable.
+              </p>
+            </div>
+          </article>
         </div>
-      </article>
-    </section>
+
+      </section>
+    </div>
     <section class="home__company-info">
       <article>
         <h2>Conoce la mejor empresa de viandas saludables</h2>
@@ -74,29 +85,40 @@
     <section class="home__information">
       <article class="information information__function">
         <h2 class="information__title">¿Cómo funciona nuestro servicio?</h2>
-        <div>
-          <img src="@/assets/imgs/homepage-function_1.png" alt="Selecciona tu vianda" />
-          <img src="@/assets/imgs/homepage-function_2.png" alt="Selecciona tu combo" />
-          <img src="@/assets/imgs/homepage-function_3.png" alt="Completa tu pedido" />
-        </div>
-      </article>
-    </section>
+        <div data-aos="fade-zoom-in" data-aos-delay="300" data-aos-offset="0" data-aos-easing="linear"
+          data-aos-duration="1500">
 
-    <section class="home__information">
-      <article class="information information__what">
-        <h2 class="information__title">¿Qué ofrecemos?</h2>
-        <div>
-          <img src="@/assets/page-icons/gluten.png"
-            alt="Imagen ilustrativa mostrando que ofrecemos productos sin gluten" />
-          <img src="@/assets/page-icons/vegan.png" alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
-          <img src="@/assets/icons/isotipo.png" alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
-          <img src="@/assets/page-icons/vegetarian.png"
-            alt="Imagen ilustrativa mostrando que ofrecemos productos vegetarianos" />
-          <img src="@/assets/page-icons/personalizable.png"
-            alt="Imagen ilustrativa mostrando que ofrecemos menús personalizados" />
+          <div>
+            <img src="@/assets/imgs/homepage-function_1.png" alt="Selecciona tu vianda" />
+
+            <img src="@/assets/imgs/homepage-function_2.png" alt="Selecciona tu combo" />
+            <img src="@/assets/imgs/homepage-function_3.png" alt="Completa tu pedido" />
+          </div>
         </div>
       </article>
     </section>
+    <div data-aos="zoom-in-left">
+
+      <section class="home__information">
+        <article class="information information__what">
+          <h2 class="information__title">¿Qué ofrecemos?</h2>
+          <div data-aos="zoom-in" data-aos-easing="linear" data-aos-duration="600">
+            <div>
+              <img src="@/assets/page-icons/gluten.png"
+                alt="Imagen ilustrativa mostrando que ofrecemos productos sin gluten" />
+              <img src="@/assets/page-icons/vegan.png"
+                alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
+
+              <img src="@/assets/icons/isotipo.png" alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />
+              <img src="@/assets/page-icons/vegetarian.png"
+                alt="Imagen ilustrativa mostrando que ofrecemos productos vegetarianos" />
+              <img src="@/assets/page-icons/personalizable.png"
+                alt="Imagen ilustrativa mostrando que ofrecemos menús personalizados" />
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
   </main>
   <MainFooter />
   <ScrollButton />
@@ -118,6 +140,7 @@ export default {
     HomeBanner,
     ScrollButton,
   },
+
 };
 </script>
 
@@ -263,7 +286,7 @@ main .home__beginning .home__beginning_boxes article li {
 }
 
 main .home__cards {
-  padding: 6em;
+  padding: 2em;
   background-color: #ebeadf;
   display: flex;
   flex-direction: column;
@@ -285,11 +308,21 @@ main .home__cards .home__cards__text p {
 }
 
 main .home__cards .home__card {
-  width: 90vw;
+  width: 95vw;
   margin: auto;
   display: flex;
   flex-direction: row;
+  padding-top: 2em;
+  padding-bottom: 2em;
 }
+
+.home__cards .home__card:nth-child(2) {
+
+  background-color: white;
+  border-radius: 15px;
+}
+
+
 
 main .home__cards .home__card div {
   width: 50%;
