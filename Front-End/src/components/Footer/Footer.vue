@@ -4,8 +4,8 @@
       <div class="footer-item">
         <h1 class="footer-title">Sisviansa</h1>
         <p class="footer-description">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Comprometidos con calidad, nutrición y sabor en cada plato. Ofrecemos opciones sin gluten, veganas y menús
+          personalizables para un estilo de vida saludable.
         </p>
       </div>
 
@@ -29,8 +29,7 @@
           </li>
           <li><i class="fa fa-phone" aria-hidden="true"></i>1234567890</li>
           <li>
-            <i class="fa fa-envelope" aria-hidden="true"></i
-            >contacto@sisviansa.com
+            <i class="fa fa-envelope" aria-hidden="true"></i>contacto@sisviansa.com
           </li>
         </ul>
         <div class="footer-social-media">

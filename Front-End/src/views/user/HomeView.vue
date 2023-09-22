@@ -44,10 +44,9 @@
         <div>
           <h2>Empresas</h2>
           <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officiis
-            asperiores eius dicta nulla laboriosam accusamus doloribus
-            repellendus dolorem accusantium cumque ea nihil quam, architecto
-            necessitatibus velit praesentium commodi consequuntur numquam?
+            Ofrecemos opciones de comida saludable de alta calidad para empresas de todos los
+            tamaños. Nuestros menús personalizables satisfacen las necesidades de tu equipo y promueven un estilo de vida
+            más saludable.
           </p>
         </div>
       </article>
@@ -56,14 +55,22 @@
         <div>
           <h2>Usuarios</h2>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt,
-            laborum? Eaque commodi impedit quam molestiae porro, ipsa et iste
-            ullam voluptate consectetur alias enim, magnam, ipsam non. Quaerat,
-            nemo corporis?
+            Disfruta de opciones deliciosas y saludables, como productos sin gluten, veganos y
+            más. Únete a nuestro viaje hacia un estilo de vida más saludable.
           </p>
         </div>
       </article>
     </section>
+    <section class="home__company-info">
+      <article>
+        <h2>Conoce la mejor empresa de viandas saludables</h2>
+        <div>
+          <img src="@/assets/icons/isotipo.png">
+        </div>
+        <p>Sisviansa</p>
+      </article>
+    </section>
+
     <section class="home__information">
       <article class="information information__function">
         <h2 class="information__title">¿Cómo funciona nuestro servicio?</h2>
@@ -116,7 +123,8 @@ export default {
 
 <style lang="css" scoped>
 main {
-  background-color: red;
+  background-color: #243328;
+
 }
 
 
@@ -138,11 +146,44 @@ main .home__information .information__what {
   justify-content: center;
   background-color: #ebeadf;
   height: 85vh;
-  padding-bottom: 5em;
+  padding-bottom: 1em;
   color: black;
   margin: auto;
 
 }
+
+main .home__company-info {
+  background-color: #243328;
+  padding: 5em 0;
+  text-align: center;
+}
+
+main .home__company-info h2 {
+  font-size: 1.8em;
+  color: #ffffff;
+  margin-bottom: 1em;
+}
+
+main .home__company-info div {
+  width: 20vw;
+  height: 20vw;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+
+main .home__company-info p {
+  color: #ffffff;
+  font-size: 1em;
+  margin-top: 1em;
+}
+
 
 main .home__information .information__title {
   padding: 3em 0 2em;
@@ -230,7 +271,7 @@ main .home__cards {
 
 main .home__cards .home__cards__text {
   width: 40vw;
-  margin: 1em auto;
+  margin: 1em auto 4em;
 }
 
 main .home__cards .home__cards__text h1 {
@@ -251,7 +292,7 @@ main .home__cards .home__card {
 }
 
 main .home__cards .home__card div {
-  width: 60%;
+  width: 50%;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -265,6 +306,7 @@ main .home__cards .home__card:nth-child(odd) {
 
 main .home__cards .home__card div p {
   margin: 1em 0;
+  font-size: 1.1em;
 }
 
 main .home__cards .home__card div h2 {
@@ -279,13 +321,20 @@ main .home__cards .home__card img {
 
 @media (max-width: 768px) {
 
+
   main .home__information .information__function,
-  main .home__information .information__what {
+  main .home__information .information__what,
+  main .home__beginning {
     height: auto;
+  }
+
+  main .home__cards {
+    padding: 0;
   }
 
   main .home__cards .home__cards__text {
     margin-top: 7em;
+    width: 80vw;
   }
 
   main .home__cards .home__card {
@@ -298,7 +347,7 @@ main .home__cards .home__card img {
   }
 
   main .home__cards .home__card div {
-    width: 100%;
+    width: 90%;
     align-items: center;
     padding: 1em;
   }
@@ -307,4 +356,25 @@ main .home__cards .home__card img {
     width: 80%;
     margin-bottom: 1em;
   }
-}</style>
+
+  main .home__beginning .home__beginning_boxes {
+    flex-direction: column;
+  }
+
+  main .home__beginning .home__beginning_boxes article {
+    margin-top: 10px;
+    width: 70vw;
+    height: 80vw;
+    background-color: #ebeadf;
+  }
+
+  main .home__company-info div img {
+    width: 20em;
+  }
+
+  main .home__company-info div {
+    width: 49vw;
+    height: 22.5vh;
+  }
+}
+</style>

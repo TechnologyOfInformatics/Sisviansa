@@ -1,8 +1,8 @@
- .banner{
-    width: 100%;
-    background-color: #243328;
+ .banner {
+     width: 100%;
+     background-color: #243328;
  }
- 
+
  main .home__banner {
      position: relative;
      height: 75vh;
@@ -110,34 +110,24 @@
      color: #fff;
  }
 
+ @media (min-width: 768px) {
+     main #banner__img {
+         display: none;
+     }
+ }
+
  @media (max-width: 768px) {
-     main .home__banner {
-         height: 40vh;
+     main .home__banner div {
+         display: none;
      }
 
-     main .home__banner img {
-         width: 100%;
+     main #banner__img {
+         display: block;
+         width: 70vw;
          height: 20vh;
+         margin-top: 1em;
      }
-
-     main .home__banner .home__banner__text {
-         width: 90vw;
-         transform: translate(0, 0);
-         margin-bottom: 1em;
-     }
-
-     main .home__banner .home__banner__text p {
-         font-size: 1.2em;
-     }
-
-     main .home__banner .home__banner__text h1 {
-         font-size: 2.0em;
-     }
-
-     .home__banner__arrow {
-         position: absolute;
-         top: 50%;
-         width: 10%;
-         transform: translate(0%, -700%);
+     main{
+        height: 30vh;
      }
  }

@@ -113,7 +113,7 @@ header .nav__bottom .nav__bottom__cart .cart-count {
         top: 100%;
         left: 0;
         width: 100%;
-        background-color: rgba(241, 241, 241, 0.95);
+        background-color: #243328;
         padding: 1em;
         transition: opacity 0.5s, visibility 0s linear 0.5s;
         opacity: 0;
