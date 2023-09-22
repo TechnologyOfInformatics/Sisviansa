@@ -125,4 +125,4 @@ export default {
 };
 </script>
 
-<style lang="css" src="./Header.css"></style>
+<style lang="css" src="./Header.css" scoped></style>

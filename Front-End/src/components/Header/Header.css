@@ -1,18 +1,21 @@
+body{
+    color: #fcfcfc;
+}
 header {
     z-index: 99;
     width: 100%;
     top: 0;
     position: sticky;
-    border-radius: 8px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: #243328;
 }
 
 header nav {
-    background-color: rgba(241, 241, 241, 0.95);
     padding: 0em 3em 0 3em;
 }
 
 header .nav__top {
+    color: #fcfcfc;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -29,7 +32,6 @@ header .nav__top .action__button {
 
 header .nav__top .action__button i {
     text-decoration: none;
-    color: #333333;
 }
 
 header .nav__logo {
@@ -41,8 +43,8 @@ header .nav__logo {
 header .nav__logo p {
     font-size: 2.6em;
     font-family: 'Pacifico', cursive;
-    background: #000000;
-    background: linear-gradient(to top, #000000 30%, #979996 100%);
+    background: #fcfcfc;
+    background: linear-gradient(to top, #fcfcfc 30%, #979996 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -80,7 +82,7 @@ header .nav__bottom ul li .selected {
 
 header .nav__bottom ul li .link {
     text-decoration: none;
-    color: #333;
+    color: #fcfcfc;
 }
 
 header .nav__bottom .nav__bottom__address img {
@@ -98,7 +100,7 @@ header .nav__bottom .nav__bottom__cart .cart-count {
     padding: 2px 6px;
     font-size: 14px;
     font-weight: bold;
-    color: black;
+    color: #fcfcfc;
     background-color: #ccc;
     border-radius: 50%;
 }

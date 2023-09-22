@@ -55,4 +55,4 @@ export default {
   name: "MainFooter",
 };
 </script>
-<style lang="css" src="./Footer.css"></style>
+<style lang="css" src="./Footer.css" scoped></style>

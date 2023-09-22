@@ -1,4 +1,5 @@
 <template>
+  <main class="banner">
   <section class="home__banner">
     <div class="home__banner__arrow left" @click="
       changeImage(
@@ -53,6 +54,7 @@
       </transition>
     </div>
   </section>
+</main>
 </template>
 
 <script>
@@ -80,7 +82,7 @@ export default {
     startCarousel() {
       setInterval(() => {
         this.nextImage();
-      }, 10000);
+      }, 20000);
     },
     nextImage() {
       this.currentImageIndex =
@@ -101,4 +103,4 @@ export default {
   transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 </style>
-<style lang="css" src="./Carrousel.css"></style>
+<style lang="css" src="./Carrousel.css" scoped></style>

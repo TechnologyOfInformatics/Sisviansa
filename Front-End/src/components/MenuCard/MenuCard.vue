@@ -187,4 +187,4 @@ export default {
 };
 </script>
 
-<style lang="css" src="./MenuCard.css"></style>
+<style lang="css" src="./MenuCard.css" scoped></style>

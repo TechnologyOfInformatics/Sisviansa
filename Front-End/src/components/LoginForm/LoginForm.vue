@@ -33,7 +33,8 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           let token = response.data[1];
-          console.log(token);
+          console.log(token)
+
           sessionStorage.setItem('miToken', token);
           this.$router.push("/");
 
