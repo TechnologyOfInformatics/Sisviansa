@@ -51,8 +51,9 @@ function session(QueryCall $ctl, $token)
     }
 
     $is_session_active = $ctl->select("sesion", ["estado"], [$token], ["token"])->call();
-
-    if ($is_session_active[0] === "Activa") {
+    if (!is_array($is_session_active) || count($is_session_active) === 0 || is_string($is_session_active)) {
+        return "404, NOT FOUND: The given TOKEN doesn't exist";
+    } elseif ($is_session_active[0] === "Activa") {
         $query = "SELECT sesion.final_de_sesion,
                 sesion.estado,
                 web.primer_nombre, 
@@ -62,7 +63,7 @@ function session(QueryCall $ctl, $token)
                 JOIN web ON inicia.cliente_id = web.cliente_id
                 WHERE inicia.sesion_token = '$token';
             ";
-
+    
         $response = $ctl->setQuery($query)->call();
         if (!is_array($response) || count($response) === 0 || is_string($response)) {
             return "404, NOT FOUND: The given TOKEN doesn't exist";
@@ -81,7 +82,7 @@ function session(QueryCall $ctl, $token)
                 return session_close($ctl, $token);
             }
         }
-    } else {
+    }  else {
         return [false];
     }
 }

@@ -34,7 +34,7 @@
     <div data-aos="fade-up">
 
       <section class="home__cards">
-        <div data-aos="zoom-in-up">
+        <div data-aos="zoom-in-up" data-aos-delay="300">
 
           <div class="home__cards__text">
             <h1>¡Bienvenidos a Sisviansa!</h1>
@@ -56,7 +56,7 @@
             </p>
           </div>
         </article>
-        <div data-aos="flip-right" data-aos-easing="linear" data-aos-duration="440">
+        <div data-aos="flip-right" data-aos-easing="linear" data-aos-duration="440" data-aos-delay="300">
           <article class="home__card">
             <img src="@/assets/imgs/users-banner.png" alt="Imagen ilustrativa para usuarios" />
             <div>
@@ -96,7 +96,7 @@
         </div>
       </article>
     </section>
-    <div data-aos="zoom-in-left">
+    <div data-aos="fade-up" data-aos-delay="300">
 
       <section class="home__information">
         <article class="information information__what">
@@ -190,7 +190,7 @@ main .home__company-info div {
   width: 20vw;
   height: 20vw;
   border-radius: 50%;
-  background-color: #ebeadf;
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;

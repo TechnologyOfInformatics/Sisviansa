@@ -35,7 +35,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .scroll-button {
   position: fixed;
   bottom: 20px;

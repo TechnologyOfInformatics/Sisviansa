@@ -6,7 +6,7 @@
     <ScrollButton />
     <CartModal :cart="cart" :isCartModalVisible="isCartModalVisible" @close="closeCartModal"
       @remove-from-cart="removeFromCart" @update-cart="updateCart" />
-    <MainFooter/>
+    <MainFooter />
   </div>
 </template>
 
@@ -56,8 +56,8 @@ export default {
 };
 </script>
 
-<style>
-body{
-  background-color: #ebeadf;
+<style scoped>
+body {
+  background-color: white;
 }
 </style>

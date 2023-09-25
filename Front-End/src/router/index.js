@@ -4,9 +4,9 @@ import FaqView from '@/views/user/FaqView.vue'
 import AuthView from '@/views/user/AuthView.vue'
 import ShopView from '@/views/user/ShopView.vue'
 import CartView from '@/views/user/CartView.vue'
+import ProfileView from '@/views/user/ProfileView.vue'
 
 import AdminAuthView from '@/views/admin/AuthView.vue'
-import AdminOrderView from '@/views/admin/OrderView.vue'
 import AdminUserView from '@/views/admin/UserView.vue'
 const routes = [
   {
@@ -35,6 +35,11 @@ const routes = [
     name: 'cart',
     component: CartView
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView
+  },
 
   {
     path: '/admin/auth',
@@ -46,11 +51,7 @@ const routes = [
     name: 'adminUser',
     component: AdminUserView
   },
-  {
-    path: '/admin/order',
-    name: 'adminOrder',
-    component: AdminOrderView
-  },
+
 ]
 
 const router = createRouter({

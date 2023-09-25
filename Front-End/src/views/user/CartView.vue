@@ -60,8 +60,7 @@ export default {
       if (this.cart.length === 0) {
         return;
       }
-      // Lógica para el proceso de compra
-      // Aquí podrías redirigir al usuario a la página de pago o confirmación
+
     },
   },
 };

@@ -37,7 +37,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* Estilos para el loader */
 .loading-overlay {
   position: fixed;

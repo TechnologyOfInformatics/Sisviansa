@@ -26,7 +26,7 @@
       <hr />
       <div class="nav__bottom">
         <div class="nav__bottom__address" v-if="showAddresses">
-          <img src="@/assets/page-icons/truck.png" alt="Camion de direccion" />
+          <i class="fa-solid fa-truck-fast"></i>
         </div>
 
         <ul class="nav__menu" :class="{ open: menuOpen }" id="navMenu">
@@ -39,10 +39,12 @@
           <li :class="{ selected: $route.path === '/faq' }">
             <router-link to="/faq" class="link">Preguntas Frecuentes</router-link>
           </li>
+          <li :class="{ selected: $route.path === '/profile' }">
+            <router-link to="/profile" class="link">Perfil</router-link>
+          </li>
         </ul>
         <div class="nav__bottom__cart" v-if="showCart">
-          <img src="@/assets/page-icons/cart.png" alt="Carrito de compra" @click="handleCartClicked" />
-
+          <i class="fa-solid fa-cart-shopping" @click="handleCartClicked"></i>
           <span class="cart-count" v-if="cart.length > 0">
             {{ cart.length }}
           </span>
@@ -84,24 +86,29 @@ export default {
     $route: "checkRoutePath",
   },
   methods: {
-    fetchUserData() {
-      const dataToSend = {
-        functionName: "base_session",
-        token: sessionStorage.getItem('miToken'),
-      };
 
-      this.$http
-        .post("http://localhost/Back-End/server.php", dataToSend)
-        .then((response) => {
-          const userData = response.data;
-          this.user = userData[1] + " " + userData[2];
-          this.isAuthenticated = userData[0];
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    toggleMenu() {
+    fetchUserData() {
+      const token = sessionStorage.getItem('miToken');
+
+      // Verifica si hay un token antes de realizar la solicitud
+      if (token) {
+        const dataToSend = {
+          functionName: "base_session",
+          token: token,
+        };
+
+        this.$http
+          .post("http://localhost/Back-End/server.php", dataToSend)
+          .then((response) => {
+            const userData = response.data;
+            this.user = userData[1] + " " + userData[2];
+            this.isAuthenticated = userData[0];
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    }, toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
     checkRoutePath() {

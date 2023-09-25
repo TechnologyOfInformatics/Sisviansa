@@ -14,40 +14,62 @@
 
 <script>
 export default {
+
   data() {
     return {
       mail: "",
       passwd: "",
+      token: sessionStorage.getItem("miToken") || 0,
+
     };
   },
 
   methods: {
     login() {
-      let dataToSend = {
-        functionName: "login_login",
-        mail: this.mail,
-        passwd: this.passwd,
+      const maxAttempts = 10;
+      let attempts = 0;
+
+      const attemptLogin = () => {
+        let dataToSend = {
+          functionName: "login_login",
+          mail: this.mail,
+          passwd: this.passwd,
+          token: this.token
+        };
+
+        this.$http
+          .post("http://localhost/Back-End/server.php", dataToSend)
+          .then((response) => {
+            if (Array.isArray(response.data)) {
+              let token = response.data[1];
+              if (token) {
+                sessionStorage.setItem('miToken', token);
+                this.$router.push('/');
+              } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                  attemptLogin();
+                }
+              }
+            } else {
+              attempts++;
+              if (attempts < maxAttempts) {
+                attemptLogin();
+              } else {
+                console.error("Credenciales inválidas.");
+              }
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       };
 
-      this.$http
-        .post("http://localhost/Back-End/server.php", dataToSend)
-        .then((response) => {
-          let token = response.data[1];
-          console.log(token)
-
-          sessionStorage.setItem('miToken', token);
-          this.$router.push("/");
-
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      attemptLogin();
     },
+
   },
 
-  // mounted: {
-  //   //si esta iniciado sesion no permite acceder
-  // }
 };
 </script>
 

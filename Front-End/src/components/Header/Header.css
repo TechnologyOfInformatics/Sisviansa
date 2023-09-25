@@ -9,7 +9,11 @@ header {
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     background-color: #243328;
 }
-
+header .nav__welcome{
+    color: white;
+    text-decoration: none;
+    
+}
 header nav {
     padding: 0em 3em 0 3em;
 }
@@ -85,14 +89,16 @@ header .nav__bottom ul li .link {
     color: #fcfcfc;
 }
 
-header .nav__bottom .nav__bottom__address img {
+header .nav__bottom .nav__bottom__address i {
     cursor: pointer;
-    width: 4vw;
+    font-size: 2.2vw;
+    color: white;
 }
 
-header .nav__bottom .nav__bottom__cart img {
+header .nav__bottom .nav__bottom__cart i {
     cursor: pointer;
-    width: 2.5vw;
+    font-size: 2vw;
+    color: white;
 }
 
 header .nav__bottom .nav__bottom__cart .cart-count {
@@ -112,7 +118,7 @@ header .nav__bottom .nav__bottom__cart .cart-count {
         position: absolute;
         top: 100%;
         left: 0;
-        width: 100%;
+        width: 100vw;
         background-color: #243328;
         padding: 1em;
         transition: opacity 0.5s, visibility 0s linear 0.5s;
@@ -136,10 +142,11 @@ header .nav__bottom .nav__bottom__cart .cart-count {
 
     .nav__hamburger i {
         font-size: 20px;
+        color: white;
     }
 
     header .nav__bottom ul {
-        width: 90vw;
+        width: 91%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -184,17 +191,20 @@ header .nav__bottom .nav__bottom__cart .cart-count {
         border-top: 1px solid #ccc;
     }
 
-    header .nav__bottom .nav__bottom__address img {
+    header .nav__bottom .nav__bottom__address i {
         cursor: pointer;
-        width: 8vw;
+        font-size: 6vw;
     }
 
-    header .nav__bottom .nav__bottom__cart img {
+    header .nav__bottom .nav__bottom__cart i {
         cursor: pointer;
-        width: 6vw;
+        font-size: 6vw;
     }
+    header .nav__logo {
+        display: none;
+    }
+    
 }
-
 
 .selected {
     border-bottom: 1px solid #ccc;

@@ -15,7 +15,6 @@
 
 body {
     font-family: 'Montserrat', sans-serif;
-    height: 100vh;
     transition: background 0.3s ease;
     background-color: #fff;
     box-sizing: border-box;

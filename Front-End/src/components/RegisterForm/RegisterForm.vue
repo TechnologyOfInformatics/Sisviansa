@@ -157,4 +157,19 @@ button:active {
   border: 1px solid #ccc;
   border-radius: 50%;
 }
+@media (max-width: 768px) {
+  input {
+    width: 190%;
+    padding: 12px 8px;
+  
+  }
+
+  a {
+    font-size: 15px;
+  }
+
+  button {
+    padding: 12px 25px;
+  }
+}
 </style>
