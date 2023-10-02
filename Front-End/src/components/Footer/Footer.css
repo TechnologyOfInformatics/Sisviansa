@@ -1,5 +1,5 @@
 .footer {
-    width: 99%;
+    max-width: 100vw;
     background: #eceff3;
     display: block;
     border-top: 1px solid rgba(128, 128, 128, 0.6);
@@ -119,7 +119,7 @@
     padding: 5px;
 }
 
-.footer .footer-bottom .footer-copyright{
+.footer .footer-bottom .footer-copyright {
     font-size: 10px;
     color: #fff;
 
@@ -132,6 +132,10 @@
 }
 
 @media screen and (max-width: 600px) {
+    .footer {
+        max-width: 99.4vw;
+    }
+
     .footer .footer-item {
         width: 100%;
     }

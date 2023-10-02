@@ -1,14 +1,16 @@
 <template>
     <MainAnnouncement />
     <MainHeader />
-    <div class="faq">
-        <div v-for="(question, index) in faqList" :key="index" class="faq-item">
-            <div class="question" @click="toggleAccordion(index)">
-                {{ question.title }}
-                <i class="fa-solid fa-arrow-left" :class="{ 'arrow-expanded': question.opened }"></i>
-            </div>
-            <div class="answer" :class="{ opened: question.opened }">
-                {{ question.answer }}
+    <div class="container">
+        <div class="faq" data-aos="fade-up" data-aos-delay="3500" data-aos-duration="1240">
+            <div v-for="(question, index) in faqList" :key="index" class="faq-item">
+                <div class="question" @click="toggleAccordion(index)">
+                    {{ question.title }}
+                    <i class="fa-solid fa-arrow-left" :class="{ 'arrow-expanded': question.opened }"></i>
+                </div>
+                <div class="answer" :class="{ opened: question.opened }">
+                    {{ question.answer }}
+                </div>
             </div>
         </div>
     </div>
@@ -88,18 +90,30 @@ export default {
 </script>
   
 <style scoped>
+.container {
+    background-color: #243328;
+    width: 100%;
+    padding-top: 2em;
+    padding-bottom: 2em;
+
+}
+
 .faq {
-    max-width: 600px;
     margin: 0 auto;
+    max-width: 600px;
     padding: 20px;
+    background-color: #243328;
+    border: 1px solid white;
+    border-radius: 5px;
 }
 
 .faq-item {
-    background-color: #fff;
-    margin-bottom: 10px;
+    background-color: #ebeadf;
+    margin: 10px auto;
     border: 1px solid #ddd;
     border-radius: 5px;
     overflow: hidden;
+    color: black;
 }
 
 .question {
@@ -111,7 +125,7 @@ export default {
 }
 
 .question:hover {
-    background-color: #f0f0f0;
+    background-color: rgba(98, 143, 110, 0.7);
 }
 
 .arrow-expanded {

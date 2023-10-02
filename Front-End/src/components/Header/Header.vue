@@ -4,8 +4,8 @@
       <div class="nav__top" v-if="showTop">
         <div>
           <p v-if="isAuthenticated" class="nav__welcome">Bienvenido {{ user }}</p>
-          <router-link v-else to="/login" class="link">
-            <p class="nav__welcome">Bienvenido (Inicia sesión)</p>
+          <router-link v-else to="/login" class="link nav__welcome">
+            <p>Bienvenido (<span>Inicia sesión</span>) </p>
           </router-link>
         </div>
         <div class="nav__logo">
@@ -26,7 +26,7 @@
       <hr />
       <div class="nav__bottom">
         <div class="nav__bottom__address" v-if="showAddresses">
-          <i class="fa-solid fa-truck-fast"></i>
+          <i class="fa-solid fa-truck-fast" @click="toggleDirectionModal"></i>
         </div>
 
         <ul class="nav__menu" :class="{ open: menuOpen }" id="navMenu">
@@ -44,7 +44,7 @@
           </li>
         </ul>
         <div class="nav__bottom__cart" v-if="showCart">
-          <i class="fa-solid fa-cart-shopping" @click="handleCartClicked"></i>
+          <i class="fa-solid fa-cart-shopping" @click="toggleCartModal"></i>
           <span class="cart-count" v-if="cart.length > 0">
             {{ cart.length }}
           </span>
@@ -90,7 +90,7 @@ export default {
     fetchUserData() {
       const token = sessionStorage.getItem('miToken');
 
-      // Verifica si hay un token antes de realizar la solicitud
+
       if (token) {
         const dataToSend = {
           functionName: "base_session",
@@ -120,9 +120,15 @@ export default {
         this.showTop = false;
       }
     },
-    handleCartClicked() {
-      this.$emit("cart-clicked");
+    toggleCartModal() {
+      this.$emit("toggle-cart-modal");
+
     },
+    toggleDirectionModal() {
+      this.$emit("toggle-direction-modal");
+
+    },
+
     logout() {
       sessionStorage.removeItem('miToken');
       this.isAuthenticated = false;

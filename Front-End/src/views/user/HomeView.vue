@@ -103,7 +103,7 @@
           <h2 class="information__title">¿Qué ofrecemos?</h2>
           <div data-aos="zoom-in" data-aos-easing="linear" data-aos-duration="600">
             <div>
-              <img src="@/assets/page-icons/gluten.png"
+              <img src="@/assets/page-icons/nogluten.png"
                 alt="Imagen ilustrativa mostrando que ofrecemos productos sin gluten" />
               <img src="@/assets/page-icons/vegan.png"
                 alt="Imagen ilustrativa mostrando que ofrecemos productos veganos" />

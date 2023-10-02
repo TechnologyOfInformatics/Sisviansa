@@ -30,44 +30,48 @@
             <button @click="searchUsers">Buscar</button>
           </div>
 
-          <div v-if="filteredUsers.length === 0" class="no-results">
-            <p>No se encontraron resultados.</p>
+            <div v-if="filteredUsers.length === 0" class="no-results">
+              <p>No se encontraron resultados.</p>
+            </div>
+            <table class="user-table" v-else>
+              <div class="table-container">
+
+              <thead>
+                <tr>
+                  <th>Cliente ID</th>
+                  <th>Teléfono</th>
+                  <th>Documento Tipo</th>
+                  <th>Documento Número</th>
+                  <th>Primer Nombre</th>
+                  <th>Segundo Nombre</th>
+                  <th>Primer Apellido</th>
+                  <th>Segundo Apellido</th>
+                  <th>Autorización</th>
+                  <th>Dirección</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
+                  <td>{{ user.Cliente_ID }}</td>
+                  <td>{{ user.Telefono }}</td>
+                  <td>{{ user.Documento_tipo }}</td>
+                  <td>{{ user.Documento_numero }}</td>
+                  <td>{{ user.Primer_nombre }}</td>
+                  <td>{{ user.Segundo_nombre }}</td>
+                  <td>{{ user.Primer_apellido }}</td>
+                  <td>{{ user.Segundo_apellido }}</td>
+                  <td>{{ user.Autorizacion }}</td>
+                  <td>
+                    <button @click="toggleUserDetails(user)">
+                      {{ user.showDetails ? '-' : '+' }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>        
+            </div>
+            </table>
           </div>
-          <table class="user-table" v-else>
-            <thead>
-              <tr>
-                <th>Cliente ID</th>
-                <th>Teléfono</th>
-                <th>Documento Tipo</th>
-                <th>Documento Número</th>
-                <th>Primer Nombre</th>
-                <th>Segundo Nombre</th>
-                <th>Primer Apellido</th>
-                <th>Segundo Apellido</th>
-                <th>Autorización</th>
-                <th>Dirección</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
-                <td>{{ user.Cliente_ID }}</td>
-                <td>{{ user.Telefono }}</td>
-                <td>{{ user.Documento_tipo }}</td>
-                <td>{{ user.Documento_numero }}</td>
-                <td>{{ user.Primer_nombre }}</td>
-                <td>{{ user.Segundo_nombre }}</td>
-                <td>{{ user.Primer_apellido }}</td>
-                <td>{{ user.Segundo_apellido }}</td>
-                <td>{{ user.Autorizacion }}</td>
-                <td>
-                  <button @click="toggleUserDetails(user)">
-                    {{ user.showDetails ? '-' : '+' }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </section>
       <!-- Modal para mostrar detalles del usuario -->
       <div v-if="showModal" class="modal">
@@ -533,9 +537,14 @@ body {
 
 /* Estilos para la tabla de usuarios */
 .user-table {
-  width: 100%;
   border-collapse: collapse;
   background-color: #fff;
+}
+
+.table-container {
+  height: 60vh;
+    overflow-y: auto;
+
 }
 
 .user-table th,

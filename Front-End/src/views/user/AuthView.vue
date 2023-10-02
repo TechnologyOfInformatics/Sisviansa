@@ -1,6 +1,7 @@
 <template>
   <MainHeader />
   <main>
+
     <div class="container" :class="{ 'right-panel-active': isSignUp }" id="main">
       <LoginForm />
       <RegisterForm />

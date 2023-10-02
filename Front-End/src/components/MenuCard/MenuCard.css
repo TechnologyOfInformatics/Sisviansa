@@ -9,38 +9,42 @@
 
 .menu-list .menu-card {
   width: 20vw;
-  height: 45vh; 
+  height: 45vh;
   clip-path: polygon(0 4%, 4% 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
   margin: 1em 1em;
   background: url('@/assets/page-icons/menu.png');
   background-size: contain;
+
 }
 
 .menu-list .menu-card:nth-child(even) {
   clip-path: polygon(0 96%, 4% 100%, 100% 100%, 100% 4%, 96% 0, 0 0);
 
+
 }
 
 .menu-list .menu-card .menu-top {
-  height: 60%;
+  height: 53%;
 }
 
 .menu-list .menu-card .menu-top .menu-top-text {
   transform: translate(10%, 15%);
   color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.menu-list .menu-card .menu-top .menu-top-text p {
+.menu-list .menu-card .menu-top .menu-top-text div {
   background-color: rgba(244, 244, 244, 0.8);
   border: 1px solid #fff;
-  border-radius: 15px;
-  padding: 10px 6px;
+  padding: 10px 10px;
   color: #555;
   font-weight: 500;
   font-size: 1.2em;
-  width: auto;
-  transform: translateX(5%);
+  transform: translateX(80%);
+  padding-left: 1em;
+  width: 8vw;
   margin-top: 20px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%, 10% 50%, 0 0);
 }
 
 .menu-list .menu-card .menu-top img {
@@ -56,9 +60,10 @@
 
 }
 
-.menu-list .menu-card .menu-footer p {
+.menu-list .menu-card .menu-footer .description {
   height: 60%;
-  
+  font-size: 16px;
+  width: 15vw;
 }
 
 .menu-footer-buttons {
@@ -80,28 +85,52 @@
   color: white;
 
 }
-.footer-buttons-icons .fa-cart-plus{
+
+.menu-footer-buttons .fa-cart-plus {
   color: white;
 
 }
-.footer-buttons-icons {
+
+.menu-footer-buttons {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-between;
+  align-items: left;
 }
 
-.footer-buttons-icons button {
+.footer-bottom-icons button {
   border: none;
   background-color: transparent;
 }
 
-.footer-buttons-icons button img,
-.footer-buttons-icons i {
+.footer-bottom-icons button img,
+.footer-bottom-icons i {
   cursor: pointer;
   margin: 0;
   width: 2vw;
   font-size: 1.5vw;
+  color: white;
+}
 
+.footer-side-icons {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  transform: translate(16.2vw, -12.8vh);
+}
+
+.footer-side-icons button {
+  border: none;
+  background-color: transparent;
+}
+
+.footer-side-icons button img,
+.footer-side-icons i {
+  cursor: pointer;
+  margin: 0;
+  width: 2.5vw;
+  font-size: 1.5vw;
+  color: white;
+  border-radius: 50%;
 }
 
 .added-to-cart-message {
@@ -282,7 +311,8 @@
     margin-bottom: 1em;
   }
 
-  .footer-buttons-icons i,
+  .add-to-cart-btn i,
+  .close-btn i,
   .viewMore i {
     font-size: 6vw;
   }
@@ -298,5 +328,12 @@
   .added-to-cart-message div {
     width: 80vw;
     height: 15vh;
+  }
+
+  .menu-list .menu-card .menu-top .menu-top-text div {
+
+    transform: translateX(50%);
+    width: 40vw;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%, 10% 50%, 0 0);
   }
 }
