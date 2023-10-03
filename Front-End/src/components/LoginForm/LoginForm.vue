@@ -40,6 +40,8 @@ export default {
         this.$http
           .post("http://localhost/Back-End/server.php", dataToSend)
           .then((response) => {
+            console.log(response)
+
             if (Array.isArray(response.data)) {
               let token = response.data[1];
               if (token) {

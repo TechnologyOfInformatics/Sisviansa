@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="menu-list">
-      <div v-for="menu in menuItems" :key="menu.title" class="menu-card">
+      <div v-for="menu in menus" :key="menu.id" class="menu-card">
         <div class="menu-top">
           <div class="menu-top-text">
             <div>
@@ -28,13 +28,13 @@
               </button>
             </div>
             <div class="footer-side-icons">
-              <button class="button-side" v-if="this.menu.viandas.dieta.includes('Sin Gluten')">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Sin Gluten'))">
                 <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
               </button>
-              <button class="button-side" v-if="this.menu.viandas.dieta.includes('Vegana')">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Vegana'))">
                 <img src="../../assets/page-icons/vegan-iso.png" alt="Vegana">
               </button>
-              <button class="button-side" v-if="this.menu.viandas.dieta.includes('Vegetariana')">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Vegetariana'))">
                 <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariana">
               </button>
             </div>
@@ -86,10 +86,6 @@
 <script>
 export default {
   name: "MenuCard",
-  props: {
-    filterType: String,
-    menuItems: Array,
-  },
   data() {
     return {
       cart: [],
@@ -98,90 +94,49 @@ export default {
       selectedMenu: null,
       addedToCart: false,
       favoritesActions: [],
+      menus: []
     };
   },
-  computed: {
-    sortedAndFilteredMenus() {
-      // Ordena los elementos según la propiedad seleccionada en selectedCategory
-      let sortedMenus = [...this.menuItems];
-      if (this.selectedCategory === "Mayor Calorías") {
-        sortedMenus.sort((a, b) => b.calories - a.calories);
-      } else if (this.selectedCategory === "Menor Calorías") {
-        sortedMenus.sort((a, b) => a.calories - b.calories);
-      } else if (this.selectedCategory === "Mayor Precio") {
-        sortedMenus.sort((a, b) => b.price - a.price);
-      } else if (this.selectedCategory === "Menor Precio") {
-        sortedMenus.sort((a, b) => a.price - b.price);
-      }
 
-      // Filtra los elementos según la propiedad seleccionada en selectedMenuType
-      if (this.selectedMenuType === "Todos") {
-        return sortedMenus;
-      } else {
-        return sortedMenus.filter((menu) =>
-          menu.viandas.some((vianda) => vianda.diet === this.selectedMenuType)
-        );
-      }
-    },
-  },
+
+
 
   created() {
+
     this.fetchUserData();
   },
   methods: {
     transformMenusData(data) {
       return data.map((menuData) => {
-        // Inicializamos contadores para cada tipo de dieta
-        let vegetarianCount = 0;
-        let veganCount = 0;
-        let glutenFreeCount = 0;
+        const viandas = [];
+        let totalCalories = 0;
 
-        const viandas = menuData.Viandas.map((vianda) => {
-          // Asumimos que vianda tiene un arreglo de dietas
-          const dietas = vianda.Dietas.map((dieta) => dieta);
-
-          // Contamos las dietas en esta vianda
-          if (dietas.includes("Vegetariana")) {
-            vegetarianCount++;
+        for (const viandaName in menuData.viandas) {
+          if (Object.prototype.hasOwnProperty.call(menuData.viandas, viandaName)) {
+            const vianda = menuData.viandas[viandaName];
+            viandas.push({
+              id: vianda.id,
+              name: vianda.nombre,
+              calories: parseInt(vianda.calorias),
+              dietas: vianda.dietas,
+            });
+            totalCalories += parseInt(vianda.calorias);
           }
-          if (dietas.includes("Vegana")) {
-            veganCount++;
-          }
-          if (dietas.includes("Sin Gluten")) {
-            glutenFreeCount++;
-          }
-
-          return {
-            id: vianda.ID,
-            name: vianda.Nombre,
-            calories: vianda.Calorias,
-            dietas,
-          };
-        });
-
-        // Determinamos la dieta predominante del menú
-        let predominantDiet = "Todos"; // Valor por defecto
-
-        if (vegetarianCount === viandas.length) {
-          predominantDiet = "Vegetariana";
-        } else if (veganCount === viandas.length) {
-          predominantDiet = "Vegana";
-        } else if (glutenFreeCount === viandas.length) {
-          predominantDiet = "Sin Gluten";
         }
 
         return {
-          id: parseInt(menuData.ID),
-          title: menuData.Nombre,
-          calories: parseInt(menuData.Calorias),
-          frequency: parseInt(menuData.Frecuencia),
-          description: menuData.Descripcion,
-          price: parseInt(menuData.Precio),
+          id: parseInt(menuData.id),
+          title: menuData.nombre,
+          calories: totalCalories,
+          frequency: parseInt(menuData.frecuencia),
+          description: menuData.descripcion,
+          price: parseFloat(menuData.precio),
           viandas: viandas,
-          predominantDiet: predominantDiet, // Agregamos la dieta predominante
         };
       });
     },
+
+
 
     fetchUserData() {
       const dataToSend = {
@@ -192,9 +147,14 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
+          console.log(response)
           this.menus = this.transformMenusData(response.data[0]);
-          this.favorites = response.data[1];
-          console.log()
+          if (Array.isArray(response.data[1])) {
+            this.favorites = response.data[1];
+          }
+
+
+
 
         })
         .catch((error) => {
