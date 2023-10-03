@@ -63,7 +63,31 @@ export default {
       selectedCategory: "Dieta",
       sortOrder: "asc",
       menuTypes: ["Todos", "Vegetariano", "Vegano", "Sin Gluten"],
+      menuItems: [],
     };
+  },
+  computed: {
+    sortedAndFilteredMenus() {
+      let sortedMenus = [...this.menuItems];
+      if (this.selectedCategory === "Mayor Calorías") {
+        sortedMenus.sort((a, b) => b.calories - a.calories);
+      } else if (this.selectedCategory === "Menor Calorías") {
+        sortedMenus.sort((a, b) => a.calories - b.calories);
+      } else if (this.selectedCategory === "Mayor Precio") {
+        sortedMenus.sort((a, b) => b.price - a.price);
+      } else if (this.selectedCategory === "Menor Precio") {
+        sortedMenus.sort((a, b) => a.price - b.price);
+      }
+
+      // Filtra los elementos según la propiedad seleccionada en selectedMenuType
+      if (this.selectedMenuType === "Todos") {
+        return sortedMenus;
+      } else {
+        return sortedMenus.filter((menu) =>
+          menu.viandas.some((vianda) => vianda.diet === this.selectedMenuType)
+        );
+      }
+    },
   },
   created() {
     const cartString = sessionStorage.getItem("cart");
