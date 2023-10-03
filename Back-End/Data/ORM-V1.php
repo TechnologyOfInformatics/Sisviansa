@@ -727,7 +727,7 @@ class TORM //Techin Object-Relation Model (Basic)
     }
 }
 
-
+/*
 // Uso de TORM:
 $tORM = new TORM("localhost", "root", "", "sisviansa_techin_v1", 3306);
 
@@ -786,3 +786,4 @@ $favorites = $tORM
 echo '<pre>';
 print_r([$menus, gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id')]);
 echo '</pre>';
+*/

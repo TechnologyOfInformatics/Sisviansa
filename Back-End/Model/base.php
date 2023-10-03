@@ -7,6 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
 $ctl = new QueryCall("localhost", "root", "", "database", 3306);
+$tORM = new TORM("localhost", "root", "", "database", 3306);
 $base = __FILE__;
 
 function fast_verification_doc($doc_type, $doc)

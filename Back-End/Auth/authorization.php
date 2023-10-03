@@ -1,5 +1,6 @@
 <?php
 include_once "Data/database_model.php";
+include_once "Data/ORM-V1.php";
 header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -63,7 +64,7 @@ function session(QueryCall $ctl, $token)
                 JOIN web ON inicia.cliente_id = web.cliente_id
                 WHERE inicia.sesion_token = '$token';
             ";
-    
+
         $response = $ctl->setQuery($query)->call();
         if (!is_array($response) || count($response) === 0 || is_string($response)) {
             return "404, NOT FOUND: The given TOKEN doesn't exist";
@@ -82,7 +83,7 @@ function session(QueryCall $ctl, $token)
                 return session_close($ctl, $token);
             }
         }
-    }  else {
+    } else {
         return [false];
     }
 }
@@ -243,54 +244,170 @@ function register_web_second(QueryCall $ctl, $token, $second_name, $second_surna
 }
 
 
-function show_shop(QueryCall $ctl, string $token)
-{
-    $favorites = [];
-    if (!isset($ctl)) {
-        return "400 Bad Request: Missing data";
-    } elseif (!empty($token)) { //Si el token esta entre los valores 8 y 15, y no está vacío
-        if ((strlen($token) < 8 || strlen($token) >= 15)) {
-            return "400, BAD REQUEST: Wrong data type";
-        } else {
 
-            $is_session = session($ctl, $token);
-            if (is_array($is_session)) { //Si is_session es un array y tiene un valor en 0
-                if ($is_session[0]) {
-                    $id = $ctl->setQuery("SELECT web.cliente_id
-                    FROM inicia
-                    JOIN cliente ON inicia.cliente_id = cliente.id
-                    JOIN web ON cliente.id = web.cliente_id
-                    WHERE inicia.sesion_token = '0WeGy5MYIpAryN'")->call();
-                    if ($id) {
-                        $favorites = $ctl->select("favorito", ["menu_id"], [$id[0]], ["web_id"])->call();
-                    }
-                }
+//
+//
+//
+//
+function modify_web(QueryCall $ctl, TORM $tORM, $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $street = "", $neighborhood = "", $city = "", $mail = "")
+{
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    unset($values[1]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 30, 30, 30, 30, 30, 30, 30, 20, 25];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+    if ($passwd) {
+        $data_array_web["web.contrasenia"] = md5($values[1]);
+    }
+    unset($values[0]);
+    unset($values[1]);
+    $values = array_values($values);
+
+    $column_array_web = ["web.primer_nombre", "web.segundo_nombre", "web.primer_apellido", "web.segundo_apellido", "web.calle", "web.barrio", "web.ciudad"];
+    $column_array_cliente = $mail ? array(["cliente.email"] => $mail) : [];
+    $data_array_web = [];
+    foreach ($column_array_web  as $index => $column) {
+        if ($values[$index]) {
+            $data_array_web[$column] = $values[$index];
+        }
+        $client_id = $tORM
+            ->from("inicia")
+            ->columns("inicia.cliente_id")
+            ->where("inicia.cliente_id", "eq", $token)
+            ->do("select");
+
+        if ($client_id) {
+            $object = $tORM
+                ->from("web");
+
+            $object =  call_user_func_array(array($object, "columns"), array_keys($data_array_web));
+            $object = $object
+                ->where("web.cliente_id", "eq", $object)
+                ->do("update");
+            return $object;
+        } else {
+            return "ERROR 404: NOT FOUND";
+        }
+    }
+}
+
+function user_information(TORM $tORM, $token)
+{
+    $values = func_get_args();
+
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $result = $tORM
+        ->from("cliente")
+        ->columns("None column")
+        ->join("inicia", "inicia.cliente_id", "cliente.id")
+        ->joined_columns("None column")
+        ->where("inicia.token", "eq", $token)
+        ->join("cliente_simplificado", "cliente_simplificado.id", "cliente.id")
+        ->join("web", "web.cliente_id", "cliente_simplificado.id")
+        //
+        //
+        ->do("select");
+    if (gettype($result) != "string") {
+        $new_result = [
+            0 => $result["primer_nombre"],
+            1 => $result["primer_apellido"],
+            2 => $result["segundo_nombre"],
+            3 => $result["segundo_apellido"],
+            4 => $result["email"],
+            5 => $result["numero"],
+            6 => $result["tipo"],
+            'direccion' => [
+                $result["calle"],
+                $result["barrio"],
+                $result["ciudad"]
+            ]
+        ];
+        return $new_result;
+    } else {
+        return $result;
+    }
+}
+
+function show_shop(TORM $tORM, $token)
+{
+    $is_session = $tORM
+        ->from("sesion")
+        ->columns("sesion.token")
+        ->where("sesion.token", "eq", $token)
+        ->do("select");
+    $favorites = "";
+    if (!isset($tORM)) {
+        return "400 Bad Request: Missing data";
+    } elseif (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
+        if ((strlen($token) < 8 || strlen($token) >= 15)) {
+            return "400, BAD REQUEST: Wrong data length";
+        } else {
+            $favorites = $tORM
+                ->from("favorito")
+                ->columns("favorito.menu_id")
+                ->join("inicia", "inicia.cliente_id", "favorito.web_id")
+                ->joined_columns("inicia.cliente_id")
+                ->where("inicia.token", "eq", $token)
+                ->do("select");
+        }
+    }
+    $menus = $tORM
+        ->from("menu")
+        ->do("select");
+
+    $foods = $tORM
+        ->from("vianda")
+        ->do("select");
+
+    $relation = $tORM
+        ->from("conforma")
+        ->columns("conforma.vianda_id", "conforma.menu_id")
+        ->do("select");
+
+    $diets = $tORM
+        ->from("dieta")
+        ->do("select");
+
+    foreach ($diets as $diet) {
+        foreach ($foods as $key => $food) {
+            unset($foods[$key]['tiempo_de_coccion']);
+            unset($foods[$key]['productos']);
+            if ($food['id'] == $diet['vianda_id']) {
+                $foods[$key]['dietas'][] = $diet['dieta'];
             }
         }
     }
-    $menus = $ctl->setQuery("SELECT * FROM menu")->call();
-    $result = [];
-    foreach ($menus as $menu) {
-        $id = $ctl->select("conforma", ["vianda_id"], [$menu[0]], ["menu_id"])->call()[0];
-        $food = $ctl->setQuery("SELECT vianda.nombre, vianda_dieta.dieta
-        FROM vianda
-        JOIN vianda_dieta ON vianda.id = vianda_dieta.vianda_id
-        WHERE vianda.id = '$id'")->call();
-        array_push($menu, $food);
-        array_push($result, $menu);
-    }
-    foreach ($menus as $menu) {
-        if (!is_array($menu) || count($menu) !== 6) {
-            print_r($menu);
-            return "400 Bad Request: El formato del menú no es válido";
-        }
+    foreach ($foods as $food) {
+        foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
+            unset($menu['estado']);
+            unset($menu['calorias']);
 
-        if (!is_array($result[6]) && count($result[6]) < 2) {
-
-            return "400 Bad Request: El formato del menú no es válido 2";
+            if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
+                if (!isset($menu['viandas'])) {
+                    $menu['viandas'] = [];
+                }
+                $menu['viandas'][$food['nombre']] = $food;
+            }
         }
     }
-    return [$result, $favorites];
-    ## menues = [[menu=>id, nombre, calorias, frecuencia,descripcion, precio, [nombre_vianda, dieta_vianda]], [[]]]
-
+    return [$menus, gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id')];
 }
