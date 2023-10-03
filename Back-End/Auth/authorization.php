@@ -384,7 +384,7 @@ function show_shop(TORM $tORM, $token)
         ->do("select");
 
     $diets = $tORM
-        ->from("dieta")
+        ->from("vianda_dieta")
         ->do("select");
 
     foreach ($diets as $diet) {
