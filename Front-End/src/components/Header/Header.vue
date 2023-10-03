@@ -122,11 +122,9 @@ export default {
     },
     toggleCartModal() {
       this.$emit("toggle-cart-modal");
-
     },
     toggleDirectionModal() {
       this.$emit("toggle-direction-modal");
-
     },
 
     logout() {

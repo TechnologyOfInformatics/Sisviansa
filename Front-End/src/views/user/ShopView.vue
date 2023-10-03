@@ -2,9 +2,9 @@
   <div class="container">
     <MainAnnouncement />
     <MainHeader :cart="cart" @toggle-cart-modal="toggleCartModal" @toggle-direction-modal="toggleDirectionModal" />
-    <DirectionModal :isDirectionModalVisible="isDirectionModalVisible" />
+    <DirectionModal :isDirectionModalVisible="isDirectionModalVisible" @toggle-direction-modal="toggleDirectionModal"/>
     <CartModal :cart="cart" :isCartModalVisible="isCartModalVisible" @remove-from-cart="removeFromCart"
-      @update-cart="updateCart" />
+      @update-cart="updateCart" @toggle-cart-modal="toggleCartModal"/>
 
 
     <MenuCard @update-cart="updateCart"  />

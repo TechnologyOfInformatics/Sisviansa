@@ -3,7 +3,7 @@
     <div class="cart-modal" :style="{ transform: `translate(65vw, -${translateY}vh)` }">
 
       <div class="cart-modal-content">
-        <button class="close-button" @click="closeModal">
+        <button class="close-button" @click="toggleCartModal">
           <i class="fa-solid fa-circle-xmark"></i>
         </button>
         <div class="cart-items">
@@ -61,6 +61,9 @@ export default {
     };
   },
   methods: {
+    toggleCartModal() {
+      this.$emit("toggle-cart-modal");
+    },
     removeFromCart(item) {
       this.$emit("remove-from-cart", item);
     },

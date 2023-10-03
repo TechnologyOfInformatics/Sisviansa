@@ -4,29 +4,9 @@
 
             <div class="direction-modal-content">
 
-
-
-
-
-
-
                 <p>hola</p>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <button class="close-button" @click="closeModal">
+                <button class="close-button" @click="toggleDirectionModal">
                     <i class="fa-solid fa-circle-xmark"></i>
                 </button>
             </div>
@@ -54,15 +34,17 @@ export default {
         };
     },
     methods: {
-
+        toggleDirectionModal() {
+            this.$emit("toggle-direction-modal");
+        },
         handleScroll() {
-            const scrollThreshold = 2.5 * window.innerHeight / 100; // 5vh
+            const scrollThreshold = 2.5 * window.innerHeight / 100; 
 
             if (!this.hasScrolled && window.scrollY >= scrollThreshold) {
-                this.translateY += 4; // El carrito sube a la posición inicial
+                this.translateY += 4;
                 this.hasScrolled = true;
             } else if (this.hasScrolled && window.scrollY < scrollThreshold) {
-                this.translateY -= 4; // El carrito baja nuevamente
+                this.translateY -= 4;
                 this.hasScrolled = false;
             }
         },
