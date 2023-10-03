@@ -650,6 +650,13 @@ class TORM //Techin Object-Relation Model (Basic)
             $query = $this->queryFormat($method);
 
 
+
+            // Etapa 8: Verificar el método (select, insert, update, delete)
+            // ...
+            // Se cambia el state al método correspondiente pasado
+            // Se setea el esqueleto como select, insert, update o delete, haciendo un string/objeto de ese tipo (será básicamente setear "<$method>" como el método en data
+            //
+            //
             $args = func_get_args();
             if (in_array(null, $args) || in_array('', $args)) {
                 $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
@@ -658,6 +665,13 @@ class TORM //Techin Object-Relation Model (Basic)
                 $this->error .= strtoupper(__FUNCTION__) . " STEP: Method is wrong" . "</br>";
                 return $this;
             }
+
+            // Etapa 9: Realizar la solicitud y obtener resultados
+            // ...
+            // Se usará queryFormat, y dependiendo de operation se hará una acción u otra
+            // Debo usar transaction
+            // ...
+            //
 
             $connect = new mysqli(
                 $this->host,
@@ -673,7 +687,7 @@ class TORM //Techin Object-Relation Model (Basic)
                 return $this;
             }
 
-            if ($query) {;
+            if ($query) {
 
                 try {
                     $connect->begin_transaction();
@@ -686,28 +700,50 @@ class TORM //Techin Object-Relation Model (Basic)
                         return $this;
                     }
 
-                    $response = "OK, 200";
+                    $response = "OK, 200"; // Éxito por defecto
 
                     if ($method === "select") {
                         $lists = $result->fetch_all();
-                        $response = (empty($lists) || count($lists) === 1) ? $lists[0] : $lists;
-                        if (empty($lists) || count($lists) === 1) {
-                            $response == [];
-                        } {
+                        if (empty($lists) || gettype($lists) != "array") {
+                            $response = "ERROR 404: NOT FOUND";
+                        } else {
                             $response = [];
-                            $counter = 0;
-                            foreach ($this->table_sets as $table) {
-                                foreach (array_keys($table) as  $column) {
-                                    if (gettype($column) == "string") {
-                                        $temporal_var = explode(".", $column);
+                            $sub_counter = 0;
+                            foreach ($lists as $list) {
+                                $counter = 0;
+                                foreach ($this->table_sets as $table) {
+                                    foreach (array_keys($table) as  $column) {
+                                        if (gettype($column) == "string") {
+                                            $temporal_var = explode(".", $column);
 
-                                        $response[$temporal_var[1]] = $lists[0][$counter];
-                                        $counter++;
+                                            $response[$sub_counter][$temporal_var[1]] = $list[$counter];
+                                            $counter++;
+                                        }
                                     }
                                 }
+                                $sub_counter++;
                             }
                         }
                     }
+
+                    //Elimino los valores de los datos que permanezcan
+                    $error = "";
+                    $this->state = '';
+                    $this->table_sets = [];
+                    $this->current_table = '';
+
+                    $this->data = [
+                        'table' => '',
+                        'joined_tables' => array(),
+                        'values' => array(),
+                        'conditions' => array()
+                    ];
+                    $this->sentenced_data = [
+                        'joined_sentence' => '',
+                        'condition' => '',
+                        'order' => '',
+                        'limit' => ''
+                    ];
 
                     $connect->rollback();
                 } catch (Exception $e) {
