@@ -20,6 +20,9 @@ $ctl->delete("cliente", ["amsdassdsasda"], ["email"])->call();
 
 print_r(register_register_web_first("maxi", "da silva", "CI", "5088325", "amsdassdsasda", "asdasddasdas"));
 
+echo "<pre>";
+print_r(shop_show_shop("X6Q?3ucsNs"));
+echo "<pre/>";
 
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado

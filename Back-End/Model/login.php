@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 $login = __FILE__;
 
-function login_login($mail, $passwd, $token)
+function login_login($mail, $passwd, $token = "")
 {
     global $ctl;
     return login($ctl, $mail, $passwd, $token);

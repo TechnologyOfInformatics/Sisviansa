@@ -320,7 +320,7 @@ function user_information(TORM $tORM, $token)
         ->columns("None column")
         ->join("inicia", "inicia.cliente_id", "cliente.id")
         ->joined_columns("None column")
-        ->where("inicia.token", "eq", $token)
+        ->where("inicia.sesion_token", "eq", $token)
         ->join("cliente_simplificado", "cliente_simplificado.id", "cliente.id")
         ->join("web", "web.cliente_id", "cliente_simplificado.id")
         //
@@ -349,11 +349,15 @@ function user_information(TORM $tORM, $token)
 
 function show_shop(TORM $tORM, $token)
 {
-    $is_session = $tORM
-        ->from("sesion")
-        ->columns("sesion.token")
-        ->where("sesion.token", "eq", $token)
-        ->do("select");
+    if ($token) {
+        $is_session = $tORM
+            ->from("sesion")
+            ->columns("sesion.token")
+            ->where("sesion.token", "eq", $token)
+            ->do("select");
+    } else {
+        $is_session = False;
+    }
     $favorites = "";
     if (!isset($tORM)) {
         return "400 Bad Request: Missing data";
@@ -366,7 +370,7 @@ function show_shop(TORM $tORM, $token)
                 ->columns("favorito.menu_id")
                 ->join("inicia", "inicia.cliente_id", "favorito.web_id")
                 ->joined_columns("inicia.cliente_id")
-                ->where("inicia.token", "eq", $token)
+                ->where("inicia.sesion_token", "eq", $token)
                 ->do("select");
         }
     }

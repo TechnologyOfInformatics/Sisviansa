@@ -127,9 +127,9 @@ CREATE TABLE Stock (
 
 -- Creación de la tabla Inicia
 CREATE TABLE Inicia (
-  Token VARCHAR(15) NOT NULL COMMENT 'Token correspondiente a la sesión',
+  Sesion_oken VARCHAR(15) NOT NULL COMMENT 'Token correspondiente a la sesión',
   Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que inició la sesión',
-  FOREIGN KEY (Token) REFERENCES Sesion(Token),
+  FOREIGN KEY (Sesion_oken) REFERENCES Sesion(Token),
   FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
