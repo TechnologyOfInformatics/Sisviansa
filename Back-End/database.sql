@@ -431,3 +431,122 @@ GRANT Administracion TO 'admin_1' @'localhost';
 CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 
 GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
+
+-- Inserts para la tabla Cliente
+INSERT INTO Cliente (Contrasenia, Autorizacion, Numero, Calle, Barrio, Ciudad, Email)
+VALUES 
+  ('contrasenia1', 'Autorizado', '12345', 'Calle 1', 'Barrio 1', 'Ciudad 1', 'cliente1@email.com'),
+  ('contrasenia2', 'En espera', '54321', 'Calle 2', 'Barrio 2', 'Ciudad 2', 'cliente2@email.com'),
+  ('contrasenia3', 'No autorizado', '98765', 'Calle 3', 'Barrio 3', 'Ciudad 3', 'cliente3@email.com');
+
+-- Inserts para la tabla Tarjeta (asegúrate de que exista un cliente con el ID correspondiente antes de ejecutar estos inserts)
+INSERT INTO Tarjeta (Numero, Fecha_de_vencimiento, Nombre_de_titular, Cliente_ID)
+VALUES 
+  ('1111111111111111', '2025-12-31', 'Titular 1', 1),
+  ('2222222222222222', '2026-12-31', 'Titular 2', 2),
+  ('3333333333333333', '2027-12-31', 'Titular 3', 3);
+
+-- Inserts para la tabla Cliente_Telefono (asegúrate de que exista un cliente con el ID correspondiente antes de ejecutar estos inserts)
+INSERT INTO Cliente_Telefono (Cliente_ID, Telefono)
+VALUES 
+  (1, '123456789'),
+  (2, '987654321'),
+  (3, '555555555');
+
+-- Inserts para la tabla Empresa
+INSERT INTO Empresa (Cliente_ID, RUT, Nombre)
+VALUES 
+  (1, '1234567890', 'Empresa 1'),
+  (2, '9876543210', 'Empresa 2'),
+  (3, '5555555555', 'Empresa 3');
+
+-- Inserts para la tabla Web
+INSERT INTO Web (Cliente_ID, Tipo, Numero, Primer_nombre, Segundo_nombre, Primer_apellido, Segundo_apellido)
+VALUES 
+  (1, 'Tipo 1', 12345, 'Primer Nombre 1', 'Segundo Nombre 1', 'Primer Apellido 1', 'Segundo Apellido 1'),
+  (2, 'Tipo 2', 54321, 'Primer Nombre 2', 'Segundo Nombre 2', 'Primer Apellido 2', 'Segundo Apellido 2'),
+  (3, 'Tipo 3', 98765, 'Primer Nombre 3', 'Segundo Nombre 3', 'Primer Apellido 3', 'Segundo Apellido 3');
+
+-- Inserts para la tabla Sesion
+INSERT INTO Sesion (Token, Inicio_de_sesion, Ultima_sesion, Final_de_sesion, Estado)
+VALUES 
+  ('token1', '2023-10-03 10:00:00', '2023-10-03 12:00:00', '2023-10-03 14:00:00', 'Activa'),
+  ('token2', '2023-10-04 09:00:00', '2023-10-04 11:00:00', '2023-10-04 13:00:00', 'Finalizada'),
+  ('token3', '2023-10-05 08:00:00', '2023-10-05 10:00:00', '2023-10-05 12:00:00', 'Activa');
+
+-- Inserts para la tabla Paquete
+INSERT INTO Paquete (Fecha_vencimiento, Fecha_de_creacion, Estado)
+VALUES 
+  ('2023-11-30', '2023-10-03', 'Solicitada'),
+  ('2023-12-31', '2023-10-04', 'En stock'),
+  ('2023-11-15', '2023-10-05', 'En producción');
+
+-- Inserts para la tabla Menu
+INSERT INTO Menu (Nombre, Calorias, Frecuencia, Descripcion, Precio, Estado)
+VALUES 
+  ('Menu 1', 500, 7, 'Descripción del menú 1', 10.99, 'Solicitado'),
+  ('Menu 2', 600, 5, 'Descripción del menú 2', 12.99, 'Confirmado'),
+  ('Menu 3', 450, 3, 'Descripción del menú 3', 9.99, 'Enviado');
+
+-- Inserts para la tabla Vianda
+INSERT INTO Vianda (Nombre, Tiempo_de_coccion, Productos, Stock, Calorias)
+VALUES 
+  ('Vianda 1', 30, 'Producto 1, Producto 2, Producto 3', 100, 300),
+  ('Vianda 2', 25, 'Producto 4, Producto 5, Producto 6', 150, 350),
+  ('Vianda 3', 35, 'Producto 7, Producto 8, Producto 9', 80, 280);
+
+-- Inserts para la tabla Vianda_Dieta (asegúrate de que exista una vianda con el ID correspondiente antes de ejecutar estos inserts)
+INSERT INTO Vianda_Dieta (Vianda_ID, Dieta)
+VALUES 
+  (1, 'Dieta 1'),
+  (2, 'Dieta 2'),
+  (3, 'Dieta 3');
+
+-- Inserts para la tabla Stock (asegúrate de que exista un menú con el ID correspondiente antes de ejecutar estos inserts)
+INSERT INTO Stock (Menu_ID, Minimo, Maximo, Actual)
+VALUES 
+  (1, 10, 50, 30),
+  (2, 15, 60, 45),
+  (3, 8, 40, 20);
+
+-- Inserts para la tabla Inicia (asegúrate de que exista una sesión y un cliente con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Inicia (Token, Cliente_ID)
+VALUES 
+  ('token1', 1),
+  ('token2', 2),
+  ('token3', 3);
+
+-- Inserts para la tabla Favorito (asegúrate de que exista un menú y un cliente con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Favorito (Menu_ID, Web_ID)
+VALUES 
+  (1, 1),
+  (2, 2),
+  (3, 3);
+
+-- Inserts para la tabla Conforma (asegúrate de que exista un menú y una vianda con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Conforma (Menu_ID, Vianda_ID, Demora_total)
+VALUES 
+  (1, 1, 45),
+  (2, 2, 40),
+  (3, 3, 50);
+
+-- Inserts para la tabla Pide (asegúrate de que exista un menú, una vianda y un cliente con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Pide (Menu_ID, Vianda_ID, Cliente_ID, Fecha_pedido, Numero_de_pedido)
+VALUES 
+  (1, 1, 1, '2023-10-03', 1),
+  (2, 2, 2, '2023-10-04', 2),
+  (3, 3, 3, '2023-10-05', 3);
+
+-- Inserts para la tabla Recibe (asegúrate de que exista un paquete y un cliente con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Recibe (Paquete_ID, Cliente_ID)
+VALUES 
+  (1, 1),
+  (2, 2),
+  (3, 3);
+
+-- Inserts para la tabla Genera (asegúrate de que exista un paquete, un menú y una vianda con los IDs correspondientes antes de ejecutar estos inserts)
+INSERT INTO Genera (Paquete_ID, Menu_ID, Vianda_ID)
+VALUES 
+  (1, 1, 1),
+  (2, 2, 2),
+  (3, 3, 3);
