@@ -8,6 +8,6 @@ header("Access-Control-Allow-Credentials: true");
 $shop = __FILE__;
 function shop_show_shop(string $token = "")
 {
-    global $ctl;
-    return show_shop($ctl, $token);
+    global $tORM;
+    return show_shop($tORM, $token);
 }
