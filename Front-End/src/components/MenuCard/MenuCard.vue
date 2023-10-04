@@ -28,13 +28,13 @@
               </button>
             </div>
             <div class="footer-side-icons">
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Sin Gluten'))">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Sin Gluten'))">
                 <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
               </button>
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Vegana'))">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Vegana'))">
                 <img src="../../assets/page-icons/vegan-iso.png" alt="Vegana">
               </button>
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.dietas.includes('Vegetariana'))">
+              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Vegetariana'))">
                 <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariana">
               </button>
             </div>
@@ -118,7 +118,7 @@ export default {
               id: vianda.id,
               name: vianda.nombre,
               calories: parseInt(vianda.calorias),
-              dietas: vianda.dietas,
+              diets: vianda.dietas,
             });
             totalCalories += parseInt(vianda.calorias);
           }
@@ -147,14 +147,16 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response)
+          console.log(response.data)
           this.menus = this.transformMenusData(response.data[0]);
           if (Array.isArray(response.data[1])) {
-            this.favorites = response.data[1];
+            response.data[1].forEach(menuId => {
+              this.favorites = []
+              this.favorites.push(menuId);
+
+              console.log(this.favorites)
+            });
           }
-
-
-
 
         })
         .catch((error) => {
