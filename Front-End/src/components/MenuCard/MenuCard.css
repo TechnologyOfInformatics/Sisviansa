@@ -295,9 +295,11 @@
   color: red;
 }
 
-.favorite {
-  color: red;
+.menu-list .menu-card .menu-footer .fa-heart.favorite {
+  color: red !important;
 }
+
+
 
 @media (max-width: 767px) {
 
