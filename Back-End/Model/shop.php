@@ -11,3 +11,8 @@ function shop_show_shop(string $token = "")
     global $tORM;
     return show_shop($tORM, $token);
 }
+function favorites_toggle(string $token, int $menu_id)
+{
+    global $tORM;
+    return show_shop($tORM, $token, $menu_id);
+}

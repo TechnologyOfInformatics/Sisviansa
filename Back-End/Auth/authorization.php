@@ -249,7 +249,7 @@ function register_web_second(QueryCall $ctl, $token, $second_name, $second_surna
 //
 //
 //
-function modify_web(QueryCall $ctl, TORM $tORM, $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $street = "", $neighborhood = "", $city = "", $mail = "")
+function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $street = "", $neighborhood = "", $city = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -269,34 +269,45 @@ function modify_web(QueryCall $ctl, TORM $tORM, $token, $passwd = "", $first_nam
         $data_array_web["web.contrasenia"] = md5($values[1]);
     }
     unset($values[0]);
-    unset($values[1]);
     $values = array_values($values);
 
     $column_array_web = ["web.primer_nombre", "web.segundo_nombre", "web.primer_apellido", "web.segundo_apellido", "web.calle", "web.barrio", "web.ciudad"];
     $column_array_cliente = $mail ? array(["cliente.email"] => $mail) : [];
     $data_array_web = [];
+    print($values);
     foreach ($column_array_web  as $index => $column) {
         if ($values[$index]) {
             $data_array_web[$column] = $values[$index];
         }
-        $client_id = $tORM
-            ->from("inicia")
-            ->columns("inicia.cliente_id")
-            ->where("inicia.cliente_id", "eq", $token)
+    }
+    print_r(($data_array_web));
+    $client_id = $tORM
+        ->from("inicia")
+        ->columns("inicia.cliente_id")
+        ->where("inicia.sesion_token", "eq", $token)
+        ->do("select");
+
+    if ($client_id) {
+
+        array_unshift($data_array_web, "web");
+        print_r($column_array_web);
+        print_r(($data_array_web));
+        $object = $tORM
+            ->from("web");
+
+        $object =  call_user_func_array(array($object, "columns"), $column_array_web);
+        $object =  call_user_func_array(array($object, "values"), array_values($data_array_web));
+        $result = $object
+            ->where("web.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+
+        $result = $tORM
+            ->from("cliente_simplificado")
+            ->where("cliente_simplificado.id", "eq", $client_id[0]["cliente_id"])
             ->do("select");
-
-        if ($client_id) {
-            $object = $tORM
-                ->from("web");
-
-            $object =  call_user_func_array(array($object, "columns"), array_keys($data_array_web));
-            $object = $object
-                ->where("web.cliente_id", "eq", $object)
-                ->do("update");
-            return $object;
-        } else {
-            return "ERROR 404: NOT FOUND";
-        }
+        return $result;
+    } else {
+        return "ERROR 404: NOT FOUND";
     }
 }
 
@@ -414,4 +425,72 @@ function show_shop(TORM $tORM, $token)
         }
     }
     return [$menus, gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id')];
+}
+
+function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
+{
+
+    $is_session = $tORM
+        ->from("sesion")
+        ->columns("sesion.token")
+        ->where("sesion.token", "eq", $token)
+        ->do("select");
+
+    if (!isset($tORM, $token, $menu_id)) {
+        return "400 Bad Request: Missing data";
+    } elseif (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
+
+        if ((strlen($token) < 8 || strlen($token) >= 15)) {
+
+            return "400, BAD REQUEST: Wrong data length";
+        } else {
+
+            $favorites = $tORM
+                ->from("favorito")
+                ->columns("favorito.menu_id")
+                ->join("inicia", "inicia.cliente_id", "favorito.web_id")
+                ->joined_columns("inicia.cliente_id")
+                ->join("sesion", "sesion.token", "inicia.sesion_token")
+                ->joined_columns("None column")
+                ->where("sesion.token", "eq", "X6Q?3ucsNs")
+                ->do("select");
+            if (!empty($favorites && gettype($favorites) != "string")) {
+
+                if (intval($favorites[0]["menu_id"]) == intval($menu_id)) {
+
+                    $result = $tORM
+                        ->from("favorito")
+                        ->where("favorito.menu_id", "eq", $favorites[0]["menu_id"])
+                        ->where("favorito.web_id", "eq", $favorites[0]["cliente_id"])
+                        ->do("delete");
+                } else {
+
+                    $result = $tORM
+                        ->from("favorito")
+                        ->values("favorito", 2, 2)
+                        ->do("insert");
+                }
+            }
+            return $result;
+        }
+    }
+}
+
+function login_bussiness()
+{
+}
+function register_bussiness()
+{
+}
+function modify_bussiness()
+{
+}
+function show_food_list()
+{
+}
+function credit_card_change()
+{
+}
+function address_change()
+{
 }
