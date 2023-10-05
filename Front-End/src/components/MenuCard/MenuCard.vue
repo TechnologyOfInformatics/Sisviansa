@@ -256,7 +256,7 @@ export default {
     },
     updateFavoritesOnServer(action) {
       const dataToSend = {
-        functionName: "favorites_toggle",
+        functionName: "shop_favorites_toggle",
         token: sessionStorage.getItem('miToken'),
         favorite: action.id,
       };
