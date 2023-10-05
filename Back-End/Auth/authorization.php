@@ -259,7 +259,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $
 
     $length_verificator = True;
 
-    $maximum = [15, 30, 30, 30, 30, 30, 30, 30, 20, 25];
+    $maximum = [15, 30, 30, 30, 30, 30, 10, 30, 30, 20, 25];
 
     foreach ($values as $index => $var) {
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
@@ -359,17 +359,16 @@ function get_address(TORM $tORM, string $token)
             ->columns("cliente.contrasenia", "cliente.numero", "cliente.calle", "cliente.barrio", "cliente.ciudad", "cliente.email")
             ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
             ->do("select")[0];
-        $new_client_data = [
+        $address = [
             'numero' => $client_values["numero"],
             'calle' => $client_values["calle"],
             'barrio' => $client_values["barrio"],
-            'ciudad' => $client_values["ciudad"],
-            'email' => $client_values["email"]
+            'ciudad' => $client_values["ciudad"]
         ];
         //
         //
         //
-        return $new_client_data;
+        return $address;
     } else {
         return "ERROR 404: NOT FOUND";
     }
