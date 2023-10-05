@@ -520,7 +520,7 @@ class TORM //Techin Object-Relation Model (Basic)
                 if (!$sentenced_set) {
                     $this->error .= strtoupper(__FUNCTION__) . " STEP: There is not enough data set" . "</br>";
                 }
-                $sqlQuery = "UPDATE {$this->data['table']} SET{$sentenced_set}";
+                $sqlQuery = "UPDATE {$this->data['table']} SET{$sentenced_set}{$this->sentenced_data['condition']} ";
                 break;
             default:
                 break;

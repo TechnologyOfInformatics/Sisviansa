@@ -249,7 +249,7 @@ function register_web_second(QueryCall $ctl, $token, $second_name, $second_surna
 //
 //
 //
-function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $street = "", $neighborhood = "", $city = "", $mail = "")
+function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $address = "",  $street = "", $neighborhood = "", $city = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -273,13 +273,7 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
 
     $column_array_web = ["web.primer_nombre", "web.segundo_nombre", "web.primer_apellido", "web.segundo_apellido", "web.calle", "web.barrio", "web.ciudad"];
     $column_array_cliente = $mail ? array(["cliente.email"] => $mail) : [];
-    $data_array_web = [];
-    print($values);
-    foreach ($column_array_web  as $index => $column) {
-        if ($values[$index]) {
-            $data_array_web[$column] = $values[$index];
-        }
-    }
+
     $client_id = $tORM
         ->from("inicia")
         ->columns("inicia.cliente_id")
@@ -288,23 +282,63 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
 
     if ($client_id) {
 
-        array_unshift($data_array_web, "web");
-        print_r($column_array_web);
-        print_r(($data_array_web));
+        $web_values = $tORM
+            ->from("web")
+            ->columns("web.primer_nombre", "web.primer_apellido", "web.segundo_nombre", "web.segundo_apellido")
+            ->where("web.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->do("select")[0];
+
+        $client_values = $tORM
+            ->from("cliente")
+            ->columns("cliente.contrasenia", "cliente.numero", "cliente.calle", "cliente.barrio", "cliente.ciudad", "cliente.email")
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("select")[0];
+        $received_data = array_merge($web_values, $client_values);
+
+        $new_web_data = [
+            'web.primer_nombre' => $first_name ? $first_name : $received_data["primer_nombre"],
+            'web.segundo_nombre' => $second_name ? $second_name : $received_data["segundo_nombre"],
+            'web.primer_apellido' => $first_surname ? $first_surname : $received_data["primer_apellido"],
+            'web.segundo_apellido' => $second_surname ? $second_surname : $received_data["segundo_apellido"],
+        ];
+        $new_client_data = [
+            'cliente.contrasenia' => $passwd ? $passwd : $received_data["contrasenia"],
+            'cliente.numero' => $address ? $address : $received_data["numero"],
+            'cliente.calle' => $street ? $street : $received_data["calle"],
+            'cliente.barrio' => $neighborhood ? $neighborhood : $received_data["barrio"],
+            'cliente.ciudad' => $city ? $city : $received_data["ciudad"],
+            'cliente.email' => $mail ? $mail : $received_data["email"]
+        ];
+
+        $new_client_values = array_merge(["cliente"], array_values($new_client_data));
+        $object = $tORM
+            ->from("cliente");
+
+        $object =  call_user_func_array(array($object, "columns"), array_keys($new_client_data));
+        $object =  call_user_func_array(array($object, "values"), $new_client_values);
+
+        $result_1 = $object
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+        //
+        //
+        //
+
+        $new_web_values = array_merge(["web"], array_values($new_web_data));
         $object = $tORM
             ->from("web");
 
-        $object =  call_user_func_array(array($object, "columns"), $column_array_web);
-        $object =  call_user_func_array(array($object, "values"), array_values($data_array_web));
-        $result = $object
+        $object =  call_user_func_array(array($object, "columns"), array_keys($new_web_data));
+        $object =  call_user_func_array(array($object, "values"), $new_web_values);
+
+        $result_2 = $object
             ->where("web.cliente_id", "eq", $client_id[0]["cliente_id"])
             ->do("update");
 
-        $result = $tORM
-            ->from("cliente_simplificado")
-            ->where("cliente_simplificado.id", "eq", $client_id[0]["cliente_id"])
-            ->do("select");
-        return $result;
+        if ($result_1 == $result_2 && $result_1 == "OK, 200") {
+            return $result_1;
+        }
+        return "ERROR 500, SERVER ERROR";
     } else {
         return "ERROR 404: NOT FOUND";
     }
