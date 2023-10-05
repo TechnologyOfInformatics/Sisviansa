@@ -18,7 +18,8 @@ export default {
 }
 
 .announcement p {
-padding-top: 5px;
-color: white;
+  font-size: 14px;
+  padding-top: 5px;
+  color: white;
 }
 </style>

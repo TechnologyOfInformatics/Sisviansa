@@ -198,6 +198,9 @@ main .home__company-info div {
   margin: 0 auto;
   margin-bottom: 1em;
 }
+main .home__company-info img{
+  width: 32vw;
+}
 
 
 main .home__company-info p {

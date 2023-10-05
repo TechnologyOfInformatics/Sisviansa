@@ -123,6 +123,8 @@ export default {
             totalCalories += parseInt(vianda.calorias);
           }
         }
+        console.log('Dietas en viandas:', viandas.map(v => v.diets));
+
 
         return {
           id: parseInt(menuData.id),

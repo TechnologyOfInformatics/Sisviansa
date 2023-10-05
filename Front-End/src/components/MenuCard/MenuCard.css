@@ -88,7 +88,12 @@
 
 .menu-footer-buttons .fa-cart-plus {
   color: white;
+  transition: all .3s;
 
+}
+
+.menu-footer-buttons .fa-cart-plus:hover {
+  color: #4caf50;
 }
 
 .menu-footer-buttons {
@@ -291,12 +296,22 @@
   background-color: #d32f2f;
 }
 
+.menu-list .menu-card .menu-footer .fa-heart {
+  color: white;
+  transition: all .3s;
+
+}
+
 .menu-list .menu-card .menu-footer .fa-heart:hover {
   color: red;
 }
 
 .menu-list .menu-card .menu-footer .fa-heart.favorite {
-  color: red !important;
+  color: red;
+}
+
+.menu-list .menu-card .menu-footer .fa-heart.favorite:hover {
+  color: white;
 }
 
 

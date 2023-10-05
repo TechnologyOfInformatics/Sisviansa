@@ -3,7 +3,7 @@
         <div class="direction-modal" :style="{ transform: `translate(2vw, -${translateY}vh)` }">
 
             <div class="direction-modal-content">
-                <div v-if="this.directions.length === 0" class="empty-direction-message">
+                <div v-if="this.directions.length === 0" class="empty-direction-message directions-container">
                     <span>Usted no tiene direcciones</span> <br>
                     <span>Puedes añadir una en </span><router-link to="/profile" class="link">tú perfil</router-link>
 
@@ -25,8 +25,11 @@
                                     <p>Número:</p> {{ direction.numero }}
                                 </div>
 
+
                             </li>
                         </ul>
+                        <p class="direction-link">Modifica tus direcciones, <router-link to="/profile"
+                                class="link">aquí</router-link>.</p>
                     </div>
                 </div>
 
@@ -52,7 +55,24 @@ export default {
             translateY: 10,
             hasScrolled: false,
             directions: [
-
+                {
+                    barrio: "Centro",
+                    calle: "Avenida Principal",
+                    numero: "123",
+                    ciudad: "Ciudad A",
+                },
+                {
+                    barrio: "Residencial Norte",
+                    calle: "Calle de las Flores",
+                    numero: "456",
+                    ciudad: "Ciudad B",
+                },
+                {
+                    barrio: "Zona Comercial",
+                    calle: "Avenida Comercioooooo",
+                    numero: "789",
+                    ciudad: "Ciudad Caaaaaaaaaaaaa",
+                },
             ]
         };
     },
@@ -84,7 +104,9 @@ export default {
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
                     console.log(response.data)
-
+                    if (Array.isArray(response.data[0])) {
+                        this.directions = response.data[0]
+                    }
                 })
                 .catch((error) => {
                     console.error(error);
