@@ -19,7 +19,7 @@
               <button @click="openModal(menu)" class="viewMore button-bottom">
                 <i class="fa-solid fa-circle-chevron-down"></i>
               </button>
-              <button class="button-bottom">
+              <button class="button-bottom" v-if="isAuthenticated">
                 <i class="fa-solid fa-heart" :class="{ favorite: isFavorite(menu.id) }"
                   @click="toggleFavorite(menu.id)"></i>
               </button>
@@ -94,7 +94,8 @@ export default {
       selectedMenu: null,
       addedToCart: false,
       favoritesActions: [],
-      menus: []
+      menus: [],
+      isAuthenticated: false,
     };
   },
 
@@ -154,6 +155,7 @@ export default {
           });
 
           if (Array.isArray(response.data[1])) {
+            this.isAuthenticated = true;
             const menuIds = response.data[1].map(menuId => parseInt(menuId, 10));
             this.favorites = menuIds;
 
@@ -164,6 +166,9 @@ export default {
                 console.log(menu.id, menu.isFavorite);
               }
             });
+          }else{
+            console.log(" no recibe array")
+            console.log(response.data[1])
           }
 
 
