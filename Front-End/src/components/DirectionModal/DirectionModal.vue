@@ -54,26 +54,7 @@ export default {
         return {
             translateY: 10,
             hasScrolled: false,
-            directions: [
-                {
-                    barrio: "Centro",
-                    calle: "Avenida Principal",
-                    numero: "123",
-                    ciudad: "Ciudad A",
-                },
-                {
-                    barrio: "Residencial Norte",
-                    calle: "Calle de las Flores",
-                    numero: "456",
-                    ciudad: "Ciudad B",
-                },
-                {
-                    barrio: "Zona Comercial",
-                    calle: "Avenida Comercioooooo",
-                    numero: "789",
-                    ciudad: "Ciudad Caaaaaaaaaaaaa",
-                },
-            ]
+            directions: [],
         };
     },
     created() {

@@ -28,14 +28,14 @@
               </button>
             </div>
             <div class="footer-side-icons">
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Sin Gluten'))">
+              <button class="button-side" v-if="showSinGlutenButton">
                 <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
               </button>
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Vegana'))">
-                <img src="../../assets/page-icons/vegan-iso.png" alt="Vegana">
+              <button class="button-side" v-if="showVeganoButton">
+                <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
               </button>
-              <button class="button-side" v-if="menu.viandas.some(vianda => vianda.diets.includes('Vegetariana'))">
-                <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariana">
+              <button class="button-side" v-if="showVegetarianoButton">
+                <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
               </button>
             </div>
 
@@ -105,6 +105,17 @@ export default {
   created() {
     this.fetchUserData();
   },
+  computed: {
+    showSinGlutenButton() {
+      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Sin Gluten')));
+    },
+    showVeganoButton() {
+      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Vegano')));
+    },
+    showVegetarianoButton() {
+      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Vegetariano')));
+    }
+  },
   methods: {
     transformMenusData(data) {
       return data.map((menuData) => {
@@ -123,7 +134,6 @@ export default {
             totalCalories += parseInt(vianda.calorias);
           }
         }
-        console.log('Dietas en viandas:', viandas.map(v => v.diets));
 
 
         return {
@@ -150,6 +160,7 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           this.menus = this.transformMenusData(response.data[0]);
+          console.log(this.menus)
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
           });
