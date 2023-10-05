@@ -149,15 +149,25 @@ export default {
         .then((response) => {
           console.log(response.data)
           this.menus = this.transformMenusData(response.data[0]);
-          if (Array.isArray(response.data[1])) {
-            response.data[1].forEach(menuId => {
-              this.favorites = []
-              this.favorites.push(menuId);
+          this.menus.forEach((menu) => {
+            menu.isFavorite = false;
+          });
 
-              console.log(this.favorites)
+          if (Array.isArray(response.data[1])) {
+            const menuIds = response.data[1].map(menuId => parseInt(menuId, 10));
+            this.favorites = menuIds;
+
+            menuIds.forEach((menuId) => {
+              const menu = this.menus.find((m) => m.id === menuId);
+              if (menu) {
+                console.log(menu);
+                menu.isFavorite = true;
+              }
             });
           }
 
+
+          console.log(this.menus)
         })
         .catch((error) => {
           console.error(error);
@@ -242,10 +252,11 @@ export default {
     },
     updateFavoritesOnServer(action) {
       const dataToSend = {
-        functionName: "updateFavorites",
+        functionName: "favorites_toggle",
         token: sessionStorage.getItem('miToken'),
         favorite: action,
       };
+      console.log(action)
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
