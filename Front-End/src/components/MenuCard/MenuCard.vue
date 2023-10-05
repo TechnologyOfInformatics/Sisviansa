@@ -160,14 +160,13 @@ export default {
             menuIds.forEach((menuId) => {
               const menu = this.menus.find((m) => m.id === menuId);
               if (menu) {
-                console.log(menu);
                 menu.isFavorite = true;
+                console.log(menu.id, menu.isFavorite);
               }
             });
           }
 
 
-          console.log(this.menus)
         })
         .catch((error) => {
           console.error(error);
@@ -254,7 +253,7 @@ export default {
       const dataToSend = {
         functionName: "favorites_toggle",
         token: sessionStorage.getItem('miToken'),
-        favorite: action,
+        favorite: action.id,
       };
       console.log(action)
       this.$http
