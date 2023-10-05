@@ -103,7 +103,6 @@ export default {
 
 
   created() {
-
     this.fetchUserData();
   },
   methods: {
@@ -148,7 +147,6 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
           this.menus = this.transformMenusData(response.data[0]);
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
@@ -163,14 +161,9 @@ export default {
               const menu = this.menus.find((m) => m.id === menuId);
               if (menu) {
                 menu.isFavorite = true;
-                console.log(menu.id, menu.isFavorite);
               }
             });
-          }else{
-            console.log(" no recibe array")
-            console.log(response.data[1])
           }
-
 
         })
         .catch((error) => {

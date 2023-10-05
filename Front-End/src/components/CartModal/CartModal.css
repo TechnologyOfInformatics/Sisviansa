@@ -1,14 +1,28 @@
 .cart-modal {
     position: fixed;
     margin-top: 5em;
-    background-color: white;
+    background-color: #243328;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid white;
     border-radius: 4px;
-    width: 400px;
+    width: 33vw;
     z-index: 9999;
     transition: transform 0.20s;
-  }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-modal-content {
+    padding: 1em;
+    margin-top: 10px;
+    width: 28vw;
+    border: 1px solid white;
+    border-radius: 5px;
+
+
+}
+
 .cart-modal-overlay {
     position: fixed;
     top: 0;
@@ -19,14 +33,14 @@
 }
 
 .close-button {
-    width: 30px;
     font-size: 18px;
     font-weight: bold;
-    display: flex;
-    align-self: right;
     cursor: pointer;
     background-color: transparent;
     border: none;
+    margin-right: 15px;
+    color: white;
+    
 }
 
 .cart-items {
@@ -36,13 +50,18 @@
 .empty-cart-message {
     text-align: center;
     margin-bottom: 10px;
+    color: white;
 }
 
 .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ebeadf;
 }
 
 .cart-item-info {
@@ -56,6 +75,13 @@
 
 .item-price {
     color: #777;
+}
+
+.item-type {
+    color: #888;
+    font-style: italic;
+    font-size: 12px;
+
 }
 
 .quantity-controls {
@@ -98,21 +124,25 @@
 
 .cart-buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 10px;
 }
 
 .complete-purchase-btn {
-    background-color: #4287f5;
-    color: white;
+    background-color: #ebeadf;
+    color: black;
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #243328;
 }
 
 .complete-purchase-btn:hover {
-    background-color: #0f5ed7;
+    background-color: #243328;
+    color: white;
+    border: 1px solid white;
 }
 
 .quantity-button[disabled] {

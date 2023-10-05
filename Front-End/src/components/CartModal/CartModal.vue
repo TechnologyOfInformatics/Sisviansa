@@ -1,11 +1,11 @@
 <template>
   <div v-show="isCartModalVisible">
-    <div class="cart-modal" :style="{ transform: `translate(65vw, -${translateY}vh)` }">
-
+    <div class="cart-modal" :style="{ transform: `translate(61vw, -${translateY}vh)` }">
+      <button class="close-button" @click="toggleCartModal">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </button>
       <div class="cart-modal-content">
-        <button class="close-button" @click="toggleCartModal">
-          <i class="fa-solid fa-circle-xmark"></i>
-        </button>
+
         <div class="cart-items">
           <div v-if="cart.length === 0" class="empty-cart-message">
             <span>Su carrito está vacío</span>
@@ -14,7 +14,8 @@
             <div v-for="item in cart" :key="item.title" class="cart-item">
               <div class="cart-item-info">
                 <span class="item-title">{{ item.title }}</span>
-                <span class="item-price">{{ item.price }} USD</span>
+                <span class="item-price">{{ item.price }} USD</span> <span class="item-type">Vegan</span> 
+                <!-- {{ item.diets }} -->
               </div>
               <div class="quantity-controls">
                 <button class="quantity-button" @click.stop="decreaseQuantity(item)" :disabled="item.quantity === 1">
@@ -80,13 +81,13 @@ export default {
     },
 
     handleScroll() {
-      const scrollThreshold = 2.5 * window.innerHeight / 100; // 5vh
+      const scrollThreshold = 2.5 * window.innerHeight / 100;
 
       if (!this.hasScrolled && window.scrollY >= scrollThreshold) {
-        this.translateY += 4; // El carrito sube a la posición inicial
+        this.translateY += 4;
         this.hasScrolled = true;
       } else if (this.hasScrolled && window.scrollY < scrollThreshold) {
-        this.translateY -= 4; // El carrito baja nuevamente
+        this.translateY -= 4;
         this.hasScrolled = false;
       }
     },

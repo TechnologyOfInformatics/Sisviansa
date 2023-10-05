@@ -4,8 +4,8 @@
       <h1>Inicia sesión</h1>
       <p>Coloca los datos de tu cuenta</p>
       <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
-      <input v-model="passwd" type="password" name="pswd" placeholder="Password" required autocomplete="current-password"
-        id="passwd" />
+      <input v-model="password" type="password" name="pswd" placeholder="Password" required autocomplete="current-password"
+        id="password" />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
     </form>
@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       mail: "",
-      passwd: "",
+      password: "",
       token: sessionStorage.getItem("miToken") || 0,
 
     };
@@ -33,7 +33,7 @@ export default {
         let dataToSend = {
           functionName: "login_login",
           mail: this.mail,
-          passwd: this.passwd,
+          passwd: this.password,
           token: this.token
         };
 
