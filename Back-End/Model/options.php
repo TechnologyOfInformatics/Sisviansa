@@ -9,6 +9,5 @@ $login = __FILE__;
 function options_modify_web($token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $street = "", $neighborhood = "", $city = "", $mail = "")
 {
     global $tORM;
-    global $ctl;
-    return modify_web($ctl, $tORM, $token, $passwd, $first_name, $second_name, $first_surname, $second_surname, $street, $neighborhood, $city, $mail);
+    return modify_web($tORM, $token, $passwd, $first_name, $second_name, $first_surname, $second_surname, $street, $neighborhood, $city, $mail);
 }

@@ -249,13 +249,12 @@ function register_web_second(QueryCall $ctl, $token, $second_name, $second_surna
 //
 //
 //
-function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $address = "",  $street = "", $neighborhood = "", $city = "", $mail = "")
+function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $address = "",  $street = "", $neighborhood = "", $city = "", $mail = "")
 {
 
     $values = func_get_args();
 
     unset($values[0]);
-    unset($values[1]);
     $values = array_values($values);
 
     $length_verificator = True;
@@ -266,13 +265,8 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
     }
     if ($passwd) {
-        $data_array_web["web.contrasenia"] = md5($values[1]);
+        $passwd = md5($passwd);
     }
-    unset($values[0]);
-    $values = array_values($values);
-
-    $column_array_web = ["web.primer_nombre", "web.segundo_nombre", "web.primer_apellido", "web.segundo_apellido", "web.calle", "web.barrio", "web.ciudad"];
-    $column_array_cliente = $mail ? array(["cliente.email"] => $mail) : [];
 
     $client_id = $tORM
         ->from("inicia")
@@ -280,7 +274,7 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
         ->where("inicia.sesion_token", "eq", $token)
         ->do("select");
 
-    if ($client_id) {
+    if ($client_id && $length_verificator) {
 
         $web_values = $tORM
             ->from("web")
@@ -344,6 +338,42 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
     }
 }
 
+function get_address(TORM $tORM, string $token)
+{
+
+    $length_verificator = True;
+
+    $length_verificator = $length_verificator && (strlen(strval($token)) <= 15);
+
+
+    $client_id = $tORM
+        ->from("inicia")
+        ->columns("inicia.cliente_id")
+        ->where("inicia.sesion_token", "eq", $token)
+        ->do("select");
+
+    if ($client_id && $length_verificator) {
+
+        $client_values = $tORM
+            ->from("cliente")
+            ->columns("cliente.contrasenia", "cliente.numero", "cliente.calle", "cliente.barrio", "cliente.ciudad", "cliente.email")
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("select")[0];
+        $new_client_data = [
+            'numero' => $client_values["numero"],
+            'calle' => $client_values["calle"],
+            'barrio' => $client_values["barrio"],
+            'ciudad' => $client_values["ciudad"],
+            'email' => $client_values["email"]
+        ];
+        //
+        //
+        //
+        return $new_client_data;
+    } else {
+        return "ERROR 404: NOT FOUND";
+    }
+}
 function user_information(TORM $tORM, $token)
 {
     $values = func_get_args();
