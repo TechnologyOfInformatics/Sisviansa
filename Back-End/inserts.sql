@@ -23,7 +23,7 @@ INSERT INTO Web (`Cliente_ID`, `Tipo`, `Numero`, `Primer_nombre`, `Segundo_nombr
 (2, 'Pasaporte', 67890123, 'Primer Nombre2', 'Segundo Nombre2', 'Primer Apellido2', 'Segundo Apellido2'),
 (3, 'Visa', 87654321, 'Primer Nombre3', 'Segundo Nombre3', 'Primer Apellido3', 'Segundo Apellido3');
 
-INSERT INTO Sesion (`Sesion_token`, `Inicio_de_sesion`, `Ultima_sesion`, `Final_de_sesion`, `Estado`) VALUES
+INSERT INTO Sesion (`Token`, `Inicio_de_sesion`, `Ultima_sesion`, `Final_de_sesion`, `Estado`) VALUES
 ('x2312x23d2d2', '2023-09-07 00:00:00', '2023-09-08 00:00:00', '2023-09-09 00:00:00', 'Activa'),
 ('23ec23d23r4t', '2023-09-07 00:00:00', '2023-09-08 00:00:00', '2023-09-09 00:00:00', 'Activa'),
 ('12312334f234', '2023-09-10 00:00:00', '2023-09-11 00:00:00', '2023-09-12 00:00:00', 'Activa');

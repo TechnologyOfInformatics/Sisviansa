@@ -428,6 +428,7 @@ function show_shop(TORM $tORM, $token)
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 {
+    // En caso de que no haya un token como el enviado se devolvera un array vacio
 
     $is_session = $tORM
         ->from("sesion")
@@ -437,45 +438,50 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 
     if (!isset($tORM, $token, $menu_id)) {
         return "400 Bad Request: Missing data";
-    } elseif (!empty($token) && $is_session) {
+    } elseif ($is_session) {
 
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
 
             return "400, BAD REQUEST: Wrong data length";
         } else {
 
+            $client_id = $tORM
+                ->from("inicia")
+                ->columns("inicia.cliente_id")
+                ->where("inicia.sesion_token", "eq", $token)
+                ->do("select");
+
             $favorites = $tORM
                 ->from("favorito")
-                ->columns("favorito.menu_id")
-                ->join("inicia", "inicia.cliente_id", "favorito.web_id")
-                ->joined_columns("inicia.cliente_id")
-                ->join("sesion", "sesion.token", "inicia.sesion_token")
-                ->joined_columns("None column")
-                ->where("sesion.token", "eq", $token)
+                ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
+                ->where("favorito.menu_id", "eq", $menu_id)
                 ->do("select");
-            $toggle_state = True;
-            if (!empty($favorites && gettype($favorites) != "string")) {
+            $toggle_state = False;
+            if ((gettype($favorites) == "array")) {
 
-                if (intval($favorites[0]["menu_id"]) == intval($menu_id)) {
+                if (!empty($favorites)) {
 
                     $tORM
                         ->from("favorito")
-                        ->where("favorito.menu_id", "eq", $favorites[0]["menu_id"])
-                        ->where("favorito.web_id", "eq", $favorites[0]["cliente_id"])
+                        ->where("favorito.menu_id", "eq", $menu_id)
+                        ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
                         ->do("delete");
                     $toggle_state = False;
                 } else {
-
                     $tORM
                         ->from("favorito")
-                        ->values("favorito", 2, 2)
+                        ->values("favorito", intval($menu_id), intval($client_id[0]['cliente_id']))
                         ->do("insert");
                     $toggle_state = True;
                 }
+            } else {
+                return gettype($favorites);
             }
 
             return [$toggle_state, $menu_id];
         }
+    } else {
+        return $is_session;
     }
 }
 
