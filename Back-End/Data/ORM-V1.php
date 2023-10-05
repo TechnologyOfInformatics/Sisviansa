@@ -704,24 +704,28 @@ class TORM //Techin Object-Relation Model (Basic)
 
                     if ($method === "select") {
                         $lists = $result->fetch_all();
-                        if (empty($lists) || gettype($lists) != "array") {
+                        if (gettype($lists) != "array") {
                             $response = "ERROR 404: NOT FOUND";
                         } else {
                             $response = [];
                             $sub_counter = 0;
-                            foreach ($lists as $list) {
-                                $counter = 0;
-                                foreach ($this->table_sets as $table) {
-                                    foreach (array_keys($table) as  $column) {
-                                        if (gettype($column) == "string") {
-                                            $temporal_var = explode(".", $column);
+                            if ($lists) {
+                                foreach ($lists as $list) {
+                                    $counter = 0;
+                                    foreach ($this->table_sets as $table) {
+                                        foreach (array_keys($table) as  $column) {
+                                            if (gettype($column) == "string") {
+                                                $temporal_var = explode(".", $column);
 
-                                            $response[$sub_counter][$temporal_var[1]] = $list[$counter];
-                                            $counter++;
+                                                $response[$sub_counter][$temporal_var[1]] = $list[$counter];
+                                                $counter++;
+                                            }
                                         }
                                     }
+                                    $sub_counter++;
                                 }
-                                $sub_counter++;
+                            } else {
+                                $response = [];
                             }
                         }
                     }

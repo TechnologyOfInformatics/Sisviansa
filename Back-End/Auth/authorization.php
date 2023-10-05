@@ -280,7 +280,6 @@ function modify_web(QueryCall $ctl, TORM $tORM, string $token, $passwd = "", $fi
             $data_array_web[$column] = $values[$index];
         }
     }
-    print_r(($data_array_web));
     $client_id = $tORM
         ->from("inicia")
         ->columns("inicia.cliente_id")
@@ -424,7 +423,7 @@ function show_shop(TORM $tORM, $token)
             }
         }
     }
-    return [$menus, gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id')];
+    return [$menus, (gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
@@ -438,7 +437,7 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 
     if (!isset($tORM, $token, $menu_id)) {
         return "400 Bad Request: Missing data";
-    } elseif (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
+    } elseif (!empty($token) && $is_session) {
 
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
 
@@ -452,26 +451,30 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
                 ->joined_columns("inicia.cliente_id")
                 ->join("sesion", "sesion.token", "inicia.sesion_token")
                 ->joined_columns("None column")
-                ->where("sesion.token", "eq", "X6Q?3ucsNs")
+                ->where("sesion.token", "eq", $token)
                 ->do("select");
+            $toggle_state = True;
             if (!empty($favorites && gettype($favorites) != "string")) {
 
                 if (intval($favorites[0]["menu_id"]) == intval($menu_id)) {
 
-                    $result = $tORM
+                    $tORM
                         ->from("favorito")
                         ->where("favorito.menu_id", "eq", $favorites[0]["menu_id"])
                         ->where("favorito.web_id", "eq", $favorites[0]["cliente_id"])
                         ->do("delete");
+                    $toggle_state = False;
                 } else {
 
-                    $result = $tORM
+                    $tORM
                         ->from("favorito")
                         ->values("favorito", 2, 2)
                         ->do("insert");
+                    $toggle_state = True;
                 }
             }
-            return $result;
+
+            return [$toggle_state, $menu_id];
         }
     }
 }
