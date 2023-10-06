@@ -16,3 +16,7 @@ function options_get_address($token)
     global $tORM;
     return get_address($tORM, $token);
 }
+function options_user_info($token){
+    global $tORM;
+    return user_information($tORM, $token);
+}

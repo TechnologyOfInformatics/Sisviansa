@@ -54,10 +54,26 @@ export default {
             }, //cambiar los datos por lo que me da el backend
         };
     },
+    created() {
+        this.fetchUserData()
+    },
     methods: {
-        updateUserInfo() {
-            
+        fetchUserData() {
+            const dataToSend = {
+                functionName: "options_user_info",
+                token: sessionStorage.getItem('miToken') || 0,
+            };
 
+            this.$http
+                .post("http://localhost/Back-End/server.php", dataToSend)
+                .then((response) => {
+                    console.log(response.data)
+                    this.userInfo = response.data;
+
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
     },
 
