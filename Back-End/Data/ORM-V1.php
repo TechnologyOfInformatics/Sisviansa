@@ -531,13 +531,11 @@ class TORM //Techin Object-Relation Model (Basic)
     }
     //
     //
-    public function do(String $method, String $operation = "")
+    public function do(String $method = '', String $query = "")
     {
         if ($this->error) {
             return $this;
-        } elseif (empty($operation)) {
-            $query = $this->queryFormat($method);
-
+        } else {
 
 
             // Etapa 8: Verificar el método (select, insert, update, delete)
@@ -546,11 +544,7 @@ class TORM //Techin Object-Relation Model (Basic)
             // Se setea el esqueleto como select, insert, update o delete, haciendo un string/objeto de ese tipo (será básicamente setear "<$method>" como el método en data
             //
             //
-            $args = func_get_args();
-            if (in_array(null, $args) || in_array('', $args)) {
-                $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
-                return $this;
-            } elseif (!in_array(strtolower($method), ['select', 'insert', 'update', 'delete'])) {
+            if (!in_array(strtolower($method), ['select', 'insert', 'update', 'delete', ''])) {
                 $this->error .= strtoupper(__FUNCTION__) . " STEP: Method is wrong" . "</br>";
                 return $this;
             }
@@ -576,10 +570,12 @@ class TORM //Techin Object-Relation Model (Basic)
                 return $this;
             }
 
-            if ($query) {
+            if (empty($query)) {
 
                 try {
                     $connect->begin_transaction();
+                    $query = $this->queryFormat($method);
+
 
                     $result = $connect->query($query);
 
@@ -649,124 +645,12 @@ class TORM //Techin Object-Relation Model (Basic)
                 ];
 
                 return $response;
+            } else {
+
+                $result = $connect->query($query);
+                $lists = $result->fetch_all();
+                return $lists;
             }
-        } elseif (strtolower($operation) == "test") {
-            $query = $this->queryFormat($method);
-
-
-
-            // Etapa 8: Verificar el método (select, insert, update, delete)
-            // ...
-            // Se cambia el state al método correspondiente pasado
-            // Se setea el esqueleto como select, insert, update o delete, haciendo un string/objeto de ese tipo (será básicamente setear "<$method>" como el método en data
-            //
-            //
-            $args = func_get_args();
-            if (in_array(null, $args) || in_array('', $args)) {
-                $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
-                return $this;
-            } elseif (!in_array(strtolower($method), ['select', 'insert', 'update', 'delete'])) {
-                $this->error .= strtoupper(__FUNCTION__) . " STEP: Method is wrong" . "</br>";
-                return $this;
-            }
-
-            // Etapa 9: Realizar la solicitud y obtener resultados
-            // ...
-            // Se usará queryFormat, y dependiendo de operation se hará una acción u otra
-            // Debo usar transaction
-            // ...
-            //
-
-            $connect = new mysqli(
-                $this->host,
-                $this->user,
-                $this->passwd,
-                $this->database,
-                $this->port
-            );
-
-            if ($connect->connect_errno) {
-                $error = $connect->connect_error;
-                $this->error .= strtoupper(__FUNCTION__) . " STEP: Connection failed - {$error}" . "</br>";
-                return $this;
-            }
-
-            if ($query) {
-
-                try {
-                    $connect->begin_transaction();
-
-                    $result = $connect->query($query);
-
-                    if (!$result) {
-                        $error = $connect->error;
-                        $this->error .= strtoupper(__FUNCTION__) . " STEP: Connection failed - {$error}" . "</br>";
-                        return $this;
-                    }
-
-                    $response = "OK, 200"; // Éxito por defecto
-
-                    if ($method === "select") {
-                        $lists = $result->fetch_all();
-                        if (gettype($lists) != "array") {
-                            $response = "ERROR 404: NOT FOUND";
-                        } else {
-                            $response = [];
-                            $sub_counter = 0;
-                            if ($lists) {
-                                foreach ($lists as $list) {
-                                    $counter = 0;
-                                    foreach ($this->table_sets as $table) {
-                                        foreach (array_keys($table) as  $column) {
-                                            if (gettype($column) == "string") {
-                                                $temporal_var = explode(".", $column);
-
-                                                $response[$sub_counter][$temporal_var[1]] = $list[$counter];
-                                                $counter++;
-                                            }
-                                        }
-                                    }
-                                    $sub_counter++;
-                                }
-                            } else {
-                                $response = [];
-                            }
-                        }
-                    }
-
-                    //Elimino los valores de los datos que permanezcan
-                    $error = "";
-                    $this->state = '';
-                    $this->table_sets = [];
-                    $this->current_table = '';
-
-                    $this->data = [
-                        'table' => '',
-                        'joined_tables' => array(),
-                        'values' => array(),
-                        'conditions' => array()
-                    ];
-                    $this->sentenced_data = [
-                        'joined_sentence' => '',
-                        'condition' => '',
-                        'order' => '',
-                        'limit' => ''
-                    ];
-
-                    $connect->rollback();
-                } catch (Exception $e) {
-                    $connect->rollback();
-                    $error = $e->getMessage();
-                    $this->error .= strtoupper(__FUNCTION__) . " STEP: Transaction failed - {$error}" . "</br>";
-                    return $this;
-                } finally {
-                    $connect->close();
-                }
-
-                return $response;
-            }
-        } else {
-            return $this;
         }
     }
 }
