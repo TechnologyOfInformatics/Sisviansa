@@ -49,8 +49,8 @@ export default {
                 segundoApellido: "",
                 correo: "",
                 direccion: "",
-                documento: "12345678",
-                tipoDocumento: "Cedula",
+                documento: "",
+                tipoDocumento: "",
             }, //cambiar los datos por lo que me da el backend
         };
     },
