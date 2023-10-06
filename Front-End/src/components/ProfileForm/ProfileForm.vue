@@ -67,9 +67,9 @@ export default {
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    console.log(response.data)
-                    this.userInfo = response.data;
-
+                    if (Array.isArray(response.data[1])) {
+                        this.userInfo = response.data;
+                    }
                 })
                 .catch((error) => {
                     console.error(error);
