@@ -368,7 +368,7 @@ function get_address(TORM $tORM, string $token)
         //
         //
         //
-        return in_array('', array_values($address)) ? [] : $address;
+        return in_array('', array_values($address)) ? [] : [ $address] ;
     } else {
         return "ERROR 404: NOT FOUND";
     }
