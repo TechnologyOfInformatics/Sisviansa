@@ -49,15 +49,31 @@ export default {
                 segundoApellido: "",
                 correo: "",
                 direccion: "",
-                documento: "12345678",
-                tipoDocumento: "Cedula",
+                documento: "",
+                tipoDocumento: "",
             }, //cambiar los datos por lo que me da el backend
         };
     },
+    created() {
+        this.fetchUserData()
+    },
     methods: {
-        updateUserInfo() {
-            
+        fetchUserData() {
+            const dataToSend = {
+                functionName: "options_user_info",
+                token: sessionStorage.getItem('miToken') || 0,
+            };
 
+            this.$http
+                .post("http://localhost/Back-End/server.php", dataToSend)
+                .then((response) => {
+                    if (Array.isArray(response.data[1])) {
+                        this.userInfo = response.data;
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
     },
 
