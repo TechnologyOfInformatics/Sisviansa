@@ -160,7 +160,6 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           this.menus = this.transformMenusData(response.data[0]);
-          console.log(this.menus)
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
           });

@@ -9,7 +9,6 @@
 
                 </div>
                 <div v-else>
-                    <h2>Direcciones actuales</h2>
                     <div class="directions-container">
                         <ul class="direction-list">
                             <li v-for="(direction, index) in directions" :key="index" class="direction-list-item">
@@ -77,17 +76,15 @@ export default {
         },
         fetchUserData() {
             const dataToSend = {
-                functionName: "direcciones",
-                token: sessionStorage.getItem('miToken'),
+                functionName: "options_get_address",
+                token: sessionStorage.getItem('miToken') || 0,
             };
 
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    console.log(response.data)
-                    if (Array.isArray(response.data[0])) {
-                        this.directions = response.data[0]
-                    }
+                    this.directions = response.data;
+
                 })
                 .catch((error) => {
                     console.error(error);
