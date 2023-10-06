@@ -19,14 +19,16 @@ WHERE cliente.email = 'amsdassdsasda';")->call();
 $ctl->delete("cliente", ["amsdassdsasda"], ["email"])->call();*/
 
 //print_r(register_register_web_first("maxi", "da silva", "CI", "5088325", "amsdassdsasda", "asdasddasdas"));
-
-echo "<pre>";
+/*
 echo "<br/>Sin valores:<br/>";
 print_r(options_get_address("X6Q?3ucsNs"));
 echo "<br/>Con valores:<br/>";
 print_r(options_get_address("12312334f234"));
 echo "<br/>Con token invalido:<br/>";
 print_r(options_get_address("12312334f34"));
+*/
+echo "<pre>";
+print_r(user_information($tORM, '12312334f234'));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado

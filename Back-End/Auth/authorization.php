@@ -45,13 +45,12 @@ function session(QueryCall $ctl, $token)
 {
     if (!isset($ctl, $token)) {
         return "400, BAD REQUEST: Wrong data type";
-    } elseif (!is_string($token)) {
-        return "400, BAD REQUEST: Wrong data type";
-    } elseif (strlen($token) >= 15 || strlen($token) < 8) {
+    } elseif (!is_string($token) || strlen($token) >= 15 || strlen($token) < 8) {
         return "400, BAD REQUEST: Wrong data type";
     }
 
     $is_session_active = $ctl->select("sesion", ["estado"], [$token], ["token"])->call();
+
     if (!is_array($is_session_active) || count($is_session_active) === 0 || is_string($is_session_active)) {
         return "404, NOT FOUND: The given TOKEN doesn't exist";
     } elseif ($is_session_active[0] === "Activa") {
@@ -208,40 +207,6 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     }
 }
 
-function register_web_second(QueryCall $ctl, $token, $second_name, $second_surname, $street, $neighborhood, $city)
-{
-    $values = func_get_args();
-
-    unset($values[0]);
-
-    $length_verificator = True;
-
-    foreach ($values as $var) {
-        $length_verificator = $length_verificator && (strlen(strval($var)) <= 30) && (strlen(strval($var)) >= 2);
-    }
-
-    $type_verificator = True;
-
-    foreach ($values as $var) {
-        $type_verificator = $type_verificator && datatype($var, "string");
-    }
-
-    if (!isset($ctl, $second_name, $second_surname, $street, $neighborhood, $city)) {
-        return "400, BAD REQUEST: Missing data";
-    } elseif (!$type_verificator) {
-        return "400, BAD REQUEST: Wrong data type";
-    } elseif (!$length_verificator) {
-        return "400, BAD REQUEST: Wrong data type";
-    }
-
-    $user = session($ctl, $token);
-    $id = $ctl->select("inicia", ["cliente_id"], [$token], ["sesion_token"])->call()[0];
-    if ($user[0]) {
-        return $ctl->update("web", [$id, $second_name, $second_surname], ["cliente_id"], ["cliente_id", "segundo_nombre", "segundo_apellido"])->call();
-    } else {
-        return "401, UNAUTHORIZED: The session expired";
-    }
-}
 
 
 
@@ -394,27 +359,34 @@ function user_information(TORM $tORM, $token)
         ->join("inicia", "inicia.cliente_id", "cliente.id")
         ->joined_columns("None column")
         ->where("inicia.sesion_token", "eq", $token)
-        ->join("cliente_simplificado", "cliente_simplificado.id", "cliente.id")
-        ->join("web", "web.cliente_id", "cliente_simplificado.id")
+        ->join("web", "web.cliente_id", "cliente.id")
+        ->joined_columns('web.primer_nombre', 'web.primer_apellido', 'web.segundo_nombre', 'web.segundo_apellido', 'web.numero', 'web.tipo')
+        ->join("cliente_simplificado", "cliente_simplificado.id", "web.cliente_id")
+        ->joined_columns('cliente_simplificado.email', 'cliente_simplificado.calle', 'cliente_simplificado.barrio', 'cliente_simplificado.ciudad')
         //
         //
         ->do("select");
-    if (gettype($result) != "string") {
-        $new_result = [
-            0 => $result["primer_nombre"],
-            1 => $result["primer_apellido"],
-            2 => $result["segundo_nombre"],
-            3 => $result["segundo_apellido"],
-            4 => $result["email"],
-            5 => $result["numero"],
-            6 => $result["tipo"],
-            'direccion' => [
-                $result["calle"],
-                $result["barrio"],
-                $result["ciudad"]
-            ]
+    if ($result) {
+        $result = $result[0];
+        $because_i_used_numero_twice = $tORM
+            ->from('cliente_simplificado')
+            ->columns('cliente_simplificado.numero')
+            ->join('inicia', 'inicia.cliente_id', 'cliente_simplificado.id')
+            ->joined_columns('None column')
+            ->where('inicia.sesion_token', 'eq', $token)
+            ->do('select');
+        $formatted_result = [
+            'primerNombre' => $result['primer_nombre'],
+            'primerApellido' => $result['primer_apellido'],
+            'segundoNombre' => $result['segundo_nombre'],
+            'segundoApellido' => $result['segundo_apellido'],
+            'correo' => $result['email'],
+            'direccion' => [$because_i_used_numero_twice[0]['numero'], $result['calle'], $result['barrio'], $result['ciudad']],
+            'documento' => $result['numero'],
+            'tipoDocumento' => $result['tipo'],
+
         ];
-        return $new_result;
+        return $formatted_result;
     } else {
         return $result;
     }
@@ -548,6 +520,13 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
     }
 }
 
+function buy_menu()
+{
+}
+function create_menu()
+{
+}
+
 function login_bussiness()
 {
 }
@@ -563,6 +542,43 @@ function show_food_list()
 function credit_card_change()
 {
 }
-function address_change()
+function address_change(/*token,id_debil, numero, calle, barrio, ciudad*/)
 {
+}
+function change_password()
+{
+}
+function recover_password()
+{
+}
+
+function proto_session(TORM $tORM)
+{
+    $token = '12312334f234';
+    $is_session_active = $tORM
+        ->from('sesion')
+        ->columns('sesion.estado', 'sesion.ultima_sesion')
+        ->join('inicia', 'inicia.sesion_token', 'sesion.token')
+        ->joined_columns('cliente_id')
+        ->where('sesion.token', 'eq', $token)
+        ->do('select');
+
+    if ($is_session_active && (gettype($is_session_active) == 'array')) {
+        if ($is_session_active[0]['estado'] == 'Activa') {
+            //Necesito modificar la sesion existente a Finalizada si esta ya en su limite de tiempo, 
+            //sino se reinicia el tiempo
+            $actual_date = date('Y-m-d H:i:s');
+            $newDate = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 minutes'));
+            if ($is_session_active[0]['ultima_sesion'] <= $actual_date) {
+                //update a la sesion actual (pasar de activa a finalizada) y crear una nueva con su respectivo token
+                //Ademas he de modificar inicia para agregar la nueva sesion ahi
+                return $is_session_active;
+            }
+        }
+        //Necesito generar una nueva entrada de sesion
+
+    } else {
+        return $is_session_active;
+    }
+    return False;
 }
