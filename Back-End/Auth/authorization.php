@@ -333,7 +333,7 @@ function get_address(TORM $tORM, string $token)
         //
         //
         //
-        return in_array('', array_values($address)) ? [] : [ $address] ;
+        return in_array('', array_values($address)) ? [] : [$address];
     } else {
         return "ERROR 404: NOT FOUND";
     }
@@ -526,7 +526,12 @@ function buy_menu()
 function create_menu()
 {
 }
-
+function modify_menu()
+{
+}
+function delete_menu()
+{
+}
 function login_bussiness()
 {
 }
@@ -548,7 +553,7 @@ function address_change(/*token,id_debil, numero, calle, barrio, ciudad*/)
 function change_password()
 {
 }
-function recover_password()
+function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
 {
 }
 
