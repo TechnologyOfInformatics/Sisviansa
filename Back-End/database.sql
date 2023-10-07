@@ -61,21 +61,6 @@ CREATE TABLE Sesion (
   Estado ENUM('Activa', 'Finalizada') NOT NULL COMMENT 'Estado de la sesión a la que se hace referencia'
 );
 
--- Creación de la tabla Paquete
-CREATE TABLE Paquete (
-  ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
-  Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete',
-  Estado ENUM(
-    'Solicitada',
-    'En stock',
-    'En producción',
-    'Envasada',
-    'Entregada',
-    'Devuelta',
-    'Desechada'
-  ) NOT NULL COMMENT 'Estado actual del paquete'
-);
-
 -- Creación de la tabla Menu
 CREATE TABLE Menu (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del menú el cual es autogenerado',
@@ -91,6 +76,24 @@ CREATE TABLE Menu (
     'Entregado',
     'Rechazado'
   ) COMMENT 'Estado del menú en específico'
+);
+
+-- Creación de la tabla Paquete
+CREATE TABLE Paquete (
+  ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
+  Menu_ID INT(11) NOT NULL COMMENT 'Menu que conforma el pedido',
+  Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete',
+  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de la creacion del paquete en si',
+  Estado ENUM(
+    'Solicitada',
+    'En stock',
+    'En producción',
+    'Envasada',
+    'Entregada',
+    'Devuelta',
+    'Desechada'
+  ) NOT NULL COMMENT 'Estado actual del paquete',
+  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID)
 );
 
 -- Creación de la tabla Vianda
@@ -168,23 +171,14 @@ CREATE TABLE Recibe (
   FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
--- Creación de la tabla Genera
-CREATE TABLE Genera (
-  Paquete_ID INT(11) PRIMARY KEY NOT NULL COMMENT 'ID único del paquete correspondiente al pedido',
-  Menu_ID INT(11) NOT NULL COMMENT 'Menu que conforma el pedido',
-  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de creacion del paquete',
-  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID)
-);
-
 CREATE TABLE Direccion (
-Cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
-Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
-Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
-Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
-Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
-PRIMARY KEY(Cliente_ID, Direccion, Calle, Barrio, Ciudad),
-FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  Cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
+  Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
+  Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
+  Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
+  Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
+  PRIMARY KEY(Cliente_ID, Direccion, Calle, Barrio, Ciudad),
+  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
 -- Elimino las vistas
@@ -200,34 +194,6 @@ SELECT
   Email
 FROM
   Cliente;
-
-CREATE VIEW Datos_de_cliente_web AS
-SELECT
-  CONCAT(Web.tipo, ': ', Web.numero) AS Documento,
-  Web.Primer_nombre,
-  Web.Primer_apellido,
-  Telefono.Telefono
-  Pide.Fecha_pedido,
-  Menu.Nombre AS Nombre_Menu,
-  Menu.Calorias,
-  Menu.Frecuencia,
-  Menu.Descripcion AS Descripcion_Menu,
-  Stock.Actual AS Stock_Menu,
-  Paquete.Fecha_de_creacion,
-  Paquete.Fecha_vencimiento
-FROM
-  Cliente_simplificado
-  JOIN Cliente_Telefono AS Telefono ON Cliente_simplificado.ID = Telefono.Cliente_ID
-  JOIN Web ON Cliente_simplificado.ID = Web.Cliente_ID
-  JOIN Pide ON Cliente_simplificado.ID = Pide.Cliente_ID
-  JOIN Conforma ON Pide.Vianda_ID = Conforma.Vianda_ID
-  AND Pide.Vianda_ID = Conforma.Vianda_ID
-  JOIN Genera ON Genera.Vianda_ID = Conforma.Vianda_ID
-  AND Genera.Vianda_ID = Conforma.Vianda_ID
-  JOIN Paquete ON Paquete.ID = Genera.Paquete_ID
-  JOIN Menu ON Genera.Menu_ID = Menu.ID
-  JOIN Recibe ON Paquete.ID = Recibe.Paquete_ID
-  JOIN Stock ON Menu.ID = Stock.Menu_ID;
 
 -- Elimino los usuarios
 DROP USER IF EXISTS 'pagina' @'localhost';
@@ -291,14 +257,6 @@ SELECT
 INSERT
 ,
 UPDATE
-  ON SISVIANSA_TECHIN_V1.Genera TO Jefe_de_cocina;
-
-GRANT
-SELECT
-,
-INSERT
-,
-UPDATE
   ON SISVIANSA_TECHIN_V1.Paquete TO Jefe_de_cocina;
 
 GRANT
@@ -313,10 +271,6 @@ UPDATE
 GRANT
 SELECT
   ON SISVIANSA_TECHIN_V1.Paquete TO Atencion;
-
-GRANT
-SELECT
-  ON SISVIANSA_TECHIN_V1.Genera TO Atencion;
 
 GRANT
 SELECT
@@ -397,10 +351,6 @@ SELECT
 
 GRANT
 SELECT
-  ON SISVIANSA_TECHIN_V1.Genera TO 'pagina' @'localhost';
-
-GRANT
-SELECT
   ON SISVIANSA_TECHIN_V1.Paquete TO 'pagina' @'localhost';
 
 GRANT
@@ -428,110 +378,289 @@ CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 
 GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
 
-INSERT INTO Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Email`) VALUES
-(1, 'contrasenia1', 'Autorizado',  'email1@gmail.com'),
-(2, 'contrasenia9', 'En espera',  'email9@hotmail.com'),
-(3, 'contrasenia17', 'No autorizado', 'email17@gmail.com');
+INSERT INTO
+  Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Email`)
+VALUES
+  (
+    1,
+    'contrasenia1',
+    'Autorizado',
+    'email1@gmail.com'
+  ),
+  (
+    2,
+    'contrasenia9',
+    'En espera',
+    'email9@hotmail.com'
+  ),
+  (
+    3,
+    'contrasenia17',
+    'No autorizado',
+    'email17@gmail.com'
+  );
 
-INSERT INTO Tarjeta (`Numero`, `Fecha_de_vencimiento`, `Nombre_de_titular`, `Cliente_ID`) VALUES
-('112312331123121233123', '2023-09-30', 'Titular Tarjeta 1', 1),
-('686868678678678678678', '2023-09-30', 'Titular Tarjeta 2', 2),
-('17171717171717171717', '2023-09-30', 'Titular Tarjeta 3', 3);
+INSERT INTO
+  Tarjeta (
+    `Numero`,
+    `Fecha_de_vencimiento`,
+    `Nombre_de_titular`,
+    `Cliente_ID`
+  )
+VALUES
+  (
+    '112312331123121233123',
+    '2023-09-30',
+    'Titular Tarjeta 1',
+    1
+  ),
+  (
+    '686868678678678678678',
+    '2023-09-30',
+    'Titular Tarjeta 2',
+    2
+  ),
+  (
+    '17171717171717171717',
+    '2023-09-30',
+    'Titular Tarjeta 3',
+    3
+  );
 
-INSERT INTO Cliente_Telefono (`Cliente_ID`, `Telefono`) VALUES
-(1, '09123456'),
-(2, '09123456'),
-(3, '09123456');
+INSERT INTO
+  Cliente_Telefono (`Cliente_ID`, `Telefono`)
+VALUES
+  (1, '09123456'),
+  (2, '09123456'),
+  (3, '09123456');
 
-INSERT INTO Empresa (`Cliente_ID`, `RUT`, `Nombre`) VALUES
-(1, 'RUT_empresa1', 'Nombre Empresa 1'),
-(2, 'RUT_empresa2', 'Nombre Empresa 2'),
-(3, 'RUT_empresa3', 'Nombre Empresa 3');
+INSERT INTO
+  Empresa (`Cliente_ID`, `RUT`, `Nombre`)
+VALUES
+  (1, 'RUT_empresa1', 'Nombre Empresa 1'),
+  (2, 'RUT_empresa2', 'Nombre Empresa 2'),
+  (3, 'RUT_empresa3', 'Nombre Empresa 3');
 
-INSERT INTO Web (`Cliente_ID`, `Tipo`, `Numero`, `Primer_nombre`, `Segundo_nombre`, `Primer_apellido`, `Segundo_apellido`) VALUES
-(1, 'Cedula', 12345678, 'Primer Nombre1', 'Segundo Nombre1', 'Primer Apellido1', 'Segundo Apellido1'),
-(2, 'Pasaporte', 67890123, 'Primer Nombre2', 'Segundo Nombre2', 'Primer Apellido2', 'Segundo Apellido2'),
-(3, 'Visa', 87654321, 'Primer Nombre3', 'Segundo Nombre3', 'Primer Apellido3', 'Segundo Apellido3');
+INSERT INTO
+  Web (
+    `Cliente_ID`,
+    `Tipo`,
+    `Numero`,
+    `Primer_nombre`,
+    `Segundo_nombre`,
+    `Primer_apellido`,
+    `Segundo_apellido`
+  )
+VALUES
+  (
+    1,
+    'Cedula',
+    12345678,
+    'Primer Nombre1',
+    'Segundo Nombre1',
+    'Primer Apellido1',
+    'Segundo Apellido1'
+  ),
+  (
+    2,
+    'Pasaporte',
+    67890123,
+    'Primer Nombre2',
+    'Segundo Nombre2',
+    'Primer Apellido2',
+    'Segundo Apellido2'
+  ),
+  (
+    3,
+    'Visa',
+    87654321,
+    'Primer Nombre3',
+    'Segundo Nombre3',
+    'Primer Apellido3',
+    'Segundo Apellido3'
+  );
 
-INSERT INTO Sesion (`Token`, `Inicio_de_sesion`, `Ultima_sesion`, `Final_de_sesion`, `Estado`) VALUES
-('x2312x23d2d2', '2023-09-07 00:00:00', '2023-09-08 00:00:00', '2023-09-09 00:00:00', 'Activa'),
-('23ec23d23r4t', '2023-09-07 00:00:00', '2023-09-08 00:00:00', '2023-09-09 00:00:00', 'Activa'),
-('12312334f234', '2023-09-10 00:00:00', '2023-09-11 00:00:00', '2023-09-12 00:00:00', 'Activa');
+INSERT INTO
+  Sesion (
+    `Token`,
+    `Inicio_de_sesion`,
+    `Ultima_sesion`,
+    `Final_de_sesion`,
+    `Estado`
+  )
+VALUES
+  (
+    'x2312x23d2d2',
+    '2023-09-07 00:00:00',
+    '2023-09-08 00:00:00',
+    '2023-09-09 00:00:00',
+    'Activa'
+  ),
+  (
+    '23ec23d23r4t',
+    '2023-09-07 00:00:00',
+    '2023-09-08 00:00:00',
+    '2023-09-09 00:00:00',
+    'Activa'
+  ),
+  (
+    '12312334f234',
+    '2023-09-10 00:00:00',
+    '2023-09-11 00:00:00',
+    '2023-09-12 00:00:00',
+    'Activa'
+  );
 
-INSERT INTO Menu (`ID`, `Nombre`, `Calorias`, `Frecuencia`, `Descripcion`, `Precio`, `Estado`) VALUES
-(1, 'Menu1', 500, 1, 'Descripcion Menu 1', 10.00, 'Solicitado'),
-(2, 'Menu2', 600, 7, 'Descripcion Menu 2', 15.00, 'Confirmado'),
-(3, 'Menu3', 700, 15, 'Descripcion Menu 3', 20.00, 'Enviado');
+INSERT INTO
+  Menu (
+    `ID`,
+    `Nombre`,
+    `Calorias`,
+    `Frecuencia`,
+    `Descripcion`,
+    `Precio`,
+    `Estado`
+  )
+VALUES
+  (
+    1,
+    'Menu1',
+    500,
+    1,
+    'Descripcion Menu 1',
+    10.00,
+    'Solicitado'
+  ),
+  (
+    2,
+    'Menu2',
+    600,
+    7,
+    'Descripcion Menu 2',
+    15.00,
+    'Confirmado'
+  ),
+  (
+    3,
+    'Menu3',
+    700,
+    15,
+    'Descripcion Menu 3',
+    20.00,
+    'Enviado'
+  );
 
-INSERT INTO Vianda (`ID`, `Nombre`, `Tiempo_de_coccion`, `Productos`, `Stock`, `Calorias`) VALUES
-(1, 'Vianda1', 30, 'Productos1', 100, 200),
-(2, 'Vianda2', 40, 'Productos2', 200, 300),
-(3, 'Vianda3', 50, 'Productos3', 300, 400),
-(4, 'Vianda4', 30, 'Productos1', 100, 200),
-(5, 'Vianda5', 40, 'Productos2', 200, 300),
-(6, 'Vianda6', 50, 'Productos3', 300, 400);
+INSERT INTO
+  Vianda (
+    `ID`,
+    `Nombre`,
+    `Tiempo_de_coccion`,
+    `Productos`,
+    `Stock`,
+    `Calorias`
+  )
+VALUES
+  (1, 'Vianda1', 30, 'Productos1', 100, 200),
+  (2, 'Vianda2', 40, 'Productos2', 200, 300),
+  (3, 'Vianda3', 50, 'Productos3', 300, 400),
+  (4, 'Vianda4', 30, 'Productos1', 100, 200),
+  (5, 'Vianda5', 40, 'Productos2', 200, 300),
+  (6, 'Vianda6', 50, 'Productos3', 300, 400);
 
-INSERT INTO Vianda_Dieta (`Vianda_ID`, `Dieta`) VALUES
---(1, 'Vegetariano'),
-(2, 'Vegano'),
-(3, 'Sin Gluten'),
---(1, 'Sin Gluten'),
-(2, 'Vegetariano'),
-(3, 'Vegano'),
-(4, 'Sin Gluten'),
-(5, 'Sin Gluten'),
-(6, 'Vegano'),
-(4, 'Vegano'),
-(5, 'Vegano'),
-(6, 'Vegetariano');
+INSERT INTO
+  Vianda_Dieta (`Vianda_ID`, `Dieta`)
+VALUES
+  (3, 'Sin Gluten'),
+  (2, 'Vegetariano'),
+  (3, 'Vegano'),
+  (4, 'Sin Gluten'),
+  (5, 'Sin Gluten'),
+  (6, 'Vegano'),
+  (4, 'Vegano'),
+  (5, 'Vegano'),
+  (6, 'Vegetariano');
 
-INSERT INTO Stock (`Menu_ID`, `Minimo`, `Maximo`, `Actual`) VALUES
-(1, 5, 10, 8),
-(2, 5, 10, 10),
-(3, 5, 10, 5);
+INSERT INTO
+  Stock (`Menu_ID`, `Minimo`, `Maximo`, `Actual`)
+VALUES
+  (1, 5, 10, 8),
+  (2, 5, 10, 10),
+  (3, 5, 10, 5);
 
-INSERT INTO Inicia (`Sesion_token`, `Cliente_ID`) VALUES
-('x2312x23d2d2', 1),
-('23ec23d23r4t', 2),
-('12312334f234', 3);
+INSERT INTO
+  Inicia (`Sesion_token`, `Cliente_ID`)
+VALUES
+  ('x2312x23d2d2', 1),
+  ('23ec23d23r4t', 2),
+  ('12312334f234', 3);
 
 TRUNCATE TABLE Favorito;
-INSERT INTO Favorito (`Menu_ID`, `Web_ID`) VALUES
-(1, 1),
-(2, 2),
-(3, 3);
 
-INSERT INTO Conforma (`Menu_ID`, `Vianda_ID`, `Demora_total`) VALUES
-(1, 1, 60),
-(2, 2, 75),
-(3, 3, 90),
-(1, 4, 60),
-(2, 5, 75),
-(3, 6, 90),
-(1, 5, 60),
-(2, 6, 75),
-(3, 4, 90),
-(1, 3, 60),
-(2, 1, 75),
-(3, 2, 90);
+INSERT INTO
+  Favorito (`Menu_ID`, `Web_ID`)
+VALUES
+  (1, 1),
+  (2, 2),
+  (3, 3);
 
-INSERT INTO Pide (`Menu_ID`, `Vianda_ID`, `Cliente_ID`, `Fecha_pedido`, `Numero_de_pedido`) VALUES
-(1, 1, 1, '2023-09-07', 1),
-(2, 2, 2, '2023-09-08', 2),
-(3, 3, 3, '2023-09-09', 3);
+INSERT INTO
+  Conforma (`Menu_ID`, `Vianda_ID`, `Demora_total`)
+VALUES
+  (1, 1, 60),
+  (2, 2, 75),
+  (3, 3, 90),
+  (1, 4, 60),
+  (2, 5, 75),
+  (3, 6, 90),
+  (1, 5, 60),
+  (2, 6, 75),
+  (3, 4, 90),
+  (1, 3, 60),
+  (2, 1, 75),
+  (3, 2, 90);
 
-INSERT INTO Paquete (`ID`, `Fecha_vencimiento`, `Fecha_de_creacion`, `Estado`, `Menu_id`) VALUES
-(1, '2023-10-01', '2023-09-07', 'Solicitada',1),
-(2, '2023-10-02', '2023-09-08', 'En stock',2),
-(3, '2023-10-03', '2023-09-09', 'En producción',3);
+INSERT INTO
+  Pide (
+    `Menu_ID`,
+    `Vianda_ID`,
+    `Cliente_ID`,
+    `Fecha_pedido`,
+    `Numero_de_pedido`
+  )
+VALUES
+  (1, 1, 1, '2023-09-07', 1),
+  (2, 2, 2, '2023-09-08', 2),
+  (3, 3, 3, '2023-09-09', 3);
 
+INSERT INTO
+  Paquete (
+    `ID`,
+    `Fecha_vencimiento`,
+    `Fecha_de_creacion`,
+    `Estado`,
+    `Menu_id`
+  )
+VALUES
+  (1, '2023-10-01', '2023-09-07', 'Solicitada', 1),
+  (2, '2023-10-02', '2023-09-08', 'En stock', 2),
+  (3, '2023-10-03', '2023-09-09', 'En producción', 3);
 
-INSERT INTO Recibe (`Paquete_ID`, `Cliente_ID`) VALUES
-(1, 1),
-(2, 2),
-(3, 3);
+INSERT INTO
+  Recibe (`Paquete_ID`, `Cliente_ID`)
+VALUES
+  (1, 1),
+  (2, 2),
+  (3, 3);
 
-INSERT INTO Cliente (`Cliente_ID`, `Numero`, `Calle`, `Barrio`, `Ciudad`) VALUES
-(1, '4', 'calle1', 'barrio1', 'ciudad1'),
-(2, '12', 'calle9', 'barrio9', 'ciudad9'),
-(3, '20', 'calle17', 'barrio17', 'ciudad17');
+INSERT INTO
+  Direccion (
+    `Cliente_ID`,
+    `Direccion`,
+    `Calle`,
+    `Barrio`,
+    `Ciudad`
+  )
+VALUES
+  (1, '4', 'calle1', 'barrio1', 'ciudad1'),
+  (2, '12', 'calle9', 'barrio9', 'ciudad9'),
+  (3, '20', 'calle17', 'barrio17', 'ciudad17');

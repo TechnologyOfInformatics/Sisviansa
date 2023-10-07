@@ -214,7 +214,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 //
 //
 //
-function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
+function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -224,13 +224,15 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $
 
     $length_verificator = True;
 
-    $maximum = [15, 30, 30, 30, 30, 30, 10, 30, 30, 20, 25];
+    $maximum = [15, 30, 30, 30, 30, 30, 20, 25];
 
     foreach ($values as $index => $var) {
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
     }
-    if ($passwd) {
+    if ($passwd && ($passwd == $confirm_passwd)) {
         $passwd = md5($passwd);
+    } elseif (!($passwd == "" && ($passwd == $confirm_passwd))) {
+        return "ERROR 400, BAD REQUEST";
     }
 
     $client_id = $tORM
@@ -249,7 +251,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $
 
         $client_values = $tORM
             ->from("cliente")
-            ->columns("cliente.contrasenia", "cliente.numero", "cliente.calle", "cliente.barrio", "cliente.ciudad", "cliente.email")
+            ->columns("cliente.contrasenia",  "cliente.email")
             ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
             ->do("select")[0];
         $received_data = array_merge($web_values, $client_values);
@@ -262,10 +264,6 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $
         ];
         $new_client_data = [
             'cliente.contrasenia' => $passwd ? $passwd : $received_data["contrasenia"],
-            'cliente.numero' => $address ? $address : $received_data["numero"],
-            'cliente.calle' => $street ? $street : $received_data["calle"],
-            'cliente.barrio' => $neighborhood ? $neighborhood : $received_data["barrio"],
-            'cliente.ciudad' => $city ? $city : $received_data["ciudad"],
             'cliente.email' => $mail ? $mail : $received_data["email"]
         ];
 
@@ -295,7 +293,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $
             ->do("update");
 
         if ($result_1 == $result_2 && $result_1 == "OK, 200") {
-            return $result_1;
+            return "OK, 200";
         }
         return "ERROR 500, SERVER ERROR";
     } else {
@@ -319,22 +317,18 @@ function get_address(TORM $tORM, string $token)
 
     if ($client_id && $length_verificator) {
         // Debo pedir los datos desde direccion y no desde cliente
-
-        $client_values = $tORM
-            ->from("cliente")
-            ->columns("cliente.contrasenia", "cliente.email")
-            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
-            ->do("select")[0];
-        $address = [
+        $address_values = $tORM->from("direccion")->where("direccion.cliente_id", "eq", $client_id);
+        $addresses = [
             'numero' => $address_values["numero"],
             'calle' => $address_values["calle"],
             'barrio' => $address_values["barrio"],
             'ciudad' => $address_values["ciudad"]
         ];
+
         //
         //
         //
-        return in_array('', array_values($address)) ? [] : [$address];
+        return $addresses;
     } else {
         return "ERROR 404: NOT FOUND";
     }
@@ -367,14 +361,19 @@ function user_information(TORM $tORM, $token)
         //
         //
         ->do("select");
+
+
+    $client_id = $tORM
+        ->from("inicia")
+        ->columns("inicia.cliente_id")
+        ->where("inicia.sesion_token", "eq", $token)
+        ->do("select");
+
     if ($result) {
         $result = $result[0];
-        $because_i_used_numero_twice = $tOM // Debo pedir los datos de direccion de su respectiva tabla
-            ->from('cliente_simplificado')
-            ->columns('cliente_simplificado.numero')
-            ->join('inicia', 'inicia.cliente_id', 'cliente_simplificado.id')
-            ->joined_columns('None column')
-            ->where('inicia.sesion_token', 'eq', $token)
+        $because_i_used_numero_twice = $tORM // Debo pedir los datos de direccion de su respectiva tabla
+            ->from('direccion')
+            ->where('direccion.cliente_id', 'eq', $client_id)
             ->do('select');
         $formatted_result = [
             'primerNombre' => $result['primer_nombre'],
@@ -382,7 +381,7 @@ function user_information(TORM $tORM, $token)
             'segundoNombre' => $result['segundo_nombre'],
             'segundoApellido' => $result['segundo_apellido'],
             'correo' => $result['email'],
-            'direccion' => [$because_i_used_numero_twice[0]['numero'], $result['calle'], $result['barrio'], $result['ciudad']],
+            'direccion' => $because_i_used_numero_twice,
             'documento' => $result['numero'],
             'tipoDocumento' => $result['tipo'],
 
