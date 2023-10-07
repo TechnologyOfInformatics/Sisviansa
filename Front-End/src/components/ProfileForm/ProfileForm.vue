@@ -21,16 +21,13 @@
                 <label for="correo">Correo:</label>
                 <input type="email" id="correo" v-model="userInfo.correo" />
             </div>
+
             <div>
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" v-model="userInfo.direccion" />
-            </div>
-            <div>
-                <label for="documento">Documento de Identidad:</label>
+                <span>Documento de Identidad:</span>
                 <span id="documento">{{ userInfo.documento }}</span>
             </div>
             <div>
-                <label for="tipo">Tipo de Documento:</label>
+                <span>Tipo de Documento:</span>
                 <span id="tipo">{{ userInfo.tipoDocumento }}</span>
             </div>
             <button type="submit">Guardar Cambios</button>
@@ -48,10 +45,9 @@ export default {
                 segundoNombre: "",
                 segundoApellido: "",
                 correo: "",
-                direccion: "",
                 documento: "",
                 tipoDocumento: "",
-            }, //cambiar los datos por lo que me da el backend
+            },
         };
     },
     created() {
@@ -67,9 +63,8 @@ export default {
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    if (Array.isArray(response.data[1])) {
-                        this.userInfo = response.data;
-                    }
+                    this.userInfo = response.data;
+
                 })
                 .catch((error) => {
                     console.error(error);
@@ -82,7 +77,6 @@ export default {
   
 <style scoped>
 .user-form {
-    max-width: 400px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;

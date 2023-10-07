@@ -12,9 +12,8 @@
   height: 45vh;
   clip-path: polygon(0 4%, 4% 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
   margin: 1em 1em;
-  background: url('@/assets/page-icons/menu.png');
+  background: url('@/assets/page-icons/menus.png');
   background-size: contain;
-
 }
 
 .menu-list .menu-card:nth-child(even) {
@@ -118,9 +117,9 @@
 
 .footer-side-icons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: absolute;
-  transform: translate(16.2vw, -12.8vh);
+  transform: translate(-.8vw, -19.21vh);
 }
 
 .footer-side-icons button {

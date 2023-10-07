@@ -14,12 +14,12 @@
         </div>
         <router-link v-if="isAuthenticated" to="/" class="link">
           <div class="action__button" @click="logout">
-            <i class="fa-solid fa-right-to-bracket"></i>
+            <i class="fa-solid fa-right-from-bracket"></i>
           </div>
         </router-link>
         <router-link v-else to="/login" class="link">
           <div class="action__button">
-            <i class="fa-solid fa-right-from-bracket"></i>
+            <i class="fa-solid fa-right-to-bracket"></i>
           </div>
         </router-link>
       </div>
