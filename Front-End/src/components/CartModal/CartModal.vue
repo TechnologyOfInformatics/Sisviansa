@@ -14,16 +14,16 @@
             <div v-for="item in cart" :key="item.title" class="cart-item">
               <div class="cart-item-info">
                 <span class="item-title">{{ item.title }}</span>
-                <span class="item-price">{{ item.price }} USD</span> <span class="item-type">Vegan</span> 
+                <span class="item-price">{{ item.price }} USD</span> <span class="item-type">Vegan</span>
                 <!-- {{ item.diets }} -->
               </div>
               <div class="quantity-controls">
                 <button class="quantity-button" @click.stop="decreaseQuantity(item)" :disabled="item.quantity === 1">
-                  -
+                  <i class="fa-solid fa-sort-down"></i>
                 </button>
                 <span class="quantity">{{ item.quantity }}</span>
                 <button class="quantity-button" @click.stop="increaseQuantity(item)">
-                  +
+                  <i class="fa-solid fa-sort-up"></i>
                 </button>
               </div>
               <button class="remove-item-btn" @click.stop="removeFromCart(item)">
