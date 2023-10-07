@@ -4,8 +4,6 @@
     <aside class="profile-sidebar">
       <nav class="profile-sidebar__nav">
         <ul>
-          <li @click="selectOption('Personalization')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Personalization' }">Personalización</li>
           <li @click="selectOption('Account')"
             :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Account' }">Datos de tu cuenta</li>
           <li @click="selectOption('Security')"
@@ -13,14 +11,15 @@
           <li @click="selectOption('OrderHistory')"
             :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">Historial de Pedidos</li>
           <li @click="selectOption('ShippingAddress')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones de envío
-          </li>
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones de envío</li>
+            <li @click="selectOption('Favorites')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Favorites' }">Menus Favoritos</li>
+            <li @click="selectOption('Customs')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">Tus menus</li>
         </ul>
       </nav>
     </aside>
     <main class="profile-main">
-      <div v-if="selectedOption === 'Personalization'">
-      </div>
       <div v-if="selectedOption === 'Account'">
         <ProfileForm />
       </div>
@@ -30,7 +29,13 @@
         <h2>Order History</h2>
       </div>
       <div v-if="selectedOption === 'ShippingAddress'">
-        <h2>Shipping Address</h2>
+        <ProfileDirection />
+      </div>
+      <div v-if="selectedOption === 'Favorites'">
+        <h2>Favoritos</h2>
+      </div>
+      <div v-if="selectedOption === 'Customs'">
+        <h2>Personalizados</h2>
       </div>
     </main>
   </div>
@@ -39,15 +44,17 @@
 <script>
 import MainHeader from "@/components/Header/Header.vue";
 import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
+import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 
 export default {
   components: {
     MainHeader,
-    ProfileForm
+    ProfileForm,
+    ProfileDirection
   },
   data() {
     return {
-      selectedOption: "Personalization",
+      selectedOption: "Account",
       login: true,
     };
   },
@@ -77,7 +84,7 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-          
+
         });
     },
   },
@@ -117,6 +124,7 @@ export default {
 
 .profile-sidebar__nav ul li:hover {
   background-color: #ebeadf;
+  color: black;
 }
 
 .profile-sidebar__nav-item--active {

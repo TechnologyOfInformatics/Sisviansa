@@ -87,6 +87,8 @@
 .quantity-controls {
     display: flex;
     align-items: center;
+    justify-content: center;
+    margin: auto;
 }
 
 .quantity-button {
