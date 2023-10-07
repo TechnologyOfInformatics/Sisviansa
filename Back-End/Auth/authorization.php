@@ -214,7 +214,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 //
 //
 //
-function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $address = "",  $street = "", $neighborhood = "", $city = "", $mail = "")
+function modify_web(TORM $tORM, string $token, $passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -318,17 +318,18 @@ function get_address(TORM $tORM, string $token)
         ->do("select");
 
     if ($client_id && $length_verificator) {
+        // Debo pedir los datos desde direccion y no desde cliente
 
         $client_values = $tORM
             ->from("cliente")
-            ->columns("cliente.contrasenia", "cliente.numero", "cliente.calle", "cliente.barrio", "cliente.ciudad", "cliente.email")
+            ->columns("cliente.contrasenia", "cliente.email")
             ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
             ->do("select")[0];
         $address = [
-            'numero' => $client_values["numero"],
-            'calle' => $client_values["calle"],
-            'barrio' => $client_values["barrio"],
-            'ciudad' => $client_values["ciudad"]
+            'numero' => $address_values["numero"],
+            'calle' => $address_values["calle"],
+            'barrio' => $address_values["barrio"],
+            'ciudad' => $address_values["ciudad"]
         ];
         //
         //
@@ -362,13 +363,13 @@ function user_information(TORM $tORM, $token)
         ->join("web", "web.cliente_id", "cliente.id")
         ->joined_columns('web.primer_nombre', 'web.primer_apellido', 'web.segundo_nombre', 'web.segundo_apellido', 'web.numero', 'web.tipo')
         ->join("cliente_simplificado", "cliente_simplificado.id", "web.cliente_id")
-        ->joined_columns('cliente_simplificado.email', 'cliente_simplificado.calle', 'cliente_simplificado.barrio', 'cliente_simplificado.ciudad')
+        ->joined_columns('cliente_simplificado.email')
         //
         //
         ->do("select");
     if ($result) {
         $result = $result[0];
-        $because_i_used_numero_twice = $tORM
+        $because_i_used_numero_twice = $tOM // Debo pedir los datos de direccion de su respectiva tabla
             ->from('cliente_simplificado')
             ->columns('cliente_simplificado.numero')
             ->join('inicia', 'inicia.cliente_id', 'cliente_simplificado.id')
@@ -522,6 +523,8 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 
 function buy_menu()
 {
+    //Esta funcion debe crear una entrada en genera (o en caso de mover el menu_id a paquete esta entrada no se genera)
+    //despues se debe hacer una entrada en paquete, donde se le daran sus datos
 }
 function create_menu()
 {

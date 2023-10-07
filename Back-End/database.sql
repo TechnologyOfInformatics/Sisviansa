@@ -12,10 +12,6 @@ CREATE TABLE Cliente (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT 'ID único de cliente el cual es autogenerado',
   Contrasenia VARCHAR(40) NOT NULL COMMENT 'Contraseña de la cuenta correspondiente al cliente',
   Autorizacion ENUM('Autorizado', 'En espera', 'No autorizado') NOT NULL COMMENT 'Estado del pedido de autorizacion del administrador',
-  Numero VARCHAR(40) COMMENT 'Número correspondiente al cliente',
-  Calle VARCHAR(50) COMMENT 'Calle frontal del lugar donde el cliente recibe los pedidos',
-  Barrio VARCHAR(50) COMMENT 'Barrio donde el cliente recibe los pedidos',
-  Ciudad VARCHAR(50) COMMENT 'Ciudad donde el cliente recibe los pedidos',
   Email VARCHAR(50) NOT NULL COMMENT 'ID único correspondiente al cliente'
 );
 
@@ -69,7 +65,6 @@ CREATE TABLE Sesion (
 CREATE TABLE Paquete (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
   Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete',
-  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de creacion del paquete',
   Estado ENUM(
     'Solicitada',
     'En stock',
@@ -177,10 +172,19 @@ CREATE TABLE Recibe (
 CREATE TABLE Genera (
   Paquete_ID INT(11) PRIMARY KEY NOT NULL COMMENT 'ID único del paquete correspondiente al pedido',
   Menu_ID INT(11) NOT NULL COMMENT 'Menu que conforma el pedido',
-  Vianda_ID INT(11) NOT NULL COMMENT 'Vianda o viandas que conforman el pedido',
+  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de creacion del paquete',
   FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Conforma(Menu_ID),
-  FOREIGN KEY (Vianda_ID) REFERENCES Conforma(Vianda_ID)
+  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID)
+);
+
+CREATE TABLE Direccion (
+Cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
+Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
+Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
+Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
+Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
+PRIMARY KEY(Cliente_ID, Direccion, Calle, Barrio, Ciudad),
+FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
 -- Elimino las vistas
@@ -193,10 +197,6 @@ CREATE VIEW Cliente_simplificado AS
 SELECT
   ID,
   Autorizacion,
-  Numero,
-  Calle,
-  Barrio,
-  Ciudad,
   Email
 FROM
   Cliente;
@@ -206,11 +206,7 @@ SELECT
   CONCAT(Web.tipo, ': ', Web.numero) AS Documento,
   Web.Primer_nombre,
   Web.Primer_apellido,
-  Telefono.Telefono,
-  Cliente_simplificado.Numero,
-  Cliente_simplificado.Calle,
-  Cliente_simplificado.Barrio,
-  Cliente_simplificado.Ciudad,
+  Telefono.Telefono
   Pide.Fecha_pedido,
   Menu.Nombre AS Nombre_Menu,
   Menu.Calorias,
@@ -432,10 +428,10 @@ CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 
 GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
 
-INSERT INTO Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Numero`, `Calle`, `Barrio`, `Ciudad`, `Email`) VALUES
-(1, 'contrasenia1', 'Autorizado', '4', 'calle1', 'barrio1', 'ciudad1', 'email1@gmail.com'),
-(2, 'contrasenia9', 'En espera', '12', 'calle9', 'barrio9', 'ciudad9', 'email9@hotmail.com'),
-(3, 'contrasenia17', 'No autorizado', '20', 'calle17', 'barrio17', 'ciudad17', 'email17@gmail.com');
+INSERT INTO Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Email`) VALUES
+(1, 'contrasenia1', 'Autorizado',  'email1@gmail.com'),
+(2, 'contrasenia9', 'En espera',  'email9@hotmail.com'),
+(3, 'contrasenia17', 'No autorizado', 'email17@gmail.com');
 
 INSERT INTO Tarjeta (`Numero`, `Fecha_de_vencimiento`, `Nombre_de_titular`, `Cliente_ID`) VALUES
 ('112312331123121233123', '2023-09-30', 'Titular Tarjeta 1', 1),
@@ -476,10 +472,10 @@ INSERT INTO Vianda (`ID`, `Nombre`, `Tiempo_de_coccion`, `Productos`, `Stock`, `
 (6, 'Vianda6', 50, 'Productos3', 300, 400);
 
 INSERT INTO Vianda_Dieta (`Vianda_ID`, `Dieta`) VALUES
-(1, 'Vegetariano'),
+--(1, 'Vegetariano'),
 (2, 'Vegano'),
 (3, 'Sin Gluten'),
-(1, 'Sin Gluten'),
+--(1, 'Sin Gluten'),
 (2, 'Vegetariano'),
 (3, 'Vegano'),
 (4, 'Sin Gluten'),
@@ -524,17 +520,18 @@ INSERT INTO Pide (`Menu_ID`, `Vianda_ID`, `Cliente_ID`, `Fecha_pedido`, `Numero_
 (2, 2, 2, '2023-09-08', 2),
 (3, 3, 3, '2023-09-09', 3);
 
-INSERT INTO Paquete (`ID`, `Fecha_vencimiento`, `Fecha_de_creacion`, `Estado`) VALUES
-(1, '2023-10-01', '2023-09-07', 'Solicitada'),
-(2, '2023-10-02', '2023-09-08', 'En stock'),
-(3, '2023-10-03', '2023-09-09', 'En producción');
+INSERT INTO Paquete (`ID`, `Fecha_vencimiento`, `Fecha_de_creacion`, `Estado`, `Menu_id`) VALUES
+(1, '2023-10-01', '2023-09-07', 'Solicitada',1),
+(2, '2023-10-02', '2023-09-08', 'En stock',2),
+(3, '2023-10-03', '2023-09-09', 'En producción',3);
 
-INSERT INTO Genera (`Paquete_ID`, `Menu_ID`, `Vianda_ID`) VALUES
-(1, 1, 1),
-(2, 2, 2),
-(3, 3, 3);
 
 INSERT INTO Recibe (`Paquete_ID`, `Cliente_ID`) VALUES
 (1, 1),
 (2, 2),
 (3, 3);
+
+INSERT INTO Cliente (`Cliente_ID`, `Numero`, `Calle`, `Barrio`, `Ciudad`) VALUES
+(1, '4', 'calle1', 'barrio1', 'ciudad1'),
+(2, '12', 'calle9', 'barrio9', 'ciudad9'),
+(3, '20', 'calle17', 'barrio17', 'ciudad17');
