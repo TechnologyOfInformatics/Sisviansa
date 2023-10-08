@@ -29,11 +29,6 @@ function options_get_special_menus($token)
     return get_fav_and_personal_menus($tORM, $token);
 }
 
-function options_get_client_menus($token)
-{
-    global $tORM;
-    return get_client_menus($tORM, $token);
-}
 
 function options_create_personal_menu(String $token, String $name, Int $frequency, String $description, array $foods)
 {

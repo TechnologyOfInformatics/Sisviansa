@@ -618,7 +618,7 @@ function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
     }
 }
 
-function get_fav_and_personal_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function get_fav_and_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
     $client_id = get_client_id($tORM, $token);
@@ -631,6 +631,7 @@ function get_fav_and_personal_menus(TORM $tORM, String $token) //Funcion incompl
             ->columns("pide.menu_id")
             ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
             ->do("select");
+
 
         foreach ($menu_id as $id) {
             $menu = $tORM
@@ -649,8 +650,6 @@ function get_fav_and_personal_menus(TORM $tORM, String $token) //Funcion incompl
             ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
             ->do("select");
 
-        $unique_menus = array();
-
 
         foreach ($favorite_menu_id as $id) {
             $menu = $tORM
@@ -663,64 +662,8 @@ function get_fav_and_personal_menus(TORM $tORM, String $token) //Funcion incompl
             }
         }
 
-        foreach ($menus_array as $menu) {
-            $id = $menu['id'];
-            if (!isset($unique_menus[$id])) {
-                $unique_menus[$id] = $menu;
-            }
-        }
-
-        $unique_menus = array_values($unique_menus);
-        return $unique_menus;
-    } else {
-
-        return "ERROR 403, FORBIDDEN";
-    }
-}
-
-function get_menus(TORM $tORM, String $token)
-{
-    //Esta funcion devolvera los menues ya sean personalizados o normales, es una funcion para admins
-    $client_id = get_client_id($tORM, $token);
-
-    if ($client_id) {
-        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
-        $menus_array = [];
-        $menu_id = $tORM
-            ->from("pide")
-            ->columns("pide.menu_id")
-            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
-            ->do("select");
-
-        foreach ($menu_id as $id) {
-            $menu = $tORM
-                ->from("menu")
-                ->where("menu.id", "eq", $id["menu_id"])
-                ->do("select");
-            if ($menu) {
-                $menus_array[] = $menu[0];
-            }
-        }
-
-        $favorite_menu_id = $tORM
-            ->from("favorito")
-            ->columns("favorito.menu_id")
-            ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
-            ->do("select");
-
         $unique_menus = array();
 
-
-        foreach ($favorite_menu_id as $id) {
-            $menu = $tORM
-                ->from("menu")
-                ->where("menu.id", "eq", $id["menu_id"])
-                ->do("select");
-            if ($menu) {
-                $menus_array[] = $menu[0];
-            }
-        }
-
         foreach ($menus_array as $menu) {
             $id = $menu['id'];
             if (!isset($unique_menus[$id])) {
@@ -728,64 +671,126 @@ function get_menus(TORM $tORM, String $token)
             }
         }
 
-        $unique_menus = array_values($unique_menus);
-        return $unique_menus;
+        $menus = array_values($unique_menus);
+
+        $foods = $tORM
+            ->from("vianda")
+            ->do("select");
+
+        $relation = $tORM
+            ->from("conforma")
+            ->columns("conforma.vianda_id", "conforma.menu_id")
+            ->do("select");
+
+        $diets = $tORM
+            ->from("vianda_dieta")
+            ->do("select");
+
+        foreach ($diets as $diet) {
+            foreach ($foods as $key => $food) {
+                unset($foods[$key]['tiempo_de_coccion']);
+                unset($foods[$key]['productos']);
+                if ($food['id'] == $diet['vianda_id']) {
+                    $foods[$key]['dietas'][] = $diet['dieta'];
+                }
+            }
+        }
+        foreach ($foods as $food) {
+            foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
+                unset($menu['estado']);
+                unset($menu['calorias']);
+
+                if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
+                    if (!isset($menu['viandas'])) {
+                        $menu['viandas'] = [];
+                    }
+                    $menu['viandas'][$food['nombre']] = $food;
+                }
+            }
+        }
+        return $menus;
     } else {
 
         return "ERROR 403, FORBIDDEN";
     }
 }
 
-function get_client_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function get_menus(TORM $tORM)
 {
-    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos
-    $client_id = get_client_id($tORM, $token);
+    //Funcion para recibir TODOS los menus, es una funcion para admin
 
-    if ($client_id) {
-        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
-        $menus_array = [];
-        $menu_id = $tORM
-            ->from("pide")
-            ->columns("pide.menu_id")
-            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
-            ->do("select");
+    $menus = $tORM
+        ->from("menu")
+        ->do("select");
 
-        foreach ($menu_id as $id) {
-            $menu = $tORM
-                ->from("menu")
-                ->where("menu.id", "eq", $id["menu_id"])
-                ->do("select");
-            if ($menu) {
-                $menus_array[] = $menu[0];
+    $foods = $tORM
+        ->from("vianda")
+        ->do("select");
+
+    $relation = $tORM
+        ->from("conforma")
+        ->columns("conforma.vianda_id", "conforma.menu_id")
+        ->do("select");
+
+    $diets = $tORM
+        ->from("vianda_dieta")
+        ->do("select");
+
+    foreach ($diets as $diet) {
+        foreach ($foods as $key => $food) {
+            unset($foods[$key]['tiempo_de_coccion']);
+            unset($foods[$key]['productos']);
+            if ($food['id'] == $diet['vianda_id']) {
+                $foods[$key]['dietas'][] = $diet['dieta'];
             }
         }
-
-        $favorite_menu_id = $tORM
-            ->from("favorito")
-            ->columns("favorito.menu_id")
-            ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
-            ->do("select");
-
-        $unique_menus = array();
-        foreach ($menus_array as $menu) {
-            $id = $menu['id'];
-            if (!isset($unique_menus[$id])) {
-                $unique_menus[$id] = $menu;
-            }
-        }
-
-        $unique_menus = array_values($unique_menus);
-        return $unique_menus;
-    } else {
-
-        return "ERROR 403, FORBIDDEN";
     }
+    foreach ($foods as $food) {
+        foreach ($menus as $key => $menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
+
+            if (in_array(['menu_id' => $menus[$key]['id'], 'vianda_id' => $food['id']], $relation)) {
+                if (!isset($menus[$key]['viandas'])) {
+                    $menus[$key]['viandas'] = [];
+                }
+                $menus[$key]['viandas'][$food['nombre']] = $food;
+            }
+        }
+    }
+
+
+    $filtered_menus = array_values($menus);
+
+
+    return [$filtered_menus];
 }
 
-function show_food(TORM $tORM) //
+function get_foods(TORM $tORM) //
 {
+    //Funcion para recibir TODOS los menus, es una funcion para admin
+
+    $foods = $tORM
+        ->from("vianda")
+        ->do("select");
+
+    $diets = $tORM
+        ->from("vianda_dieta")
+        ->do("select");
+
+    foreach ($diets as $diet) {
+        foreach ($foods as $key => $food) {
+            if ($food['id'] == $diet['vianda_id']) {
+                $foods[$key]['dietas'][] = $diet['dieta'];
+            }
+        }
+    }
+
+
+    $filtered_menus = array_values($foods);
+
+
+    return [$filtered_menus];
 }
-function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods) //recibirá los id de las viandas, y con ello creará un menú con un id propio
+function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
     $maximum = [15, 30, 11, 120];
@@ -842,6 +847,7 @@ function create_personal_menu(TORM $tORM, String $token, String $name, Int $freq
                 ->columns("conforma.menu_id", "conforma.vianda_id")
                 ->values("conforma", intval($menu_id[0]), intval($food))
                 ->do("insert");
+            buy_menu($tORM, 1, $token, $menu_id[0]);
         }
         if ($result_conformation ==  $result_menu) {
             return "OK, 200";
@@ -853,12 +859,93 @@ function create_personal_menu(TORM $tORM, String $token, String $name, Int $freq
     }
 }
 
-function modify_personal_menu() //
+function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
 {
+    $client_id = get_client_id($tORM, $token);
+    $maximum = [15, 11];
+
+    $values = func_get_args();
+    $length_verificator = True;
+    unset($values[0]);
+    $values = array_values($values);
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+    if (!$length_verificator) {
+        return "ERROR 413, REQUEST ENTITY TOO LARGE";
+    }
+    $menu_existence = $tORM
+        ->from("menu")
+        ->columns("menu.nombre")
+        ->where("menu.id", "eq", $menu_id)
+        ->where("menu.categoria", "eq", "Personalizado")
+        ->join("pide", "pide.menu_id", "menu.id")
+        ->joined_columns("None column")
+        ->where("pide.cliente_id", "eq", $client_id[0]["cliente_id"])
+        ->do("select");
+
+    if ($menu_existence) {
+        $deletion_result_one = $tORM
+            ->from("conforma")
+            ->where("conforma.menu_id", "eq", $menu_id)
+            ->do("delete");
+        $deletion_result_two = $tORM
+            ->from("pide")
+            ->where("pide.menu_id", "eq", $menu_id)
+            ->do("delete");
+        $deletion_result_three = $tORM
+            ->from("menu")
+            ->where("menu.id", "eq", $menu_id)
+            ->do("delete");
+        if ($deletion_result_one == $deletion_result_two && $deletion_result_two == $deletion_result_three) {
+            return "OK, 200";
+        } else {
+            return [$deletion_result_one, $deletion_result_two, $deletion_result_three];
+        }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
 }
 
-function delete_personal_menu() //
+function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description, array $foods) //
 {
+    $client_id = get_client_id($tORM, $token);
+    $maximum = [15, 11, 11, 120];
+
+    $values = func_get_args();
+    $length_verificator = True;
+    unset($values[0]);
+    unset($values[5]);
+    $values = array_values($values);
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+    if (!$length_verificator) {
+        return "ERROR 413, REQUEST ENTITY TOO LARGE";
+    }
+    $menu_existence = $tORM
+        ->from("menu")
+        ->columns("menu.nombre")
+        ->where("menu.id", "eq", $menu_id)
+        ->join("pide", "pide.menu_id", "menu.id")
+        ->joined_columns("None column")
+        ->where("pide.cliente_id", "eq", $client_id[0]["cliente_id"])
+        ->do("select");
+
+    if ($menu_existence) {
+
+        $result_one = delete_personal_menu($tORM, $token, $menu_id);
+        $result_two = create_personal_menu($tORM, $token, $menu_existence[0]["nombre"], $frequency, $description, $foods);
+        if ($result_one == $result_two) {
+            return "OK, 200";
+        } else {
+            return "ERROR 500, SERVER ERROR";
+        }
+    } else {
+        return "ERROR 404, NOT FOUND";
+    }
 }
 
 function login_bussiness() //
@@ -927,3 +1014,46 @@ function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora 
     }
     return False;
 }
+
+/*
+function get_client_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+{
+    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, es especial para admins, para ver TODOS los menues
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id) {
+        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pide")
+            ->columns("pide.menu_id")
+            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+
+        $unique_menus = array();
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $unique_menus = array_values($unique_menus);
+        return $unique_menus;
+    } else {
+
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+*/
