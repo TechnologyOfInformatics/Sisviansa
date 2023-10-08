@@ -8,11 +8,24 @@ header("Access-Control-Allow-Credentials: true");
 
 $authorization = __FILE__;
 
+function token_generator()
+{
+    $allowedCharacters = '0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+    $textLength = rand(8, 14);
+    $randomText = '';
+
+    for ($i = 0; $i < $textLength; $i++) {
+        $randomText .= $allowedCharacters[rand(0, strlen($allowedCharacters) - 1)];
+    }
+
+    return $randomText;
+}
+
 function get_client_id(TORM $tORM, String $token)
 {
 
 
-    $client_id = $tORM
+    $client = $tORM
         ->from("inicia")
         ->columns("inicia.cliente_id")
         ->where("inicia.sesion_token", "eq", $token)
@@ -20,7 +33,75 @@ function get_client_id(TORM $tORM, String $token)
         ->joined_columns("None column")
         ->where("sesion.estado", "eq", "Activa")
         ->do("select");
-    return $client_id;
+
+    return $client;
+}
+function session_token(TORM $tORM, String $token)
+{
+
+    $actual_date = date('Y-m-d H:i:s');
+
+    $client = $tORM
+        ->from("inicia")
+        ->columns("inicia.cliente_id")
+        ->where("inicia.sesion_token", "eq", $token)
+        ->join("sesion", "sesion.token", "inicia.sesion_token")
+        ->joined_columns("sesion.final_de_sesion")
+        ->where("sesion.estado", "eq", "Activa")
+        ->do("select");
+    $new_date = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 minutes'));
+
+    if (empty($client)) {
+        //Camino de que no se encontro la sesion/cliente
+        return $client;
+    } elseif ($client[0]["final_de_sesion"] <= $actual_date) {
+        //Camino que genera otra sesion cuando la actual esta vencida
+        $new_token = token_generator();
+
+        $tORM
+            ->from("sesion")
+            ->columns("sesion.estado")
+            ->values("sesion", "Finalizada")
+            ->where("sesion.token", "eq", $token)
+            ->do("update");
+
+        $tORM
+            ->from("sesion")
+            ->columns("sesion.token", "sesion.inicio_de_sesion", "sesion.ultima_sesion", "sesion.final_de_sesion", "sesion.estado")
+            ->values("sesion", $new_token, $actual_date, $actual_date, $new_date, "Activa")
+            ->do("insert");
+
+        $tORM
+            ->from("inicia")
+            ->where("inicia.sesion_token", "eq", $token)
+            ->do("delete");
+
+        $tORM
+            ->from("inicia")
+            ->columns("inicia.sesion_token", "inicia.cliente_id")
+            ->values("inicia", $new_token, intval($client[0]["cliente_id"]))
+            ->do("insert");
+
+        return [["cliente_id" => $client[0]["cliente_id"], "token" => $new_token]];
+    } elseif ($client[0]["final_de_sesion"] > $actual_date) {
+        //Camino que actualiza la sesion para agregarle 15 minutos
+        $tORM
+            ->from("sesion")
+            ->columns("sesion.final_de_sesion")
+            ->values("sesion", $new_date)
+            ->where("sesion.token", "eq", $token)
+            ->do("update");
+
+
+        $tORM
+            ->from("sesion")
+            ->columns("sesion.final_de_sesion", "sesion.ultima_sesion")
+            ->values("sesion", $actual_date, $new_date)
+            ->where("sesion.token", "eq", $token)
+            ->do("update");
+
+        return $client;
+    }
 }
 function session_close(QueryCall $ctl, $token)
 {
@@ -36,19 +117,6 @@ function session_close(QueryCall $ctl, $token)
     $ctl->delete("inicia", ["$token"], ["sesion_token"])->call();
     $ctl->update("sesion", [$token, "Finalizada"], ["token"], ["token", "estado"])->call();
     return [False];
-}
-
-function token_generator()
-{
-    $allowedCharacters = '0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
-    $textLength = rand(8, 14);
-    $randomText = '';
-
-    for ($i = 0; $i < $textLength; $i++) {
-        $randomText .= $allowedCharacters[rand(0, strlen($allowedCharacters) - 1)];
-    }
-
-    return $randomText;
 }
 
 function session(QueryCall $ctl, $token)
@@ -298,7 +366,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
         }
         return "ERROR 500, SERVER ERROR";
     } else {
-        return "ERROR 404: NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
 
@@ -327,7 +395,7 @@ function get_address(TORM $tORM, string $token)
         //
         return $addresses;
     } else {
-        return "ERROR 404: NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
 function user_information(TORM $tORM, $token)
@@ -382,7 +450,7 @@ function user_information(TORM $tORM, $token)
         ];
         return $formatted_result;
     } else {
-        return "ERROR 404, NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
 
@@ -518,7 +586,7 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
     }
 }
 
-function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id) //token, menu_id
+function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
     for ($i = 0; $i < $amount; $i++) {
@@ -543,14 +611,14 @@ function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id) //token,
                 }
             }
         } else {
-            return "ERROR 404, NOT FOUND";
+            return "ERROR 403, FORBIDDEN";
         }
 
         return $response;
     }
 }
 
-function get_fav_and_personal_menus(TORM $tORM, String $token) //token
+function get_fav_and_personal_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
     $client_id = get_client_id($tORM, $token);
@@ -606,11 +674,11 @@ function get_fav_and_personal_menus(TORM $tORM, String $token) //token
         return $unique_menus;
     } else {
 
-        return "ERROR 404, NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
 
-function get_menus(TORM $tORM, String $token) //token
+function get_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera los menues ya sean personalizados o normales, es una funcion para admins
     $client_id = get_client_id($tORM, $token);
@@ -664,11 +732,11 @@ function get_menus(TORM $tORM, String $token) //token
         return $unique_menus;
     } else {
 
-        return "ERROR 404, NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
 
-function get_client_menus(TORM $tORM, String $token) //Funcion incompleta
+function get_client_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos
     $client_id = get_client_id($tORM, $token);
@@ -710,11 +778,79 @@ function get_client_menus(TORM $tORM, String $token) //Funcion incompleta
         return $unique_menus;
     } else {
 
-        return "ERROR 404, NOT FOUND";
+        return "ERROR 403, FORBIDDEN";
     }
 }
-function create_personal_menu() //recibirá los id de las viandas, y con ello creará un menú con un id propio
+
+function show_food(TORM $tORM) //
 {
+}
+function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods) //recibirá los id de las viandas, y con ello creará un menú con un id propio
+{
+    $client_id = get_client_id($tORM, $token);
+    $maximum = [15, 30, 11, 120];
+
+    $values = func_get_args();
+    $length_verificator = True;
+    unset($values[0]);
+    unset($values[5]);
+    $values = array_values($values);
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+    if (!$length_verificator) {
+        return "ERROR 413, REQUEST ENTITY TOO LARGE";
+    }
+    //necesito crear el menu en si, y despues agregar su relacion con las viandas dadas en conforma
+
+    if ($client_id) {
+        $menu_names = $tORM->do(query: "SELECT nombre FROM menu;");
+
+        $result_conformation = "";
+        foreach ($menu_names as $data) {
+            if ($name === $data[0]) {
+                return "ERROR 409, CONFLICT";
+            }
+        }
+        $price = 0.0;
+        foreach ($foods as $food) {
+            $food_data = $tORM
+                ->from("vianda")
+                ->columns("vianda.precio")
+                ->where("vianda.id", "eq", $food)
+                ->do("select");
+            if ($food_data) {
+                $price += doubleval($food_data[0]["precio"]);
+            } else {
+                return "ERROR 404, NOT FOUND";
+            }
+        }
+
+        $result_menu = $tORM
+            ->from("menu")
+            ->columns("menu.nombre", "menu.frecuencia", "menu.descripcion", "menu.precio", "menu.categoria")
+            ->values("menu", $name, $frequency, $description, $price, "Personalizado")
+            ->do("insert");
+        $menu_id = $tORM->do(query: "SELECT id FROM menu
+        ORDER BY id DESC
+        LIMIT 1;")[0];
+
+        foreach ($foods as $food) {
+            $result_conformation = $tORM
+                ->from("conforma")
+                ->columns("conforma.menu_id", "conforma.vianda_id")
+                ->values("conforma", intval($menu_id[0]), intval($food))
+                ->do("insert");
+        }
+        if ($result_conformation ==  $result_menu) {
+            return "OK, 200";
+        } else {
+            return "ERROR 500, SERVER ERROR";
+        }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
 }
 
 function modify_personal_menu() //
@@ -761,7 +897,7 @@ function recover_password() //a travez de correo electronico se enviara un codig
 {
 }
 
-function proto_session(TORM $tORM) //
+function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora por si me es útil
 {
     $token = '12312334f234';
     $is_session_active = $tORM

@@ -233,7 +233,7 @@ class TORM //Techin Object-Relation Model (Basic)
         if (in_array(null, $values) || in_array('', $values)) {
             $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
             return $this;
-        } elseif (!isset($this->table_sets[$table])) {
+        } elseif (!isset($this->table_sets[strtolower($table)])) {
             $this->error .= strtoupper(__FUNCTION__) . " STEP: The table is not valid" . "</br>";
             return $this;
         } elseif (count($values) == count($this->table_sets[$table]) && empty($this->error)) {
@@ -244,7 +244,10 @@ class TORM //Techin Object-Relation Model (Basic)
                 'time' => 'string',
                 'timestamp' => 'string',
                 'boolean' => 'boolean',
-                'enum' => 'string'
+                'enum' => 'string',
+                'text' => 'string',
+                'decimal' => 'double',
+                'datetime' => 'string'
             ];
             $counter = 0;
             foreach ($this->table_sets[$table] as $index => $column) {
@@ -443,12 +446,7 @@ class TORM //Techin Object-Relation Model (Basic)
         }
         return $this;
     }
-    //
-    //
-    public function mostrar() //Funcion temporal para ver los datos, borrar al completar!!!
-    {
-        return get_object_vars($this);
-    }
+
     private function queryFormat(String $method)
     {
         // Etapa 7: Formatear la consulta SQL

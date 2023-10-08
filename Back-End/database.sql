@@ -65,7 +65,6 @@ CREATE TABLE Sesion (
 CREATE TABLE Menu (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del menú el cual es autogenerado',
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre del menú que hace referencia a las viandas que lo contienen',
-  Calorias INT(11) COMMENT 'Calorías totales correspondientes al menú',
   Frecuencia INT(11) COMMENT 'Frecuencia con la que el menu se entregue el menú',
   Descripcion TEXT COMMENT 'La descripcion del menu',
   Precio DECIMAL(10, 2) NOT NULL COMMENT 'Precio del menu',
@@ -107,7 +106,8 @@ CREATE TABLE Vianda (
   Tiempo_de_coccion INT(11) COMMENT 'Su tiempo de cocción estimado',
   Productos VARCHAR(150) NOT NULL COMMENT 'Productos que componen la vianda',
   Stock INT(11) NOT NULL COMMENT 'Stock actual de la vianda',
-  Calorias INT(11) NOT NULL COMMENT 'Calorías totales correspondientes a la vianda'
+  Calorias INT(11) NOT NULL COMMENT 'Calorías totales correspondientes a la vianda',
+  Precio DECIMAL(10, 2) NOT NULL COMMENT 'Precio propio de la vianda'
 );
 
 -- Creación de la tabla Vianda_Dieta
@@ -148,7 +148,6 @@ CREATE TABLE Favorito (
 CREATE TABLE Conforma (
   Menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente a la caja',
   Vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda correspondiente a la caja',
-  Demora_total INT(11) NOT NULL COMMENT 'Tiempo que demora en totalidad el pedido en hacerse',
   PRIMARY KEY(Menu_ID, Vianda_ID),
   FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
   FOREIGN KEY (Vianda_ID) REFERENCES Vianda(ID)
@@ -524,7 +523,6 @@ INSERT INTO
   Menu (
     `ID`,
     `Nombre`,
-    `Calorias`,
     `Frecuencia`,
     `Descripcion`,
     `Precio`,
@@ -534,7 +532,6 @@ VALUES
   (
     1,
     'Menu1',
-    500,
     1,
     'Descripcion Menu 1',
     10.00,
@@ -543,7 +540,6 @@ VALUES
   (
     2,
     'Menu2',
-    600,
     7,
     'Descripcion Menu 2',
     15.00,
@@ -552,7 +548,6 @@ VALUES
   (
     3,
     'Menu3',
-    700,
     15,
     'Descripcion Menu 3',
     20.00,
@@ -566,15 +561,16 @@ INSERT INTO
     `Tiempo_de_coccion`,
     `Productos`,
     `Stock`,
-    `Calorias`
+    `Calorias`,
+    `Precio`
   )
 VALUES
-  (1, 'Vianda1', 30, 'Productos1', 100, 200),
-  (2, 'Vianda2', 40, 'Productos2', 200, 300),
-  (3, 'Vianda3', 50, 'Productos3', 300, 400),
-  (4, 'Vianda4', 30, 'Productos1', 100, 200),
-  (5, 'Vianda5', 40, 'Productos2', 200, 300),
-  (6, 'Vianda6', 50, 'Productos3', 300, 400);
+  (1, 'Vianda1', 30, 'Productos1', 100, 200, 10.0),
+  (2, 'Vianda2', 40, 'Productos2', 200, 300, 30.0),
+  (3, 'Vianda3', 50, 'Productos3', 300, 400, 20.2),
+  (4, 'Vianda4', 30, 'Productos1', 100, 200, 10.1),
+  (5, 'Vianda5', 40, 'Productos2', 200, 300, 30.1),
+  (6, 'Vianda6', 50, 'Productos3', 300, 400, 20.2);
 
 INSERT INTO
   Vianda_Dieta (`Vianda_ID`, `Dieta`)
@@ -613,20 +609,20 @@ VALUES
   (3, 3);
 
 INSERT INTO
-  Conforma (`Menu_ID`, `Vianda_ID`, `Demora_total`)
+  Conforma (`Menu_ID`, `Vianda_ID`)
 VALUES
-  (1, 1, 60),
-  (2, 2, 75),
-  (3, 3, 90),
-  (1, 4, 60),
-  (2, 5, 75),
-  (3, 6, 90),
-  (1, 5, 60),
-  (2, 6, 75),
-  (3, 4, 90),
-  (1, 3, 60),
-  (2, 1, 75),
-  (3, 2, 90);
+  (1, 1),
+  (2, 2),
+  (3, 3),
+  (1, 4),
+  (2, 5),
+  (3, 6),
+  (1, 5),
+  (2, 6),
+  (3, 4),
+  (1, 3),
+  (2, 1),
+  (3, 2);
 
 INSERT INTO
   Pide (
