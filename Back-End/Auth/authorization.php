@@ -370,7 +370,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
     }
 }
 
-function get_address(TORM $tORM, string $token)
+function get_address(TORM $tORM, string $token) //Funcion incompleta
 {
 
     $length_verificator = True;
@@ -382,7 +382,9 @@ function get_address(TORM $tORM, string $token)
 
     if ($client_id && $length_verificator) {
         // Debo pedir los datos desde direccion y no desde cliente
-        $address_values = $tORM->from("direccion")->where("direccion.cliente_id", "eq", $client_id);
+        $address_values = $tORM
+            ->from("direccion")
+            ->where("direccion.cliente_id", "eq", $client_id);
         $addresses = [
             'numero' => $address_values["numero"],
             'calle' => $address_values["calle"],

@@ -5,6 +5,8 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 $index = __FILE__;
 
+////////////////////////////////////////DEBE SER MODIFICADO PARA CONECTARSE CON LA BASE EN VEZ DE USAR TOKENS
+
 function user_info($token)
 {
     global $tORM;
@@ -15,5 +17,12 @@ function admin_get_menus($token)
 {
 
     global $tORM;
-    return get_fav_and_personal_menus($tORM, $token);
+    return get_menus($tORM, $token);
+}
+
+function admin_get_foods($token)
+{
+
+    global $tORM;
+    return get_foods($tORM, $token);
 }

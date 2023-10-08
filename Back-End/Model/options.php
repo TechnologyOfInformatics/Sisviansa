@@ -13,8 +13,9 @@ function options_modify_web($token, $passwd = "", $first_name = "", $second_name
 }
 function options_get_address($token)
 {
-    global $tORM;
-    return get_address($tORM, $token);
+    //global $tORM;
+    //return get_address($tORM, $token);
+    return [];
 }
 function options_user_info($token)
 {
@@ -29,9 +30,19 @@ function options_get_special_menus($token)
     return get_fav_and_personal_menus($tORM, $token);
 }
 
-
 function options_create_personal_menu(String $token, String $name, Int $frequency, String $description, array $foods)
 {
     global $tORM;
     return create_personal_menu($tORM, $token, $name, $frequency, $description, $foods);
+}
+
+function options_mod_personal_menu(String $token, Int $menu_id, Int $frequency, String $description, array $foods)
+{
+    global $tORM;
+    return modify_personal_menu($tORM, $token, $menu_id, $frequency, $description, $foods);
+}
+function options_del_personal_menu(String $token, Int $menu_id)
+{
+    global $tORM;
+    return delete_personal_menu($tORM, $token, $menu_id);
 }
