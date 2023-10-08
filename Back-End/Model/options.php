@@ -16,7 +16,21 @@ function options_get_address($token)
     global $tORM;
     return get_address($tORM, $token);
 }
-function options_user_info($token){
+function options_user_info($token)
+{
     global $tORM;
     return user_information($tORM, $token);
+}
+
+function options_get_special_menus($token)
+{
+
+    global $tORM;
+    return get_fav_and_personal_menus($tORM, $token);
+}
+
+function options_get_client_menus($token)
+{
+    global $tORM;
+    return get_client_menus($tORM, $token);
 }

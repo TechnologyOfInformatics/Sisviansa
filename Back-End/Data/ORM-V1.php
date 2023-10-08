@@ -505,7 +505,7 @@ class TORM //Techin Object-Relation Model (Basic)
                 if (!$columns) {
                     $this->error .= strtoupper(__FUNCTION__) . " STEP: There is no columns set" . "</br>";
                 }
-                $sqlQuery = "INSERT INTO `{$this->data['table']}`({$columns}) VALUES ($values) ";
+                $sqlQuery = "INSERT INTO `{$this->data['table']}`({$columns}) VALUES ({$values}) ";
 
                 break;
             case 'delete':

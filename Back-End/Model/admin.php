@@ -10,3 +10,10 @@ function user_info($token)
     global $tORM;
     return user_info($tORM, $token);
 }
+
+function admin_get_menus($token)
+{
+
+    global $tORM;
+    return get_fav_and_personal_menus($tORM, $token);
+}

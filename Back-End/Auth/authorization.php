@@ -7,16 +7,26 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
 $authorization = __FILE__;
-function datatype($var, $type)
-{
-    return gettype($var) === $type;
-}
 
+function get_client_id(TORM $tORM, String $token)
+{
+
+
+    $client_id = $tORM
+        ->from("inicia")
+        ->columns("inicia.cliente_id")
+        ->where("inicia.sesion_token", "eq", $token)
+        ->join("sesion", "sesion.token", "inicia.sesion_token")
+        ->joined_columns("None column")
+        ->where("sesion.estado", "eq", "Activa")
+        ->do("select");
+    return $client_id;
+}
 function session_close(QueryCall $ctl, $token)
 {
     if (!isset($ctl, $token)) {
         return "400, BAD REQUEST: Wrong data type";
-    } elseif (!datatype($token, "string")) {
+    } elseif (!(gettype($token) == "string")) {
         return "400, BAD REQUEST: Wrong data type";
     } elseif (strlen($token) >= 15 || strlen($token) < 8) {
         return "400, BAD REQUEST: Wrong data type";
@@ -207,11 +217,6 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     }
 }
 
-
-
-
-//
-//
 //
 //
 function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
@@ -235,11 +240,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
         return "ERROR 400, BAD REQUEST";
     }
 
-    $client_id = $tORM
-        ->from("inicia")
-        ->columns("inicia.cliente_id")
-        ->where("inicia.sesion_token", "eq", $token)
-        ->do("select");
+    $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
 
@@ -309,11 +310,7 @@ function get_address(TORM $tORM, string $token)
     $length_verificator = $length_verificator && (strlen(strval($token)) <= 15);
 
 
-    $client_id = $tORM
-        ->from("inicia")
-        ->columns("inicia.cliente_id")
-        ->where("inicia.sesion_token", "eq", $token)
-        ->do("select");
+    $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
         // Debo pedir los datos desde direccion y no desde cliente
@@ -363,17 +360,14 @@ function user_information(TORM $tORM, $token)
         ->do("select");
 
 
-    $client_id = $tORM
-        ->from("inicia")
-        ->columns("inicia.cliente_id")
-        ->where("inicia.sesion_token", "eq", $token)
-        ->do("select");
 
-    if ($result) {
+    $client_id = get_client_id($tORM, $token);
+
+    if ($result && $client_id) {
         $result = $result[0];
         $because_i_used_numero_twice = $tORM // Debo pedir los datos de direccion de su respectiva tabla
             ->from('direccion')
-            ->where('direccion.cliente_id', 'eq', $client_id)
+            ->where('direccion.cliente_id', 'eq', $client_id[0]["cliente_id"])
             ->do('select');
         $formatted_result = [
             'primerNombre' => $result['primer_nombre'],
@@ -388,34 +382,35 @@ function user_information(TORM $tORM, $token)
         ];
         return $formatted_result;
     } else {
-        return $result;
+        return "ERROR 404, NOT FOUND";
     }
 }
 
 function show_shop(TORM $tORM, $token)
 {
+    //Aqui tome otra "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
     if ($token) {
         $is_session = $tORM
             ->from("sesion")
             ->columns("sesion.token")
             ->where("sesion.token", "eq", $token)
+            ->where("sesion.estado", "eq", "Activa")
             ->do("select");
     } else {
         $is_session = False;
     }
-    $favorites = "";
-    if (!isset($tORM)) {
-        return "400 Bad Request: Missing data";
-    } elseif (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
+    $client_id = get_client_id($tORM, $token);
+    $favorites = [];
+    if (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
             return "400, BAD REQUEST: Wrong data length";
-        } else {
-            $favorites = $tORM
+        } elseif ($client_id) {
+            $favorites =  $tORM
                 ->from("favorito")
-                ->columns("favorito.menu_id")
-                ->join("inicia", "inicia.cliente_id", "favorito.web_id")
-                ->joined_columns("inicia.cliente_id")
-                ->where("inicia.sesion_token", "eq", $token)
+                ->where("favorito.web_id", "eq", $client_id[0]["cliente_id"])
+                ->join("menu", "menu.id", "favorito.menu_id")
+                ->joined_columns("None column")
+                ->where("menu.categoria", "eq", "Estandar")
                 ->do("select");
         }
     }
@@ -458,7 +453,15 @@ function show_shop(TORM $tORM, $token)
             }
         }
     }
-    return [$menus, (gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id'))];
+
+    $filtered_menus = array_filter($menus, function ($menu) {
+        return $menu['categoria'] == 'Estandar';
+    });
+
+    $filtered_menus = array_values($filtered_menus);
+
+
+    return [$filtered_menus, (gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
@@ -479,38 +482,33 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 
             return "400, BAD REQUEST: Wrong data length";
         } else {
+            $favorites = [];
+            $client_id = get_client_id($tORM, $token);
+            if ($client_id) {
+                $favorites = $tORM
+                    ->from("favorito")
+                    ->where("favorito.web_id", "eq", $client_id[0]["cliente_id"])
+                    ->where("favorito.menu_id", "eq", $menu_id)
+                    ->join("menu", "menu.id", "favorito.menu_id")
+                    ->joined_columns("None column")
+                    ->where("menu.categoria", "eq", "Estandar")
+                    ->do("select");
+                $toggle_state = False;
+            }
+            if (!empty($favorites)) {
 
-            $client_id = $tORM
-                ->from("inicia")
-                ->columns("inicia.cliente_id")
-                ->where("inicia.sesion_token", "eq", $token)
-                ->do("select");
-
-            $favorites = $tORM
-                ->from("favorito")
-                ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
-                ->where("favorito.menu_id", "eq", $menu_id)
-                ->do("select");
-            $toggle_state = False;
-            if ((gettype($favorites) == "array")) {
-
-                if (!empty($favorites)) {
-
-                    $tORM
-                        ->from("favorito")
-                        ->where("favorito.menu_id", "eq", $menu_id)
-                        ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
-                        ->do("delete");
-                    $toggle_state = False;
-                } else {
-                    $tORM
-                        ->from("favorito")
-                        ->values("favorito", intval($menu_id), intval($client_id[0]['cliente_id']))
-                        ->do("insert");
-                    $toggle_state = True;
-                }
+                $tORM
+                    ->from("favorito")
+                    ->where("favorito.menu_id", "eq", $menu_id)
+                    ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
+                    ->do("delete");
+                $toggle_state = False;
             } else {
-                return gettype($favorites);
+                $tORM
+                    ->from("favorito")
+                    ->values("favorito", intval($menu_id), intval($client_id[0]['cliente_id']))
+                    ->do("insert");
+                $toggle_state = True;
             }
 
             return [$toggle_state, $menu_id];
@@ -520,46 +518,250 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
     }
 }
 
-function buy_menu()
+function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id) //token, menu_id
 {
-    //Esta funcion debe crear una entrada en genera (o en caso de mover el menu_id a paquete esta entrada no se genera)
-    //despues se debe hacer una entrada en paquete, donde se le daran sus datos
+    //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
+    for ($i = 0; $i < $amount; $i++) {
+        $client_id = get_client_id($tORM, $token);
+
+        $foods = $tORM
+            ->from("conforma")
+            ->columns("conforma.vianda_id")
+            ->where("conforma.menu_id", "eq", $menu_id)
+            ->do("select");
+        $response = [];
+        if ($client_id && $foods) {
+
+            for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
+                $actual_date = date('Y-m-d H:i:s');
+                foreach ($foods as $food) {
+                    $response = $tORM
+                        ->from("pide")
+                        ->columns("pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
+                        ->values("pide", intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
+                        ->do("insert");
+                }
+            }
+        } else {
+            return "ERROR 404, NOT FOUND";
+        }
+
+        return $response;
+    }
 }
-function create_menu()
+
+function get_fav_and_personal_menus(TORM $tORM, String $token) //token
+{
+    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id) {
+        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pide")
+            ->columns("pide.menu_id")
+            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.categoria", "eq", "Personalizado")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        $favorite_menu_id = $tORM
+            ->from("favorito")
+            ->columns("favorito.menu_id")
+            ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        $unique_menus = array();
+
+
+        foreach ($favorite_menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.categoria", "eq", "Estandar")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $unique_menus = array_values($unique_menus);
+        return $unique_menus;
+    } else {
+
+        return "ERROR 404, NOT FOUND";
+    }
+}
+
+function get_menus(TORM $tORM, String $token) //token
+{
+    //Esta funcion devolvera los menues ya sean personalizados o normales, es una funcion para admins
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id) {
+        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pide")
+            ->columns("pide.menu_id")
+            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        $favorite_menu_id = $tORM
+            ->from("favorito")
+            ->columns("favorito.menu_id")
+            ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        $unique_menus = array();
+
+
+        foreach ($favorite_menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $unique_menus = array_values($unique_menus);
+        return $unique_menus;
+    } else {
+
+        return "ERROR 404, NOT FOUND";
+    }
+}
+
+function get_client_menus(TORM $tORM, String $token) //Funcion incompleta
+{
+    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id) {
+        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pide")
+            ->columns("pide.menu_id")
+            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        $favorite_menu_id = $tORM
+            ->from("favorito")
+            ->columns("favorito.menu_id")
+            ->where("favorito.web_id", "eq", $client_id[0]['cliente_id'])
+            ->do("select");
+
+        $unique_menus = array();
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $unique_menus = array_values($unique_menus);
+        return $unique_menus;
+    } else {
+
+        return "ERROR 404, NOT FOUND";
+    }
+}
+function create_personal_menu() //recibirá los id de las viandas, y con ello creará un menú con un id propio
 {
 }
-function modify_menu()
+
+function modify_personal_menu() //
 {
 }
-function delete_menu()
+
+function delete_personal_menu() //
 {
 }
-function login_bussiness()
+
+function login_bussiness() //
 {
 }
-function register_bussiness()
+
+function register_bussiness() //
 {
 }
-function modify_bussiness()
+
+function modify_bussiness() //
 {
 }
-function show_food_list()
+
+function show_food_list() //
 {
 }
-function credit_card_change()
+
+function credit_card_change() //
 {
 }
-function address_change(/*token,id_debil, numero, calle, barrio, ciudad*/)
+
+function address_create(/*token, numero, calle, barrio, ciudad*/) //
 {
 }
-function change_password()
+
+function address_change(/*token, numero, calle, barrio, ciudad*/) //
 {
 }
+
+function change_password() //
+{
+}
+
 function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
 {
 }
 
-function proto_session(TORM $tORM)
+function proto_session(TORM $tORM) //
 {
     $token = '12312334f234';
     $is_session_active = $tORM

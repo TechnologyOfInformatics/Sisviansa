@@ -16,3 +16,10 @@ function shop_favorites_toggle(string $token, int $menu_id)
     global $tORM;
     return toggle_favorites($tORM, $token, $menu_id);
 }
+
+function shop_buy_menu($token, $amount, $menu_id)
+{
+
+    global $tORM;
+    return buy_menu($tORM, $amount, $token, $menu_id);
+}

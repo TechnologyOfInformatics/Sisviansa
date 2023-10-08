@@ -69,15 +69,19 @@ CREATE TABLE Menu (
   Frecuencia INT(11) COMMENT 'Frecuencia con la que el menu se entregue el menú',
   Descripcion TEXT COMMENT 'La descripcion del menu',
   Precio DECIMAL(10, 2) NOT NULL COMMENT 'Precio del menu',
-  Estado ENUM(
-    'Solicitado',
-    'Confirmado',
-    'Enviado',
-    'Entregado',
-    'Rechazado'
-  ) COMMENT 'Estado del menú en específico'
+  Categoria ENUM('Estandar', 'Personalizado') NOT NULL COMMENT 'La categoria a la que pertenece el menu, donde puede ser creado por un cliente o por el sistema'
 );
 
+/*
+ ,
+ Estado ENUM(
+ 'Solicitado',
+ 'Confirmado',
+ 'Enviado',
+ 'Entregado',
+ 'Rechazado'
+ ) COMMENT 'Estado del menú en específico'
+ */
 -- Creación de la tabla Paquete
 CREATE TABLE Paquete (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
@@ -152,15 +156,20 @@ CREATE TABLE Conforma (
 
 -- Creación de la tabla Pide
 CREATE TABLE Pide (
+  Numero_de_pedido INT(11) AUTO_INCREMENT NOT NULL COMMENT 'Número de pedido',
   Menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente al pedido',
   Vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda correspondiente al pedido',
   Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha efectuado el pedido',
   Fecha_pedido DATE NOT NULL COMMENT 'Fecha del pedido',
-  Numero_de_pedido INT(11) NOT NULL COMMENT 'Número de pedido',
-  PRIMARY KEY(Menu_ID, Vianda_ID, Cliente_ID),
+  PRIMARY KEY(
+    Numero_de_pedido,
+    Menu_ID,
+    Vianda_ID,
+    Cliente_ID
+  ),
   FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
   FOREIGN KEY (Vianda_ID) REFERENCES Vianda(ID),
-  FOREIGN KEY (Cliente_ID) REFERENCES Web(Cliente_ID)
+  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
 -- Creación de la tabla Recibe
@@ -519,7 +528,7 @@ INSERT INTO
     `Frecuencia`,
     `Descripcion`,
     `Precio`,
-    `Estado`
+    `Categoria`
   )
 VALUES
   (
@@ -529,7 +538,7 @@ VALUES
     1,
     'Descripcion Menu 1',
     10.00,
-    'Solicitado'
+    'Personalizado'
   ),
   (
     2,
@@ -538,7 +547,7 @@ VALUES
     7,
     'Descripcion Menu 2',
     15.00,
-    'Confirmado'
+    'Estandar'
   ),
   (
     3,
@@ -547,7 +556,7 @@ VALUES
     15,
     'Descripcion Menu 3',
     20.00,
-    'Enviado'
+    'Estandar'
   );
 
 INSERT INTO
@@ -643,7 +652,13 @@ INSERT INTO
 VALUES
   (1, '2023-10-01', '2023-09-07', 'Solicitada', 1),
   (2, '2023-10-02', '2023-09-08', 'En stock', 2),
-  (3, '2023-10-03', '2023-09-09', 'En producción', 3);
+  (
+    3,
+    '2023-10-03',
+    '2023-09-09',
+    'En producción',
+    3
+  );
 
 INSERT INTO
   Recibe (`Paquete_ID`, `Cliente_ID`)

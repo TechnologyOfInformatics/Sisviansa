@@ -28,7 +28,7 @@ echo "<br/>Con token invalido:<br/>";
 print_r(options_get_address("12312334f34"));
 */
 echo "<pre>";
-print_r(user_information($tORM, '12312334f234'));
+print_r(get_client_menus($tORM, "x2312x23d2d2"));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado
