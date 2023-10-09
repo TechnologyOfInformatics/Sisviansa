@@ -24,17 +24,19 @@ function token_generator()
 function get_client_id(TORM $tORM, String $token)
 {
 
+    if ($token) {
+        $client = $tORM
+            ->from("inicia")
+            ->columns("inicia.cliente_id")
+            ->where("inicia.sesion_token", "eq", $token)
+            ->join("sesion", "sesion.token", "inicia.sesion_token")
+            ->joined_columns("None column")
+            ->where("sesion.estado", "eq", "Activa")
+            ->do("select");
 
-    $client = $tORM
-        ->from("inicia")
-        ->columns("inicia.cliente_id")
-        ->where("inicia.sesion_token", "eq", $token)
-        ->join("sesion", "sesion.token", "inicia.sesion_token")
-        ->joined_columns("None column")
-        ->where("sesion.estado", "eq", "Activa")
-        ->do("select");
-
-    return $client;
+        return $client;
+    }
+    return [];
 }
 function session_token(TORM $tORM, String $token)
 {
@@ -464,6 +466,7 @@ function show_shop(TORM $tORM, $token)
             ->where("sesion.estado", "eq", "Activa")
             ->do("select");
     } else {
+        print_r('hola');
         $is_session = False;
     }
     $client_id = get_client_id($tORM, $token);
@@ -474,6 +477,7 @@ function show_shop(TORM $tORM, $token)
         } elseif ($client_id) {
             $favorites =  $tORM
                 ->from("favorito")
+                ->columns('favorito.menu_id')
                 ->where("favorito.web_id", "eq", $client_id[0]["cliente_id"])
                 ->join("menu", "menu.id", "favorito.menu_id")
                 ->joined_columns("None column")
@@ -488,6 +492,7 @@ function show_shop(TORM $tORM, $token)
     $foods = $tORM
         ->from("vianda")
         ->do("select");
+    print_r($foods);
 
     $relation = $tORM
         ->from("conforma")
@@ -508,8 +513,6 @@ function show_shop(TORM $tORM, $token)
     }
     foreach ($foods as $food) {
         foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
-            unset($menu['estado']);
-            unset($menu['calorias']);
 
             if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
                 if (!isset($menu['viandas'])) {
