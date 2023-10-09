@@ -584,7 +584,6 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
         return $is_session;
     }
 }
-
 function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
@@ -612,6 +611,17 @@ function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
         return $response;
     } else {
         return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function buy_multiple_menus(TORM $tORM, array $amounts, String $token, array $menus_ids)
+{
+    $response = '';
+    if ($token && (count($amounts) == count($menus_ids))) {
+        for ($i = 0; $i < count($amounts); $i++) {
+            $response = buy_menu($tORM, $amounts[$i], $token, $menus_ids[$i]);
+        }
+        return $response;
     }
 }
 
