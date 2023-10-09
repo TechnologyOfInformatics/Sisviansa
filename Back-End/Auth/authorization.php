@@ -492,7 +492,6 @@ function show_shop(TORM $tORM, $token)
     $foods = $tORM
         ->from("vianda")
         ->do("select");
-    print_r($foods);
 
     $relation = $tORM
         ->from("conforma")
