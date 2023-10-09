@@ -399,7 +399,7 @@ function get_address(TORM $tORM, string $token) //Funcion incompleta
         return "ERROR 403, FORBIDDEN";
     }
 }
-function user_information(TORM $tORM, $token)
+function user_information_web(TORM $tORM, $token)
 {
     $values = func_get_args();
 
@@ -528,7 +528,7 @@ function show_shop(TORM $tORM, $token)
     $filtered_menus = array_values($filtered_menus);
 
 
-    return [$filtered_menus, (gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id'))];
+    return [$filtered_menus, (gettype($favorites) == "string" ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)

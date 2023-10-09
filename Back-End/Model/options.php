@@ -19,7 +19,7 @@ function options_get_address($token)
 function options_user_info($token)
 {
     global $tORM;
-    return user_information($tORM, $token);
+    return user_information_web($tORM, $token);
 }
 
 function options_get_special_menus($token)
