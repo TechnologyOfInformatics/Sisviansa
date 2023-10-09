@@ -13,9 +13,8 @@ function options_modify_web($token, $passwd = "", $first_name = "", $second_name
 }
 function options_get_address($token)
 {
-    //global $tORM;
-    //return get_address($tORM, $token);
-    return [];
+    global $tORM;
+    return get_address($tORM, $token);
 }
 function options_user_info($token)
 {

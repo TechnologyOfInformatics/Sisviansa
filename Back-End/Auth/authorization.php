@@ -384,18 +384,15 @@ function get_address(TORM $tORM, string $token) //Funcion incompleta
         // Debo pedir los datos desde direccion y no desde cliente
         $address_values = $tORM
             ->from("direccion")
-            ->where("direccion.cliente_id", "eq", $client_id);
-        $addresses = [
-            'numero' => $address_values["numero"],
-            'calle' => $address_values["calle"],
-            'barrio' => $address_values["barrio"],
-            'ciudad' => $address_values["ciudad"]
-        ];
+            ->columns('direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
+            ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do('select');
+
 
         //
         //
         //
-        return $addresses;
+        return $address_values;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
@@ -591,32 +588,30 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
-    for ($i = 0; $i < $amount; $i++) {
-        $client_id = get_client_id($tORM, $token);
+    $client_id = get_client_id($tORM, $token);
 
-        $foods = $tORM
-            ->from("conforma")
-            ->columns("conforma.vianda_id")
-            ->where("conforma.menu_id", "eq", $menu_id)
-            ->do("select");
-        $response = [];
-        if ($client_id && $foods) {
+    $foods = $tORM
+        ->from("conforma")
+        ->columns("conforma.vianda_id")
+        ->where("conforma.menu_id", "eq", $menu_id)
+        ->do("select");
+    $response = [];
+    if ($client_id && $foods) {
 
-            for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
-                $actual_date = date('Y-m-d H:i:s');
-                foreach ($foods as $food) {
-                    $response = $tORM
-                        ->from("pide")
-                        ->columns("pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
-                        ->values("pide", intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
-                        ->do("insert");
-                }
+        for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
+            $actual_date = date('Y-m-d H:i:s');
+            foreach ($foods as $food) {
+                $response = $tORM
+                    ->from("pide")
+                    ->columns("pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
+                    ->values("pide", intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
+                    ->do("insert");
             }
-        } else {
-            return "ERROR 403, FORBIDDEN";
         }
 
         return $response;
+    } else {
+        return "ERROR 403, FORBIDDEN";
     }
 }
 

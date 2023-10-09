@@ -386,27 +386,49 @@ CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 
 GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
 
-INSERT INTO
-  Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Email`)
-VALUES
-  (
-    1,
-    'contrasenia1',
-    'Autorizado',
-    'email1@gmail.com'
-  ),
-  (
-    2,
-    'contrasenia9',
-    'En espera',
-    'email9@hotmail.com'
-  ),
-  (
-    3,
-    'contrasenia17',
-    'No autorizado',
-    'email17@gmail.com'
-  );
+INSERT INTO 
+Cliente (
+  `ID`,
+   `Contrasenia`,
+    `Autorizacion`,
+     `Email`
+     )
+      VALUES 
+      (
+        NULL, 
+        'contrasenia1',
+         'Autorizado',
+          'email1@gmail.com'
+         ),
+          (
+          NULL,
+          'contrasenia9',
+          'En espera',
+          'email9@hotmail.com'
+         ),
+          (
+            NULL,
+          'contrasenia17',
+           'No autorizado',
+           'email17@gmail.com'
+          ), (
+            NULL, 
+            'contrasenia1',
+            'Autorizado',
+             'email4@gmail.com'
+             ),
+              (
+                NULL, 
+              'contrasenia9',
+               'En espera',
+                'email10@hotmail.com'
+                ),
+                 (
+                  NULL,
+                   'contrasenia17',
+                    'No autorizado',
+                     'email18@gmail.com'
+                     ); 
 
 INSERT INTO
   Tarjeta (
@@ -445,9 +467,9 @@ VALUES
 INSERT INTO
   Empresa (`Cliente_ID`, `RUT`, `Nombre`)
 VALUES
-  (1, 'RUT_empresa1', 'Nombre Empresa 1'),
-  (2, 'RUT_empresa2', 'Nombre Empresa 2'),
-  (3, 'RUT_empresa3', 'Nombre Empresa 3');
+  (4, 'RUT_empresa1', 'Nombre Empresa 1'),
+  (5, 'RUT_empresa2', 'Nombre Empresa 2'),
+  (6, 'RUT_empresa3', 'Nombre Empresa 3');
 
 INSERT INTO
   Web (
