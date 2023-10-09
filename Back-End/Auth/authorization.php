@@ -500,7 +500,6 @@ function show_shop(TORM $tORM, $token)
 
     foreach ($diets as $diet) {
         foreach ($foods as $key => $food) {
-            unset($foods[$key]['tiempo_de_coccion']);
             unset($foods[$key]['productos']);
             if ($food['id'] == $diet['vianda_id']) {
                 $foods[$key]['dietas'][] = $diet['dieta'];
@@ -516,7 +515,7 @@ function show_shop(TORM $tORM, $token)
                 if (!isset($menu['viandas'])) {
                     $menu['viandas'] = [];
                 }
-                $menu['viandas'][$food['nombre']] = $food;
+                $menu['viandas'][] = $food;
             }
         }
     }
