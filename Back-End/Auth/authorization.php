@@ -466,7 +466,6 @@ function show_shop(TORM $tORM, $token)
             ->where("sesion.estado", "eq", "Activa")
             ->do("select");
     } else {
-        print_r('hola');
         $is_session = False;
     }
     $client_id = get_client_id($tORM, $token);
