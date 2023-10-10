@@ -21,7 +21,7 @@
                                 <div>
 
                                     <p>Calle:</p> {{ direction.calle }}<br>
-                                    <p>Número:</p> {{ direction.numero }}
+                                    <p>Número:</p> {{ direction.direccion }}
                                 </div>
 
 
@@ -83,8 +83,9 @@ export default {
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    this.directions = response.data;
-
+                    if (Array.isArray(response.data)) {
+                        this.directions = response.data;
+                    } 
                 })
                 .catch((error) => {
                     console.error(error);
