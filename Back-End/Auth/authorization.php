@@ -469,7 +469,6 @@ function show_shop(TORM $tORM, $token)
         $is_session = False;
     }
     $client_id = get_client_id($tORM, $token);
-    print_r($client_id);
     $favorites = [];
     if (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
