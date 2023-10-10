@@ -21,7 +21,7 @@ function shop_buy_menu($token, $amount, $menu_id)
 {
 
     global $tORM;
-    return buy_menu($tORM, $amount, $token, $menu_id);
+    return buy_multiple_menus($tORM, $token, $amount, $menu_id);
 }
 
 function shop_get_address($token)
