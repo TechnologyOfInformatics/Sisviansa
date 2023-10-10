@@ -625,7 +625,7 @@ function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $me
         for ($i = 0; $i < count($amounts); $i++) {
             $response = buy_menu($tORM, $token, intval($amounts[$i]),  $menus_ids[$i]);
         }
-        return $response;
+        return $response == "OK, 200" ? $response : "ERROR 500, SERVER ERROR";
     }
 }
 
