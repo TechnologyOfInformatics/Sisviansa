@@ -601,14 +601,16 @@ function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
             ->do("select");
         $response = [];
         if ($client_id && $foods) {
+            $order_id = $tORM
+                ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
 
             for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
                 $actual_date = date('Y-m-d H:i:s');
                 foreach ($foods as $food) {
                     $response = $tORM
                         ->from("pide")
-                        ->columns("pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
-                        ->values("pide", intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
+                        ->columns("pide.numero_de_pedido", "pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
+                        ->values("pide", $order_id ? intval($order_id[0] + 1) : 0, intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
                         ->do("insert");
                 }
             }
