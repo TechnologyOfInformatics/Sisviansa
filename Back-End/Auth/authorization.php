@@ -469,6 +469,7 @@ function show_shop(TORM $tORM, $token)
         $is_session = False;
     }
     $client_id = get_client_id($tORM, $token);
+    print_r($client_id);
     $favorites = [];
     if (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
@@ -528,7 +529,7 @@ function show_shop(TORM $tORM, $token)
     $filtered_menus = array_values($filtered_menus);
 
 
-    return [$filtered_menus, (gettype($favorites) != 'array' ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
+    return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
