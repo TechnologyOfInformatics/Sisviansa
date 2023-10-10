@@ -584,7 +584,7 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
         return $is_session;
     }
 }
-function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
+function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
     $client_id = get_client_id($tORM, $token);
@@ -614,7 +614,7 @@ function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
     }
 }
 
-function buy_multiple_menus(TORM $tORM, array $amounts, String $token, array $menus_ids)
+function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $menus_ids)
 {
     $response = '';
     if ($token && (count($amounts) == count($menus_ids))) {
