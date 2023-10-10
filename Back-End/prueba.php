@@ -28,11 +28,8 @@ echo "<br/>Con token invalido:<br/>";
 print_r(options_get_address("12312334f34"));
 */
 echo "<pre>";
-$client_id[] = ['cliente_id' => 5];
 print_r(
-    $tORM
-        ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0]
-
+    buy_multiple_menus($tORM, '12312334f234', [1, 3], [3, 2])
 );
 
 echo "<pre/>";
