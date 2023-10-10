@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form class="user-form" @submit="updateUserInfo">
+        <form class="user-form" @submit.prevent="updateUserInfo">
             <div>
                 <label for="primerNombre">Primer Nombre:</label>
                 <input type="text" id="primerNombre" v-model="userInfo.primerNombre" />
@@ -54,6 +54,22 @@ export default {
         this.fetchUserData()
     },
     methods: {
+        updateUserInfo() {
+            const dataToSend = {
+                functionName: "options_modify_web", 
+                token: sessionStorage.getItem('miToken') || 0,
+                userInfo: this.userInfo,
+            };
+
+            this.$http
+                .post("http://localhost/Back-End/server.php", dataToSend)
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
         fetchUserData() {
             const dataToSend = {
                 functionName: "options_user_info",
