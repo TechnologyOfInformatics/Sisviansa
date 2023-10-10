@@ -626,6 +626,8 @@ function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $me
             $response = buy_menu($tORM, $token, intval($amounts[$i]),  $menus_ids[$i]);
         }
         return $response == "OK, 200" ? $response : "ERROR 500, SERVER ERROR";
+    } else {
+        return "ERROR 400, WRONG DATA TYPE";
     }
 }
 
