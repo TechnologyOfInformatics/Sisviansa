@@ -17,7 +17,7 @@ function shop_favorites_toggle(string $token, int $menu_id)
     return toggle_favorites($tORM, $token, $menu_id);
 }
 
-function shop_buy_menu($token, $amount, $menu_id)
+function shop_buy_menu(String $token, array $amount, array $menu_id)
 {
 
     global $tORM;
