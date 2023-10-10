@@ -17,9 +17,15 @@ function shop_favorites_toggle(string $token, int $menu_id)
     return toggle_favorites($tORM, $token, $menu_id);
 }
 
-function shop_buy_menu($token, $amount, $menu_id)
+function shop_buy_menu(String $token, array $amount, array $menu_id)
 {
 
     global $tORM;
-    return buy_menu($tORM, $amount, $token, $menu_id);
+    return buy_multiple_menus($tORM, $token, $amount, $menu_id);
+}
+
+function shop_get_address($token)
+{
+    global $tORM;
+    return get_address($tORM, $token);
 }

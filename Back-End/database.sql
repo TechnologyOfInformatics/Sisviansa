@@ -387,25 +387,48 @@ CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
 
 INSERT INTO
-  Cliente (`ID`, `Contrasenia`, `Autorizacion`, `Email`)
+  Cliente (
+    `ID`,
+    `Contrasenia`,
+    `Autorizacion`,
+    `Email`
+  )
 VALUES
   (
-    1,
+    NULL,
     'contrasenia1',
     'Autorizado',
     'email1@gmail.com'
   ),
   (
-    2,
+    NULL,
     'contrasenia9',
     'En espera',
     'email9@hotmail.com'
   ),
   (
-    3,
+    NULL,
     'contrasenia17',
     'No autorizado',
     'email17@gmail.com'
+  ),
+  (
+    NULL,
+    'contrasenia1',
+    'Autorizado',
+    'email4@gmail.com'
+  ),
+  (
+    NULL,
+    'contrasenia9',
+    'En espera',
+    'email10@hotmail.com'
+  ),
+  (
+    NULL,
+    'contrasenia17',
+    'No autorizado',
+    'email18@gmail.com'
   );
 
 INSERT INTO
@@ -445,9 +468,9 @@ VALUES
 INSERT INTO
   Empresa (`Cliente_ID`, `RUT`, `Nombre`)
 VALUES
-  (1, 'RUT_empresa1', 'Nombre Empresa 1'),
-  (2, 'RUT_empresa2', 'Nombre Empresa 2'),
-  (3, 'RUT_empresa3', 'Nombre Empresa 3');
+  (4, 'RUT_empresa1', 'Nombre Empresa 1'),
+  (5, 'RUT_empresa2', 'Nombre Empresa 2'),
+  (6, 'RUT_empresa3', 'Nombre Empresa 3');
 
 INSERT INTO
   Web (
@@ -499,23 +522,23 @@ INSERT INTO
 VALUES
   (
     'x2312x23d2d2',
-    '2023-09-07 00:00:00',
-    '2023-09-08 00:00:00',
-    '2023-09-09 00:00:00',
+    Now(),
+    Now(),
+    DATE_ADD( Now(), INTERVAL 15 Minute),
     'Activa'
   ),
   (
     '23ec23d23r4t',
-    '2023-09-07 00:00:00',
-    '2023-09-08 00:00:00',
-    '2023-09-09 00:00:00',
+    Now(),
+    Now(),
+    DATE_ADD( Now(), INTERVAL 15 Minute),
     'Activa'
   ),
   (
     '12312334f234',
-    '2023-09-10 00:00:00',
-    '2023-09-11 00:00:00',
-    '2023-09-12 00:00:00',
+    Now(),
+    Now(),
+    DATE_ADD( Now(), INTERVAL 15 Minute),
     'Activa'
   );
 
@@ -672,6 +695,59 @@ INSERT INTO
     `Ciudad`
   )
 VALUES
-  (1, '4', 'calle1', 'barrio1', 'ciudad1'),
-  (2, '12', 'calle9', 'barrio9', 'ciudad9'),
-  (3, '20', 'calle17', 'barrio17', 'ciudad17');
+  (
+    '1',
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17'
+  ),
+  (
+    '1',
+    '4',
+    'calle1',
+    'barrio1',
+    'ciudad1'
+  ),
+  (
+    '2',
+    '12',
+    'calle9',
+    'barrio9',
+    'ciudad9'
+  ),
+  (
+    '3',
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17'
+  ),
+  (
+    '4',
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17'
+  ),
+  (
+    '4',
+    '4',
+    'calle1',
+    'barrio1',
+    'ciudad1'
+  ),
+  (
+    '5',
+    '12',
+    'calle9',
+    'barrio9',
+    'ciudad9'
+  ),
+  (
+    '6',
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17'
+  );

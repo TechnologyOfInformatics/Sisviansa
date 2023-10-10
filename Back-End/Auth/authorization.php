@@ -24,17 +24,19 @@ function token_generator()
 function get_client_id(TORM $tORM, String $token)
 {
 
+    if ($token) {
+        $client = $tORM
+            ->from("inicia")
+            ->columns("inicia.cliente_id")
+            ->where("inicia.sesion_token", "eq", $token)
+            ->join("sesion", "sesion.token", "inicia.sesion_token")
+            ->joined_columns("None column")
+            ->where("sesion.estado", "eq", "Activa")
+            ->do("select");
 
-    $client = $tORM
-        ->from("inicia")
-        ->columns("inicia.cliente_id")
-        ->where("inicia.sesion_token", "eq", $token)
-        ->join("sesion", "sesion.token", "inicia.sesion_token")
-        ->joined_columns("None column")
-        ->where("sesion.estado", "eq", "Activa")
-        ->do("select");
-
-    return $client;
+        return $client;
+    }
+    return [];
 }
 function session_token(TORM $tORM, String $token)
 {
@@ -384,23 +386,20 @@ function get_address(TORM $tORM, string $token) //Funcion incompleta
         // Debo pedir los datos desde direccion y no desde cliente
         $address_values = $tORM
             ->from("direccion")
-            ->where("direccion.cliente_id", "eq", $client_id);
-        $addresses = [
-            'numero' => $address_values["numero"],
-            'calle' => $address_values["calle"],
-            'barrio' => $address_values["barrio"],
-            'ciudad' => $address_values["ciudad"]
-        ];
+            ->columns('direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
+            ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->do('select');
+
 
         //
         //
         //
-        return $addresses;
+        return $address_values;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
 }
-function user_information(TORM $tORM, $token)
+function user_information_web(TORM $tORM, $token)
 {
     $values = func_get_args();
 
@@ -477,6 +476,7 @@ function show_shop(TORM $tORM, $token)
         } elseif ($client_id) {
             $favorites =  $tORM
                 ->from("favorito")
+                ->columns('favorito.menu_id')
                 ->where("favorito.web_id", "eq", $client_id[0]["cliente_id"])
                 ->join("menu", "menu.id", "favorito.menu_id")
                 ->joined_columns("None column")
@@ -503,7 +503,6 @@ function show_shop(TORM $tORM, $token)
 
     foreach ($diets as $diet) {
         foreach ($foods as $key => $food) {
-            unset($foods[$key]['tiempo_de_coccion']);
             unset($foods[$key]['productos']);
             if ($food['id'] == $diet['vianda_id']) {
                 $foods[$key]['dietas'][] = $diet['dieta'];
@@ -512,14 +511,12 @@ function show_shop(TORM $tORM, $token)
     }
     foreach ($foods as $food) {
         foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
-            unset($menu['estado']);
-            unset($menu['calorias']);
 
             if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
                 if (!isset($menu['viandas'])) {
                     $menu['viandas'] = [];
                 }
-                $menu['viandas'][$food['nombre']] = $food;
+                $menu['viandas'][] = $food;
             }
         }
     }
@@ -531,7 +528,7 @@ function show_shop(TORM $tORM, $token)
     $filtered_menus = array_values($filtered_menus);
 
 
-    return [$filtered_menus, (gettype($favorites) == "string" ? $favorites : array_column($favorites, 'menu_id'))];
+    return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
@@ -587,37 +584,46 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
         return $is_session;
     }
 }
-
-function buy_menu(TORM $tORM, Int $amount, String $token, Int $menu_id)
+function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
-    for ($i = 0; $i < $amount; $i++) {
-        $client_id = get_client_id($tORM, $token);
+    $client_id = get_client_id($tORM, $token);
 
-        $foods = $tORM
-            ->from("conforma")
-            ->columns("conforma.vianda_id")
-            ->where("conforma.menu_id", "eq", $menu_id)
-            ->do("select");
-        $response = [];
-        if ($client_id && $foods) {
-            $order_id = $tORM
-                ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
+    $foods = $tORM
+        ->from("conforma")
+        ->columns("conforma.vianda_id")
+        ->where("conforma.menu_id", "eq", $menu_id)
+        ->do("select");
+    $response = [];
+    if ($client_id && $foods) {
+        $order_id = $tORM
+            ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
 
-            for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
-                $actual_date = date('Y-m-d H:i:s');
-                foreach ($foods as $food) {
-                    $response = $tORM
-                        ->from("pide")
-                        ->columns("pide.numero_de_pedido", "pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
-                        ->values("pide", $order_id ? intval($order_id[0] + 1) : 0, intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
-                        ->do("insert");
-                }
+        for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
+            $actual_date = date('Y-m-d H:i:s');
+            foreach ($foods as $food) {
+                $response = $tORM
+                    ->from("pide")
+                    ->columns("pide.numero_de_pedido", "pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
+                    ->values("pide", $order_id ? intval($order_id[0] + 1) : 0, intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
+                    ->do("insert");
             }
-        } else {
-            return "ERROR 403, FORBIDDEN";
         }
 
+
+        return $response;
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $menus_ids)
+{
+    $response = '';
+    if ($token && (count($amounts) == count($menus_ids))) {
+        for ($i = 0; $i < count($amounts); $i++) {
+            $response = buy_menu($tORM, $amounts[$i], $token, $menus_ids[$i]);
+        }
         return $response;
     }
 }
