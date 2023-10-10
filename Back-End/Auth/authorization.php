@@ -528,7 +528,7 @@ function show_shop(TORM $tORM, $token)
     $filtered_menus = array_values($filtered_menus);
 
 
-    return [$filtered_menus, (gettype($favorites) == 'array' ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
+    return [$filtered_menus, (gettype($favorites) != 'array' ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
