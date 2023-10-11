@@ -230,16 +230,14 @@ class TORM //Techin Object-Relation Model (Basic)
     //
     public function values(String $table, ...$values)
     {
-        if (in_array(null, $values) || in_array('', $values)) {
-            $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
-            return $this;
-        } elseif (!isset($this->table_sets[strtolower($table)])) {
+        if (!isset($this->table_sets[strtolower($table)])) {
             $this->error .= strtoupper(__FUNCTION__) . " STEP: The table is not valid" . "</br>";
             return $this;
         } elseif (count($values) == count($this->table_sets[$table]) && empty($this->error)) {
             $sql_php_types = [
                 'varchar' => 'string',
                 'int' => 'integer',
+                'tinyint' => 'integer',
                 'date' => 'string',
                 'time' => 'string',
                 'timestamp' => 'string',

@@ -11,11 +11,37 @@ function options_modify_web($token, $passwd = "", $confirm_passwd = "", $first_n
     global $tORM;
     return modify_web($tORM, $token, $passwd, $confirm_passwd, $first_name, $second_name, $first_surname, $second_surname,  $mail);
 }
-function options_get_address($token)
+
+function options_get_address(String $token)
 {
     global $tORM;
     return get_address($tORM, $token);
 }
+
+function options_set_address($token, String $city, String $neighborhood = "", String $street, String $address)
+{
+    global $tORM;
+    return set_address($tORM, $token, $city, $neighborhood,  $street,  $address);
+}
+
+function options_modify_address(String $token, Int $address_id,  String $city = "", String $neighborhood = "", String $street = "", String $address = "")
+{
+    global $tORM;
+    return modify_address($tORM, $token, $address_id,  $city, $neighborhood, $street, $address);
+}
+
+function options_delete_address(String $token, Int $address_id)
+{
+    global $tORM;
+    return delete_address($tORM, $token, $address_id);
+}
+
+function options_toggle_default(String $token, Int $address_id)
+{
+    global $tORM;
+    return toggle_default($tORM, $token, $address_id);
+}
+
 function options_user_info($token)
 {
     global $tORM;
@@ -40,6 +66,7 @@ function options_mod_personal_menu(String $token, Int $menu_id, Int $frequency, 
     global $tORM;
     return modify_personal_menu($tORM, $token, $menu_id, $frequency, $description, $foods);
 }
+
 function options_del_personal_menu(String $token, Int $menu_id)
 {
     global $tORM;
