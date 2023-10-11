@@ -280,8 +280,8 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     if ($ctl->insert("cliente", [$mail, $password, "En espera"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
         $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
         $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "tipo", "numero"])->call();
-        login($ctl, $mail, $password, "");
-        return ["OK", 200];
+        $response = login($ctl, $mail, $password, "");
+        return $response;
     }
 }
 //
