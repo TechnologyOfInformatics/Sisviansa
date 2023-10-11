@@ -28,10 +28,9 @@ echo "<br/>Con token invalido:<br/>";
 print_r(options_get_address("12312334f34"));
 */
 echo "<pre>";
-$address_id = 3;
-$client_id = [['cliente_id' => 4]];
-print_r(!$state = $tORM
-    ->do(query: "SELECT predeterminado FROM direccion WHERE cliente_id = {$client_id[0]['cliente_id']} AND id = {$address_id}"));
+//print_r(delete_address($tORM, 'x2312x23d2d2', 2));
+//print_r(set_address($tORM, 'x2312x23d2d2', 'Chicago', '', 'Bella visasdasdasdta', '12345'));
+//print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado

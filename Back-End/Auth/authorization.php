@@ -235,8 +235,6 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         return "404, NOT FOUND: The user wasn't found";
     }
 }
-
-
 function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
 {
     $values = func_get_args();
@@ -282,11 +280,10 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     if ($ctl->insert("cliente", [$mail, $password, "En espera"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
         $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
         $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "tipo", "numero"])->call();
-        login($ctl, $mail, $password, "");
-        return ["OK", 200];
+        $response = login($ctl, $mail, $password, "");
+        return $response;
     }
 }
-
 //
 //
 function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
@@ -296,7 +293,6 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
 
     unset($values[0]);
     $values = array_values($values);
-    print_r($values);
 
     $length_verificator = True;
 
@@ -372,7 +368,6 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
         return "ERROR 403, FORBIDDEN";
     }
 }
-
 function get_address(TORM $tORM, string $token)
 {
 
@@ -454,7 +449,7 @@ function user_information_web(TORM $tORM, $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
-function set_address(TORM $tORM, String $token, String $city = "", String $neighborhood = "", String $street = "", String $address = "")
+function set_address(TORM $tORM, String $token, String $city, String $neighborhood = "", String $street, String $address)
 {
     $values = func_get_args();
 
@@ -473,12 +468,23 @@ function set_address(TORM $tORM, String $token, String $city = "", String $neigh
     if ($client_id) {
         $address_id = $tORM
             ->do(query: "SELECT MAX(id) FROM direccion WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
-        if (isset($address_id[0]) && ($address_id[0] <= 3)) {
+        $address_id = intval(!empty($address_id[0]) ? $address_id[0] + 1 : 1);
+
+        if ($address_id <= 3) {
             $response = $tORM
                 ->from("direccion")
-                ->columns("direccion.id", 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
-                ->values('direccion', ($address_id ? ($address_id[0] + 1) : 1), $address, $street, $neighborhood, $city)
+                ->columns("direccion.id", 'direccion.cliente_id', 'direccion.direccion', 'direccion.calle',  'direccion.ciudad')
+                ->values('direccion', $address_id, intval($client_id[0]['cliente_id']), $address, $street, $city)
                 ->do('insert');
+
+            if ($neighborhood && $response == "OK, 200") {
+                $tORM
+                    ->from("direccion")
+                    ->columns('direccion.barrio')
+                    ->values('direccion', $neighborhood)
+                    ->where("direccion.id", "eq",  $address_id)
+                    ->do('update');
+            }
             return $response;
         } else {
             return "ERROR 429, TOO MANY REQUESTS";
@@ -506,10 +512,15 @@ function modify_address(TORM $tORM, String $token, Int $address_id,  String $cit
     $client_id = get_client_id($tORM, $token);
     if ($client_id) {
         if (($address_id <= 3)) {
+            $actual_address = $tORM
+                ->from("direccion")
+                ->where("direccion.id", "eq", $address_id)
+                ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
+                ->do("select")[0];
             $response = $tORM
                 ->from("direccion")
                 ->columns('direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
-                ->values('direccion', $address, $street, $neighborhood, $city)
+                ->values('direccion', ($address ? $address : $actual_address['direccion']), ($street ? $street : $actual_address['calle']), ($neighborhood ? $neighborhood : $actual_address['barrio']), ($city ? $city : $actual_address['ciudad']))
                 ->where('direccion.id', 'eq', $address_id)
                 ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
                 ->do('update');
@@ -517,34 +528,6 @@ function modify_address(TORM $tORM, String $token, Int $address_id,  String $cit
         } else {
             return "ERROR 429, TOO MANY REQUESTS";
         }
-    } else {
-        return "ERROR 403, FORBIDDEN";
-    }
-}
-function delete_address(TORM $tORM, String $token, Int $address_id)
-{
-
-    $values = func_get_args();
-
-    unset($values[0]);
-    $values = array_values($values);
-
-    $length_verificator = True;
-
-    $maximum = [15, 1];
-
-    foreach ($values as $index => $var) {
-        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
-    }
-
-    $client_id = get_client_id($tORM, $token);
-    if ($client_id) {
-        $response = $tORM
-            ->from("direccion")
-            ->where('direccion.id', 'eq', $address_id)
-            ->where('direccion.id', 'eq', $client_id[0]['cliente_id'])
-            ->do('delete');
-        return $response;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
@@ -574,14 +557,69 @@ function toggle_default(TORM $tORM, String $token, Int $address_id)
             $response = $tORM
                 ->from("direccion")
                 ->columns('direccion.predeterminado')
-                ->values('direccion', !$state)
+                ->values('direccion', ($state[0][0] ? 0 : 1))
                 ->where('direccion.id', 'eq', $address_id)
                 ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
                 ->do('update');
             return $response;
         } else {
-            return "ERROR 429, TOO MANY REQUESTS";
+            return "ERROR 404, NOT FOUND";
         }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+function delete_address(TORM $tORM, String $token, Int $address_id)
+{
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 1];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+
+        $actual_addresses = $tORM
+            ->from('direccion')
+            ->where('direccion.id', "eq", $address_id)
+            ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+            ->do("select");
+
+        if ($actual_addresses) {
+            $response = $tORM
+                ->from("direccion")
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->where('direccion.id', 'eq', $actual_addresses[0]['id'])
+                ->do('delete');
+
+            $actual_addresses = $tORM
+                ->from('direccion')
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->do("select");
+            $response = $tORM
+                ->from("direccion")
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->do('delete');
+            foreach ($actual_addresses as $key => $address) {
+                $response = $tORM
+                    ->from("direccion")
+                    ->columns("direccion.id", 'direccion.cliente_id', 'direccion.direccion', 'direccion.calle',  'direccion.ciudad', 'direccion.predeterminado')
+                    ->values('direccion', (intval($key) + 1), intval($address['cliente_id']), $address['direccion'], $address['calle'], $address['ciudad'], intval($address['predeterminado']))
+                    ->do('insert');
+            }
+        } else {
+            return "ERROR 404, NOT FOUND";
+        }
+        return $response;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
@@ -661,7 +699,6 @@ function show_shop(TORM $tORM, $token)
 
     return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
-
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 {
     // En caso de que no haya un token como el enviado se devolvera un array vacio
