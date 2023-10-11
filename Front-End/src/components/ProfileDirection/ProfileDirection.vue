@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="directions-container">
-            <ul class="direction-list">
+            <ul class="direction-list"  v-if="Array.isArray(this.directions)">
                 <li v-for="(direction, index) in directions" :key="index" class="direction-list-item">
 
                     <div class="direction">
