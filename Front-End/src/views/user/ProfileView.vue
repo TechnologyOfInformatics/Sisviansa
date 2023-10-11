@@ -134,6 +134,7 @@ export default {
 }
 
 .profile-main {
+  background-color: #ebeadf;
 
   flex: 1;
   padding: 20px;

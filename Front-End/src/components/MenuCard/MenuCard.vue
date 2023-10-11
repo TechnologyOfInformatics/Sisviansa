@@ -107,15 +107,28 @@ export default {
   },
   computed: {
     showSinGlutenButton() {
-      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Sin Gluten')));
+      return this.menus.some((menu) =>
+        menu.viandas && menu.viandas.some((vianda) =>
+          vianda.diets && vianda.diets.includes('Sin Gluten')
+        )
+      );
     },
     showVeganoButton() {
-      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Vegano')));
+      return this.menus.some((menu) =>
+        menu.viandas && menu.viandas.some((vianda) =>
+          vianda.diets && vianda.diets.includes('Vegano')
+        )
+      );
     },
     showVegetarianoButton() {
-      return this.menus.some(menu => menu.viandas.some(vianda => vianda.diets.includes('Vegetariano')));
+      return this.menus.some((menu) =>
+        menu.viandas && menu.viandas.some((vianda) =>
+          vianda.diets && vianda.diets.includes('Vegetariano')
+        )
+      );
     }
   },
+
   methods: {
     transformMenusData(data) {
       return data.map((menuData) => {
@@ -265,7 +278,6 @@ export default {
         token: sessionStorage.getItem('miToken'),
         favorite: action.id,
       };
-      console.log(action)
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {

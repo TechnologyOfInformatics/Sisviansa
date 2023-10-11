@@ -1,1 +1,74 @@
+main {
+    background-color: #243328;
+    border: 1px solid white;
+    border-radius: 10px;
+    height: 77.99vh;
+}
 
+
+.directions-container {
+    width: 90%;
+    margin: 5em auto;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.direction-list {
+    width: 95%;
+    margin: 2em auto;
+
+}
+
+.direction-list-item {
+    list-style: none;
+}
+
+.direction-list-item div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.direction-quantity {
+    text-align: center;
+    align-self: center;
+    color: white;
+    font-size: 2em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-decoration: underline;
+}
+
+.direction-quantity-index{
+    color: white;
+    font-size: 2em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
+
+.direction-item {
+    width: 40vw;
+    height: 4vh;
+    padding: 1em 2em;
+    background-color: #ebeadf;
+    margin-top: 1em;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.direction-item-city{
+    font-size: 2em;
+    padding-right: 3em;
+}
+
+.direction-link {
+    color: white;
+}
+
+.direction-link .link {
+    text-decoration: underline;
+    color: white;
+}
