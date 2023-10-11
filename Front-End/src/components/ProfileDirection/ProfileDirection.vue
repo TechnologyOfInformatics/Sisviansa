@@ -1,38 +1,65 @@
 <template>
     <main>
-        <div v-if="this.directions.length === 0" class="empty-direction-message directions-container">
-            <span>Usted no tiene direcciones</span> <br>
-            <span>Puedes añadir una en </span><router-link to="/profile" class="link">tú perfil</router-link>
+        <div class="directions-container">
+            <ul class="direction-list">
+                <li v-for="(direction, index) in directions" :key="index" class="direction-list-item">
 
-        </div>
-        <div v-else>
-            <div class="directions-container">
-                <ul class="direction-list">
-                    <li v-for="(direction, index) in directions" :key="index" class="direction-list-item">
-                        <div>
+                    <div class="direction">
+                        <div class="direction-button gears">
+                            <i class="fa-solid fa-gears"></i>
+                        </div>
+                        <div class="direction-item"> <i class="fa-solid fa-route"></i>
+
+                            <p class="direction-item-city">{{ direction.ciudad }}</p>
+                            <i class="fa-solid fa-house-flag"></i>
                             <div>
-                                <p class="direction-quantity">Dirección</p>
-                                <p class="direction-quantity-index">: {{ index }}</p>
-                            </div>
-                            <div class="direction-item">
-                                <p class="direction-item-city">{{ direction.ciudad }}</p>
-                                <div>
-                                    <p> {{ direction.barrio }}, {{ direction.calle }} {{direction.direccion}}</p>
-                                </div>
+                                <p> {{ direction.barrio }}, {{ direction.calle }} {{ direction.direccion }}</p>
                             </div>
                         </div>
-                    </li>
-                </ul>
+                        <div class="direction-button trash">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                    </div>
+                </li>
+                <div v-if="this.directions.length === 0">
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                </div>
+                <div v-if="this.directions.length === 1">
 
-            </div>
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                </div>
+
+                <div v-if="this.directions.length === 2">
+                    <div class="direction-item-null">
+                        <DirectionProfileButton />
+                    </div>
+                </div>
+            </ul>
         </div>
     </main>
 </template>
   
 <script>
+
+import DirectionProfileButton from '@/components/DirectionProfileButton/DirectionProfileButton.vue'
 export default {
     name: "ProfileDirection",
-
+    components: {
+        DirectionProfileButton
+    },
     data() {
         return {
             directions: [],

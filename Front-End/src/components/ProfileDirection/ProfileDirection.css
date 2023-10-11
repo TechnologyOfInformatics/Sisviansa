@@ -25,8 +25,7 @@ main {
 
 .direction-list-item div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+
 }
 
 .direction-quantity {
@@ -38,28 +37,88 @@ main {
     text-decoration: underline;
 }
 
-.direction-quantity-index{
+.direction-quantity-index {
     color: white;
     font-size: 2em;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 
+.direction {
+    width: 46vw;
+    margin: 0 auto;
 }
 
 .direction-item {
     width: 40vw;
+    padding: 1em 1em;
+    height: 4vh;
+    background-color: #ebeadf;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
+
+
+}
+
+.direction-button {
+    width: 3vw;
+    padding: 1em 2em;
+    height: 4vh;
+    background-color: #ebeadf;
+    cursor: pointer;
+}
+.fa-house-flag{
+    padding-right: 0.3em;
+}
+.gears {
+    margin-top: 1em;
+    padding: 1.5em 0 .5em 0;
+padding-left: 1em;
+    border-bottom-left-radius: 50%;
+    border-top-left-radius: 50%;
+    border-right: 2px solid black;
+}
+
+.gears .fa-gears {
+    color: #515151;
+
+}
+.fa-route{
+    font-size: 1.5em;
+    padding-right: 0.3em;
+}
+.trash {
+    margin-top: 1em;
+    padding: 1.25em 0 .75em 0;
+    padding-left: 1em;
+    border-bottom-right-radius: 50%;
+    border-top-right-radius: 50%;
+    border-left: 2px solid black;
+
+}
+
+.trash .fa-trash {
+    font-size: 1.5em;
+    color: rgb(239, 80, 80);
+}
+
+.direction-item-null {
+    width: 40vw;
     height: 4vh;
     padding: 1em 2em;
-    background-color: #ebeadf;
-    margin-top: 1em;
+    background-color: #969696;
     border-radius: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
+    margin: 1em auto;
 }
 
-.direction-item-city{
+
+.direction-item-city {
     font-size: 2em;
     padding-right: 3em;
 }
