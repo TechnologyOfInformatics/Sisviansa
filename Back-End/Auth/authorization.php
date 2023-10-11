@@ -723,10 +723,14 @@ function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
     $foods = $tORM
         ->from("conforma")
         ->columns("conforma.vianda_id")
-        ->where("conforma.menu_id", "eq", $menu_id)
+        ->where("conforma.menu_id", "eq", intval($menu_id))
         ->do("select");
+
     $response = [];
+
     if ($client_id && $foods) {
+        $order_id = $tORM
+            ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
         $order_id = $tORM
             ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
 
@@ -742,6 +746,8 @@ function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
             }
         }
 
+
+
         return $response;
     } else {
         return "ERROR 403, FORBIDDEN";
@@ -753,9 +759,11 @@ function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $me
     $response = '';
     if ($token && (count($amounts) == count($menus_ids))) {
         for ($i = 0; $i < count($amounts); $i++) {
-            $response = buy_menu($tORM, $amounts[$i], $token, $menus_ids[$i]);
+            $response = buy_menu($tORM, $token, intval($amounts[$i]),  $menus_ids[$i]);
         }
-        return $response;
+        return $response == "OK, 200" ? $response : "ERROR 500, SERVER ERROR";
+    } else {
+        return "ERROR 400, WRONG DATA TYPE";
     }
 }
 function get_orders(TORM $tORM, $token) // Funcion incompleta

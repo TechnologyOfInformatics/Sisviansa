@@ -172,13 +172,11 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-
           this.menus = this.transformMenusData(response.data[0]);
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
           });
 
-          console.log(response.data[1])
           if (Array.isArray(response.data[1])) {
             this.isAuthenticated = true;
             const menuIds = response.data[1].map(menuId => parseInt(menuId, 10));

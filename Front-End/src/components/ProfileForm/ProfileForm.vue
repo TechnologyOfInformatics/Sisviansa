@@ -1,34 +1,35 @@
 <template>
     <div>
-        <form class="user-form" @submit="updateUserInfo">
+        <form class="user-form" @submit.prevent="updateUserInfo">
             <div>
-                <label for="primerNombre">Primer Nombre:</label>
-                <input type="text" id="primerNombre" v-model="userInfo.primerNombre" />
+                <label for="first_name">Primer Nombre:</label>
+                <input type="text" id="first_name" v-model="first_name" />
+            </div>
+
+            <div>
+                <label for="second_name">Segundo Nombre:</label>
+                <input type="text" id="second_name" v-model="second_name" />
             </div>
             <div>
-                <label for="primerApellido">Primer Apellido:</label>
-                <input type="text" id="primerApellido" v-model="userInfo.primerApellido" />
+                <label for="first_surname">Primer Apellido:</label>
+                <input type="text" id="first_surname" v-model="first_surname" />
             </div>
             <div>
-                <label for="segundoNombre">Segundo Nombre:</label>
-                <input type="text" id="segundoNombre" v-model="userInfo.segundoNombre" />
+                <label for="second_surname">Segundo Apellido:</label>
+                <input type="text" id="second_surname" v-model="second_surname" />
             </div>
             <div>
-                <label for="segundoApellido">Segundo Apellido:</label>
-                <input type="text" id="segundoApellido" v-model="userInfo.segundoApellido" />
-            </div>
-            <div>
-                <label for="correo">Correo:</label>
-                <input type="email" id="correo" v-model="userInfo.correo" />
+                <label for="mail">Correo:</label>
+                <input type="mail" id="mail" v-model="mail" />
             </div>
 
             <div>
                 <span>Documento de Identidad:</span>
-                <span id="documento">{{ userInfo.documento }}</span>
+                <span id="id">{{ id }}</span>
             </div>
             <div>
                 <span>Tipo de Documento:</span>
-                <span id="tipo">{{ userInfo.tipoDocumento }}</span>
+                <span id="tipo">{{ idtype }}</span>
             </div>
             <button type="submit">Guardar Cambios</button>
         </form>
@@ -39,21 +40,42 @@ export default {
 
     data() {
         return {
-            userInfo: {
-                primerNombre: "",
-                primerApellido: "",
-                segundoNombre: "",
-                segundoApellido: "",
-                correo: "",
-                documento: "",
-                tipoDocumento: "",
-            },
+            first_name: "",
+            second_name: "",
+            first_surname: "",
+            second_surname: "",
+            mail: "",
+            id: "",
+            idtype: "",
         };
     },
     created() {
         this.fetchUserData()
     },
     methods: {
+        updateUserInfo() {
+            const dataToSend = {
+                functionName: "options_modify_web",
+                token: sessionStorage.getItem('miToken') || 0,
+                password: '',
+                confirm_passwd: '',
+                first_name: this.first_name,
+                second_name: this.second_name,
+                first_surname: this.first_surname,
+                second_surname: this.second_surname,
+                mail: this.mail,
+            };
+
+            this.$http
+                .post("http://localhost/Back-End/server.php", dataToSend)
+                .then((response) => {
+                    console.log(response)
+
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
         fetchUserData() {
             const dataToSend = {
                 functionName: "options_user_info",
@@ -63,8 +85,14 @@ export default {
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    this.userInfo = response.data;
-
+                    console.log(response);
+                    this.first_name = response.data.primerNombre;
+                    this.second_name = response.data.segundoNombre;
+                    this.first_surname = response.data.primerApellido;
+                    this.second_surname = response.data.segundoApellido;
+                    this.mail = response.data.correo;
+                    this.id = response.data.documento;
+                    this.idtype = response.data.tipoDocumento;
                 })
                 .catch((error) => {
                     console.error(error);

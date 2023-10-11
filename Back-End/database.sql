@@ -155,11 +155,13 @@ CREATE TABLE Conforma (
 
 -- Creación de la tabla Pide
 CREATE TABLE Pide (
-  Numero_de_pedido INT(11) AUTO_INCREMENT NOT NULL COMMENT 'Número de pedido',
+  Numero_de_pedido INT(11) NOT NULL COMMENT 'Número del pedido correspondiente',
   Menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente al pedido',
   Vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda correspondiente al pedido',
   Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha efectuado el pedido',
   Fecha_pedido DATE NOT NULL COMMENT 'Fecha del pedido',
+  Estado ENUM('En procesamiento', 'Preparado', 'Denegado') DEFAULT 'En procesamiento' COMMENT 'Estado del pedido en sí ',
+  Cantidad INT NOT NULL COMMENT 'Cantidad de veces que se compro éste menu en éste pedido',
   PRIMARY KEY(
     Numero_de_pedido,
     Menu_ID,
@@ -655,12 +657,13 @@ INSERT INTO
     `Vianda_ID`,
     `Cliente_ID`,
     `Fecha_pedido`,
-    `Numero_de_pedido`
+    `Numero_de_pedido`,
+    `Cantidad`
   )
 VALUES
-  (1, 1, 1, '2023-09-07', 1),
-  (2, 2, 2, '2023-09-08', 2),
-  (3, 3, 3, '2023-09-09', 3);
+  (1, 1, 1, '2023-09-07', 1, 1),
+  (2, 2, 2, '2023-09-08', 2, 1),
+  (3, 3, 3, '2023-09-09', 3, 1);
 
 INSERT INTO
   Paquete (
