@@ -296,6 +296,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
 
     unset($values[0]);
     $values = array_values($values);
+    print_r($values);
 
     $length_verificator = True;
 
@@ -372,12 +373,11 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
     }
 }
 
-function get_address(TORM $tORM, string $token) //Funcion incompleta
+function get_address(TORM $tORM, string $token)
 {
 
-    $length_verificator = True;
 
-    $length_verificator = $length_verificator && (strlen(strval($token)) <= 15);
+    $length_verificator = (strlen(strval($token)) <= 15);
 
 
     $client_id = get_client_id($tORM, $token);
@@ -386,7 +386,7 @@ function get_address(TORM $tORM, string $token) //Funcion incompleta
         // Debo pedir los datos desde direccion y no desde cliente
         $address_values = $tORM
             ->from("direccion")
-            ->columns('direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
+            ->columns('direccion.id', 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad', 'direccion.predeterminado')
             ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
             ->do('select');
 
@@ -454,7 +454,138 @@ function user_information_web(TORM $tORM, $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+function set_address(TORM $tORM, String $token, String $city = "", String $neighborhood = "", String $street = "", String $address = "")
+{
+    $values = func_get_args();
 
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 30, 30, 30, 30];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $address_id = $tORM
+            ->do(query: "SELECT MAX(id) FROM direccion WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
+        if (isset($address_id[0]) && ($address_id[0] <= 3)) {
+            $response = $tORM
+                ->from("direccion")
+                ->columns("direccion.id", 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
+                ->values('direccion', ($address_id ? ($address_id[0] + 1) : 1), $address, $street, $neighborhood, $city)
+                ->do('insert');
+            return $response;
+        } else {
+            return "ERROR 429, TOO MANY REQUESTS";
+        }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+function modify_address(TORM $tORM, String $token, Int $address_id,  String $city = "", String $neighborhood = "", String $street = "", String $address = "")
+{
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 1, 30, 30, 30, 30];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        if (($address_id <= 3)) {
+            $response = $tORM
+                ->from("direccion")
+                ->columns('direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad')
+                ->values('direccion', $address, $street, $neighborhood, $city)
+                ->where('direccion.id', 'eq', $address_id)
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->do('update');
+            return $response;
+        } else {
+            return "ERROR 429, TOO MANY REQUESTS";
+        }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+function delete_address(TORM $tORM, String $token, Int $address_id)
+{
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 1];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $response = $tORM
+            ->from("direccion")
+            ->where('direccion.id', 'eq', $address_id)
+            ->where('direccion.id', 'eq', $client_id[0]['cliente_id'])
+            ->do('delete');
+        return $response;
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+function toggle_default(TORM $tORM, String $token, Int $address_id)
+{
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    $values = array_values($values);
+
+    $length_verificator = True;
+
+    $maximum = [15, 1];
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $state = $tORM
+            ->do(query: "SELECT predeterminado FROM direccion WHERE cliente_id = {$client_id[0]['cliente_id']} AND id = {$address_id}");
+
+        if (($address_id <= 3) && isset($state[0][0])) {
+            $response = $tORM
+                ->from("direccion")
+                ->columns('direccion.predeterminado')
+                ->values('direccion', !$state)
+                ->where('direccion.id', 'eq', $address_id)
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->do('update');
+            return $response;
+        } else {
+            return "ERROR 429, TOO MANY REQUESTS";
+        }
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
 function show_shop(TORM $tORM, $token)
 {
     //Aqui tome otra "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
@@ -596,14 +727,17 @@ function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
         ->do("select");
     $response = [];
     if ($client_id && $foods) {
+        $order_id = $tORM
+            ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
 
         for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
             $actual_date = date('Y-m-d H:i:s');
+
             foreach ($foods as $food) {
                 $response = $tORM
                     ->from("pide")
-                    ->columns("pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
-                    ->values("pide", intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
+                    ->columns("pide.numero_de_pedido", "pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
+                    ->values("pide", ($order_id ? intval($order_id) : 1), intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
                     ->do("insert");
             }
         }
@@ -624,7 +758,16 @@ function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $me
         return $response;
     }
 }
+function get_orders(TORM $tORM, $token) // Funcion incompleta
+{
 
+    $client_id = get_client_id($tORM, $token);
+    $menu_id = $tORM
+        ->from("pide")
+        ->columns("pide.menu_id")
+        ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+        ->do("select");
+}
 function get_fav_and_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar

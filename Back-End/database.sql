@@ -180,12 +180,14 @@ CREATE TABLE Recibe (
 );
 
 CREATE TABLE Direccion (
+  ID INT(11) NOT NULL COMMENT "El ID unico de la direccion correspondiente",
   Cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
   Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
   Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
   Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
   Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
-  PRIMARY KEY(Cliente_ID, Direccion, Calle, Barrio, Ciudad),
+  Predeterminado BOOLEAN NOT NULL COMMENT "Determina si la vianda correspondiente es la predeterminada",
+  PRIMARY KEY(Cliente_ID, ID),
   FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
 
@@ -524,21 +526,21 @@ VALUES
     'x2312x23d2d2',
     Now(),
     Now(),
-    DATE_ADD( Now(), INTERVAL 15 Minute),
+    DATE_ADD(Now(), INTERVAL 15 Minute),
     'Activa'
   ),
   (
     '23ec23d23r4t',
     Now(),
     Now(),
-    DATE_ADD( Now(), INTERVAL 15 Minute),
+    DATE_ADD(Now(), INTERVAL 15 Minute),
     'Activa'
   ),
   (
     '12312334f234',
     Now(),
     Now(),
-    DATE_ADD( Now(), INTERVAL 15 Minute),
+    DATE_ADD(Now(), INTERVAL 15 Minute),
     'Activa'
   );
 
@@ -689,65 +691,83 @@ VALUES
 INSERT INTO
   Direccion (
     `Cliente_ID`,
+    `ID`,
     `Direccion`,
     `Calle`,
     `Barrio`,
-    `Ciudad`
+    `Ciudad`,
+    `Predeterminado`
   )
 VALUES
   (
     '1',
+    '1',
     '20',
     'calle17',
     'barrio17',
-    'ciudad17'
+    'ciudad17',
+    TRUE
   ),
   (
     '1',
+    '2',
     '4',
     'calle1',
     'barrio1',
-    'ciudad1'
+    'ciudad1',
+    FALSE
   ),
   (
     '2',
+    '1',
     '12',
     'calle9',
     'barrio9',
-    'ciudad9'
+    'ciudad9',
+    TRUE
   ),
   (
     '3',
+    '1',
     '20',
     'calle17',
     'barrio17',
-    'ciudad17'
+    'ciudad17',
+    TRUE
   ),
   (
     '4',
+    '1',
     '20',
     'calle17',
     'barrio17',
-    'ciudad17'
+    'ciudad17',
+    TRUE
   ),
   (
     '4',
+    '2',
     '4',
     'calle1',
     'barrio1',
-    'ciudad1'
+    'ciudad1',
+    FALSE
   ),
   (
     '5',
+    '1',
     '12',
     'calle9',
     'barrio9',
-    'ciudad9'
+    'ciudad9',
+    TRUE
   ),
   (
     '6',
+    '1',
     '20',
     'calle17',
     'barrio17',
-    'ciudad17'
+    'ciudad17',
+    TRUE
   );
