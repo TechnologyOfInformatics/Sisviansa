@@ -54,7 +54,13 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
-          this.$router.push("/");
+          if (Array.isArray(response.data)) {
+            let token = response.data[1];
+            if (token) {
+              sessionStorage.setItem('miToken', token);
+              window.history.back();
+            }
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -157,11 +163,12 @@ button:active {
   border: 1px solid #ccc;
   border-radius: 50%;
 }
+
 @media (max-width: 768px) {
   input {
     width: 190%;
     padding: 12px 8px;
-  
+
   }
 
   a {

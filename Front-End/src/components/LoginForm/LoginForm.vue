@@ -46,7 +46,7 @@ export default {
               let token = response.data[1];
               if (token) {
                 sessionStorage.setItem('miToken', token);
-                this.$router.push('/');
+                window.history.back();
               } else {
                 attempts++;
                 if (attempts < maxAttempts) {
