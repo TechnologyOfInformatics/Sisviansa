@@ -1,36 +1,40 @@
 <template>
-    <div>
+    <div class="form-container">
         <form class="user-form" @submit.prevent="updateUserInfo">
             <div>
-                <label for="first_name">Primer Nombre:</label>
-                <input type="text" id="first_name" v-model="first_name" />
+                <div>
+                    <label for="first_name">Primer Nombre:</label>
+                    <input type="text" id="first_name" v-model="first_name" />
+                </div>
+
+                <div>
+                    <label for="second_name">Segundo Nombre:</label>
+                    <input type="text" id="second_name" v-model="second_name" />
+                </div>
+                <div>
+                    <label for="first_surname">Primer Apellido:</label>
+                    <input type="text" id="first_surname" v-model="first_surname" />
+                </div>
+                <div>
+                    <label for="second_surname">Segundo Apellido:</label>
+                    <input type="text" id="second_surname" v-model="second_surname" />
+                </div>
+                <div>
+                    <label for="mail">Correo:</label>
+                    <input type="mail" id="mail" v-model="mail" />
+                </div>
+            </div>
+            <div class="user-form-id">
+                <div>
+                    <span>Documento de Identidad:</span>
+                    <span id="id">{{ id }}</span>
+                </div>
+                <div>
+                    <span>Tipo de Documento:</span>
+                    <span id="tipo">{{ idtype }}</span>
+                </div>
             </div>
 
-            <div>
-                <label for="second_name">Segundo Nombre:</label>
-                <input type="text" id="second_name" v-model="second_name" />
-            </div>
-            <div>
-                <label for="first_surname">Primer Apellido:</label>
-                <input type="text" id="first_surname" v-model="first_surname" />
-            </div>
-            <div>
-                <label for="second_surname">Segundo Apellido:</label>
-                <input type="text" id="second_surname" v-model="second_surname" />
-            </div>
-            <div>
-                <label for="mail">Correo:</label>
-                <input type="mail" id="mail" v-model="mail" />
-            </div>
-
-            <div>
-                <span>Documento de Identidad:</span>
-                <span id="id">{{ id }}</span>
-            </div>
-            <div>
-                <span>Tipo de Documento:</span>
-                <span id="tipo">{{ idtype }}</span>
-            </div>
             <button type="submit">Guardar Cambios</button>
         </form>
     </div>
@@ -104,16 +108,38 @@ export default {
 </script>
   
 <style scoped>
+.form-container {
+    background-color: #243328;
+    padding: 1.63em;
+    border: 1px solid white;
+    border-radius: 15px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .user-form {
-    margin: 0 auto;
-    padding: 20px;
+    width: 62.5vw;
+    background-color: #243328;
+    padding: 2em;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
 }
 
 .user-form div {
     margin-bottom: 10px;
+    
+}
+
+.user-form-id{
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 40vw;
+    margin: 0 auto;
 }
 
 .user-form label {
@@ -121,30 +147,33 @@ export default {
 }
 
 .user-form input[type="text"],
-.user-form input[type="email"],
+.user-form input[type="mail"],
 .user-form button {
-    width: 100%;
+    width: 60vw;
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
+    margin: 0 auto;
 }
 
 .user-form span {
     display: inline-block;
     padding: 10px;
-    background-color: #f5f5f5;
+    background-color: #243328;
     border: 1px solid #ddd;
     border-radius: 3px;
 }
 
 .user-form button {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #ebeadf;
+    color: black;
+
     cursor: pointer;
 }
 
 .user-form button:hover {
-    background-color: #0056b3;
+    background-color: #243328;
+    color: #fff;
 }
 </style>

@@ -97,6 +97,7 @@
 
 .menu-footer-buttons {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: left;
 }
@@ -330,12 +331,6 @@
     margin-bottom: 1em;
   }
 
-  .add-to-cart-btn i,
-  .close-btn i,
-  .viewMore i {
-    font-size: 6vw;
-  }
-
   .footer-buttons-icons i:nth-child(odd) {
     padding-right: 1em;
   }
@@ -350,9 +345,29 @@
   }
 
   .menu-list .menu-card .menu-top .menu-top-text div {
-
     transform: translateX(50%);
     width: 40vw;
     clip-path: polygon(100% 0, 100% 100%, 0 100%, 10% 50%, 0 0);
   }
+
+  .menu-list .menu-card .menu-footer .description {
+    width: 60vw;
+  }
+
+  .footer-side-icons {
+    transform: translate(-8%, -20vh);
+  }
+
+  .footer-side-icons button img,
+  .footer-side-icons i {
+    width: 12vw;
+  }
+
+  .footer-bottom-icons button img,
+  .footer-bottom-icons i {
+    font-size: 6vw;
+    margin-right: 20px;
+    margin-bottom: 10px;
+  }
+
 }
