@@ -664,7 +664,7 @@ function delete_address(TORM $tORM, String $token, Int $address_id)
 function show_shop(TORM $tORM, String $token = '', array $order = [])
 {
     //Aqui tome otro "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
-    if ($token) {
+    if ($token && (strlen($token) < 15 && strval($token) >= 8)) {
         $is_session = $tORM
             ->from("sesion")
             ->columns("sesion.token")
@@ -674,9 +674,12 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
     } else {
         $is_session = False;
     }
+
     $client_id = get_client_id($tORM, $token);
+
     $favorites = [];
-    if (!empty($token) && $is_session) { //Si el token esta entre los valores 8 y 15, y no está vacío
+
+    if (!empty($token) && $is_session) {
         if ((strlen($token) < 8 || strlen($token) >= 15)) {
             return "400, BAD REQUEST: Wrong data length";
         } elseif ($client_id) {
@@ -690,7 +693,8 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
                 ->do("select");
         }
     }
-    if (in_array($order, ['nombre', 'id'])) {
+
+    if (isset($order[0]) && in_array($order[0], ['nombre', 'id'])) {
         $menus = $tORM
             ->from("menu")
             ->order('menu.' . $order[0], $order[1]) //nombre/id, ASC/DESC
@@ -722,9 +726,10 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
             }
         }
     }
-    foreach ($foods as $food) {
-        foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
 
+    foreach ($foods as $food) {
+        foreach ($menus as &$menu) {
+            // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
             if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
                 if (!isset($menu['viandas'])) {
                     $menu['viandas'] = [];
@@ -755,8 +760,11 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
             }
         }
     }
-    if (!empty($order) && in_array($order[0], $diets)) {
-        $filtered_menus = order_diets($filtered_menus, $order[0], $order[1]);
+    $regex_string = $order ? preg_grep('|' . strtolower($order[0]) . '|', array_map('strtolower', $diets)) : '';
+    if (!empty($regex_string)) {
+        //Aqui aplique varias cosas nuevas, array map es como lambda de python, recorre un array con una
+        //funcion que usar para cada elemento y preg_grep es similar a in_array pero permite regular expressions
+        $filtered_menus = order_diets($filtered_menus, ucfirst($regex_string[0]), $order[1]);
     }
 
     return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];

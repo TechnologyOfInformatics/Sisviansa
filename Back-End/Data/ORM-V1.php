@@ -359,7 +359,8 @@ class TORM //Techin Object-Relation Model (Basic)
                 'neq' => '!=',
                 'gt' => '>',
                 'st' => '<', 'gte' => '>=',
-                'ste' => '<=', 'like' => 'LIKE',
+                'ste' => '<=',
+                'like' => 'LIKE',
                 'null' => 'IS NULL',
                 'nnull' => 'IS NOT NULL'
             );

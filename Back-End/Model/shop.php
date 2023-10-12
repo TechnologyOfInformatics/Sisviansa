@@ -6,10 +6,10 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
 $shop = __FILE__;
-function shop_show_shop(string $token = "")
+function shop_show_shop(string $token = "", $order = [])
 {
     global $tORM;
-    return show_shop($tORM, $token);
+    return show_shop($tORM, $token, $order);
 }
 function shop_favorites_toggle(string $token, int $menu_id)
 {

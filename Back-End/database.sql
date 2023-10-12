@@ -548,7 +548,6 @@ VALUES
 
 INSERT INTO
   Menu (
-    `ID`,
     `Nombre`,
     `Frecuencia`,
     `Descripcion`,
@@ -557,7 +556,6 @@ INSERT INTO
   )
 VALUES
   (
-    1,
     'Menu1',
     1,
     'Descripcion Menu 1',
@@ -565,7 +563,6 @@ VALUES
     'Personalizado'
   ),
   (
-    2,
     'Menu2',
     7,
     'Descripcion Menu 2',
@@ -573,11 +570,31 @@ VALUES
     'Estandar'
   ),
   (
-    3,
     'Menu3',
     15,
     'Descripcion Menu 3',
     20.00,
+    'Estandar'
+  ),
+  (
+    'Menu4',
+    30,
+    'Descripcion Menu 5',
+    220.00,
+    'Estandar'
+  ),
+  (
+    'Menu5',
+    11,
+    'Descripcion Menu 5',
+    70.00,
+    'Estandar'
+  ),
+  (
+    'Menu6',
+    7,
+    'Descripcion Menu 6',
+    21110.00,
     'Estandar'
   );
 
@@ -649,7 +666,10 @@ VALUES
   (3, 4),
   (1, 3),
   (2, 1),
-  (3, 2);
+  (3, 2),
+  (4, 3),
+  (5, 1),
+  (6, 2);
 
 INSERT INTO
   Pide (
