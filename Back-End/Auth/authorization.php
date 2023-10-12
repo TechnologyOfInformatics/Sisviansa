@@ -322,7 +322,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 }
 //
 //
-function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
+function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -332,9 +332,8 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
 
     $length_verificator = True;
 
-    $maximum = [15, 30, 30, 30, 30, 30, 20, 25];
+    $maximum = [15, 30, 30, 30, 20, 25];
 
-    $length_verificator = $length_verificator && (strlen($passwd) > 8);
 
     foreach ($values as $index => $var) {
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
@@ -343,22 +342,6 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
-        $client_name = $tORM
-            ->from('web')
-            ->columns('web.primer_nombre')
-            ->where('web.cliente_id', 'eq', $client_id[0]['cliente_id'])
-            ->do('select');
-
-        $name_match = $client_name ? (preg_match('|' . strtolower($client_name[0]['primer_nombre']) . '|', $passwd)) : False; //True si esta el nombre del cliente en la contrasenia
-
-        $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
-        if ($name_match && $passwd_verificator) {
-            return 'ERROR 400, BAD REQUEST';
-        } elseif ($passwd && ($passwd == $confirm_passwd)) {
-            $passwd = md5($passwd);
-        } elseif (!($passwd == "" && ($passwd == $confirm_passwd))) {
-            return "ERROR 400, BAD REQUEST";
-        }
 
         $web_values = $tORM
             ->from("web")
@@ -379,19 +362,11 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
             'web.primer_apellido' => $first_surname ? $first_surname : $received_data["primer_apellido"],
             'web.segundo_apellido' => $second_surname ? $second_surname : $received_data["segundo_apellido"],
         ];
-        $new_client_data = [
-            'cliente.contrasenia' => $passwd ? $passwd : $received_data["contrasenia"],
-            'cliente.email' => $mail ? $mail : $received_data["email"]
-        ];
 
-        $new_client_values = array_merge(["cliente"], array_values($new_client_data));
-        $object = $tORM
-            ->from("cliente");
-
-        $object =  call_user_func_array(array($object, "columns"), array_keys($new_client_data));
-        $object =  call_user_func_array(array($object, "values"), $new_client_values);
-
-        $result_1 = $object
+        $result_1 = $tORM
+            ->from("cliente")
+            ->columns('cliente.email')
+            ->values('cliente', $mail ? $mail : $received_data["email"])
             ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
             ->do("update");
         //
@@ -1265,8 +1240,47 @@ function credit_card_change() //
 }
 
 
-function change_password() //
+function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
 {
+
+
+
+    $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
+
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id && $length_verificator) {
+        $client_name = $tORM
+            ->from('web')
+            ->columns('web.primer_nombre')
+            ->where('web.cliente_id', 'eq', $client_id[0]['cliente_id'])
+            ->do('select');
+
+        $name_match = $client_name ? (preg_match('|' . strtolower($client_name[0]['primer_nombre']) . '|', $passwd)) : False; //True si esta el nombre del cliente en la contrasenia
+
+        $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
+        if ($name_match && $passwd_verificator) {
+            return 'ERROR 400, BAD REQUEST';
+        } elseif ($passwd && ($passwd == $confirm_passwd)) {
+            $passwd = md5($passwd);
+        } elseif (!($passwd == "" && ($passwd == $confirm_passwd))) {
+            return "ERROR 400, BAD REQUEST";
+        }
+
+        $result = $tORM
+            ->from("cliente")
+            ->columns('cliente.contrasenia')
+            ->values('cliente', $passwd)
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+        //
+        //
+        //
+
+        return $result;
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
 }
 
 function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia

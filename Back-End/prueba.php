@@ -36,8 +36,8 @@ echo "<pre>";
 //print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
 
 
-$order = 'maxi';
-print_r(preg_match('|' . strtolower($name) . '|', ',maxi/x/i'));
+print_r(change_password($tORM, 'x2312x23d2d2', 'mozzarrella', 'mozzarrella'));
+print_r(md5('mozzarrella'));
 
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
