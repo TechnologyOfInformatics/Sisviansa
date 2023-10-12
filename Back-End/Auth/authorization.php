@@ -624,9 +624,9 @@ function delete_address(TORM $tORM, String $token, Int $address_id)
         return "ERROR 403, FORBIDDEN";
     }
 }
-function show_shop(TORM $tORM, $token)
+function show_shop(TORM $tORM, String $token = '', array $order = [])
 {
-    //Aqui tome otra "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
+    //Aqui tome otro "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
     if ($token) {
         $is_session = $tORM
             ->from("sesion")
@@ -653,9 +653,16 @@ function show_shop(TORM $tORM, $token)
                 ->do("select");
         }
     }
-    $menus = $tORM
-        ->from("menu")
-        ->do("select");
+    if ($order) {
+        $menus = $tORM
+            ->from("menu")
+            ->order($order[0], $order[1]) //nombre, ASC/DESC
+            ->do("select");
+    } else {
+        $menus = $tORM
+            ->from("menu")
+            ->do("select");
+    }
 
     $foods = $tORM
         ->from("vianda")
@@ -697,6 +704,19 @@ function show_shop(TORM $tORM, $token)
     $filtered_menus = array_values($filtered_menus);
 
 
+
+    foreach ($filtered_menus as $key => $menu) {
+        $filtered_menus[$key]['dietas'] = [];
+        foreach ($filtered_menus[$key]['viandas'] as $food) {
+            if (isset($food['dietas'])) {
+                foreach ($food['dietas'] as $diet) {
+                    if (!in_array($diet, $filtered_menus[$key]['dietas'])) {
+                        $filtered_menus[$key]['dietas'][] = $diet;
+                    }
+                }
+            }
+        }
+    }
     return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
@@ -1053,7 +1073,6 @@ function create_personal_menu(TORM $tORM, String $token, String $name, Int $freq
         return "ERROR 403, FORBIDDEN";
     }
 }
-
 function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
 {
     $client_id = get_client_id($tORM, $token);
@@ -1102,7 +1121,6 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         return "ERROR 403, FORBIDDEN";
     }
 }
-
 function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description, array $foods) //
 {
     $client_id = get_client_id($tORM, $token);
