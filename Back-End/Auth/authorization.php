@@ -694,10 +694,17 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
         }
     }
 
-    if (isset($order[0]) && in_array($order[0], ['nombre', 'id'])) {
+    $order_column = '';
+    if ($order) {
+        $comparition_array = ['order_by_name' => 'nombre', 'order_by_date' => 'id'];
+        if (isset($comparition_array[$order[0]])) {
+            $order_column = $comparition_array[$order[0]];
+        }
+    }
+    if ($order_column && in_array($order[1], ['ASC', 'DESC'])) {
         $menus = $tORM
             ->from("menu")
-            ->order('menu.' . $order[0], $order[1]) //nombre/id, ASC/DESC
+            ->order('menu.' . $order_column, $order[1]) //nombre/id, ASC/DESC
             ->do("select");
     } else {
         $menus = $tORM
@@ -761,7 +768,7 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
         }
     }
     $regex_string = $order ? preg_grep('|' . strtolower($order[0]) . '|', array_map('strtolower', $diets)) : '';
-    if (!empty($regex_string)) {
+    if (!empty($regex_string) && in_array($order[1], ['ASC', 'DESC'])) {
         //Aqui aplique varias cosas nuevas, array map es como lambda de python, recorre un array con una
         //funcion que usar para cada elemento y preg_grep es similar a in_array pero permite regular expressions
         $filtered_menus = order_diets($filtered_menus, ucfirst($regex_string[0]), $order[1]);
