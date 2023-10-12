@@ -8,6 +8,34 @@ header("Access-Control-Allow-Credentials: true");
 
 $authorization = __FILE__;
 
+
+function order_diets($menus, $target_diet, $order = 'ASC')
+{
+    //Ordena los menus segun una dieta dada, solo se me ocurrio como hacerla implementandola como una funcion
+    usort($menus, function ($a, $b) use ($target_diet, $order) {
+        $has_diet_one = in_array($target_diet, $a['dietas']);
+        $has_diet_two = in_array($target_diet, $b['dietas']);
+
+        if ($order === 'ASC') {
+            if ($has_diet_one && !$has_diet_two) {
+                return -1;
+            } elseif (!$has_diet_one && $has_diet_two) {
+                return 1;
+            }
+        } else {
+            if ($has_diet_one && !$has_diet_two) {
+                return 1;
+            } elseif (!$has_diet_one && $has_diet_two) {
+                return -1;
+            }
+        }
+
+        return 0; // Mantén el orden actual si ambos menús tienen o no la dieta
+    });
+
+    return $menus;
+}
+
 function token_generator()
 {
     $allowedCharacters = '0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
@@ -38,6 +66,7 @@ function get_client_id(TORM $tORM, String $token)
     }
     return [];
 }
+
 function session_token(TORM $tORM, String $token)
 {
 
@@ -105,6 +134,7 @@ function session_token(TORM $tORM, String $token)
         return $client;
     }
 }
+
 function session_close(QueryCall $ctl, $token)
 {
     if (!isset($ctl, $token)) {
@@ -166,7 +196,6 @@ function session(QueryCall $ctl, $token)
         return [false];
     }
 }
-
 
 function login(QueryCall $ctl, $mail, $passwd, string $token = "")
 {
@@ -235,6 +264,7 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         return "404, NOT FOUND: The user wasn't found";
     }
 }
+
 function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
 {
     $values = func_get_args();
@@ -368,6 +398,7 @@ function modify_web(TORM $tORM, string $token, $passwd = "", $confirm_passwd = "
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function get_address(TORM $tORM, string $token)
 {
 
@@ -394,6 +425,7 @@ function get_address(TORM $tORM, string $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function user_information_web(TORM $tORM, $token)
 {
     $values = func_get_args();
@@ -449,6 +481,7 @@ function user_information_web(TORM $tORM, $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function set_address(TORM $tORM, String $token, String $city, String $neighborhood = "", String $street, String $address)
 {
     $values = func_get_args();
@@ -493,6 +526,7 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function modify_address(TORM $tORM, String $token, Int $address_id,  String $city = "", String $neighborhood = "", String $street = "", String $address = "")
 {
 
@@ -532,6 +566,7 @@ function modify_address(TORM $tORM, String $token, Int $address_id,  String $cit
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function toggle_default(TORM $tORM, String $token, Int $address_id)
 {
 
@@ -569,6 +604,7 @@ function toggle_default(TORM $tORM, String $token, Int $address_id)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function delete_address(TORM $tORM, String $token, Int $address_id)
 {
 
@@ -624,6 +660,7 @@ function delete_address(TORM $tORM, String $token, Int $address_id)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function show_shop(TORM $tORM, String $token = '', array $order = [])
 {
     //Aqui tome otro "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
@@ -653,10 +690,10 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
                 ->do("select");
         }
     }
-    if ($order) {
+    if (in_array($order, ['nombre', 'id'])) {
         $menus = $tORM
             ->from("menu")
-            ->order($order[0], $order[1]) //nombre, ASC/DESC
+            ->order('menu.' . $order[0], $order[1]) //nombre/id, ASC/DESC
             ->do("select");
     } else {
         $menus = $tORM
@@ -704,21 +741,27 @@ function show_shop(TORM $tORM, String $token = '', array $order = [])
     $filtered_menus = array_values($filtered_menus);
 
 
-
-    foreach ($filtered_menus as $key => $menu) {
-        $filtered_menus[$key]['dietas'] = [];
-        foreach ($filtered_menus[$key]['viandas'] as $food) {
+    $diets = [];
+    foreach ($filtered_menus as $key => &$menu) {
+        $menu['dietas'] = [];
+        foreach ($menu['viandas'] as $food) {
             if (isset($food['dietas'])) {
                 foreach ($food['dietas'] as $diet) {
-                    if (!in_array($diet, $filtered_menus[$key]['dietas'])) {
-                        $filtered_menus[$key]['dietas'][] = $diet;
+                    if (!in_array($diet, $menu['dietas'])) {
+                        $menu['dietas'][] = $diet;
+                        $diets[] = $diet;
                     }
                 }
             }
         }
     }
+    if (!empty($order) && in_array($order[0], $diets)) {
+        $filtered_menus = order_diets($filtered_menus, $order[0], $order[1]);
+    }
+
     return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
+
 function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 {
     // En caso de que no haya un token como el enviado se devolvera un array vacio
@@ -772,6 +815,7 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
         return $is_session;
     }
 }
+
 function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
@@ -823,6 +867,7 @@ function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $me
         return "ERROR 400, WRONG DATA TYPE";
     }
 }
+
 function get_orders(TORM $tORM, $token) // Funcion incompleta
 {
 
@@ -833,6 +878,7 @@ function get_orders(TORM $tORM, $token) // Funcion incompleta
         ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
         ->do("select");
 }
+
 function get_fav_and_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
@@ -1005,6 +1051,7 @@ function get_foods(TORM $tORM) //
 
     return [$filtered_menus];
 }
+
 function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
@@ -1073,6 +1120,7 @@ function create_personal_menu(TORM $tORM, String $token, String $name, Int $freq
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
 {
     $client_id = get_client_id($tORM, $token);
@@ -1121,6 +1169,7 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description, array $foods) //
 {
     $client_id = get_client_id($tORM, $token);
@@ -1181,13 +1230,6 @@ function credit_card_change() //
 {
 }
 
-function address_create(/*token, numero, calle, barrio, ciudad*/) //
-{
-}
-
-function address_change(/*token, numero, calle, barrio, ciudad*/) //
-{
-}
 
 function change_password() //
 {
