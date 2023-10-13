@@ -298,7 +298,6 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         JOIN empresa  ON cliente.id = empresa.cliente_id
         WHERE cliente.email = '$mail' AND cliente.contrasenia = '$passwd'";
         $response = $ctl->setQuery($query)->call();
-        print_r($passwd);
         if ($response && count($response) === 3) {
             $id = $response[0];
             $auth = $response[2];

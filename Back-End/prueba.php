@@ -34,7 +34,7 @@ echo "<pre>";
 //print_r(delete_address($tORM, 'x2312x23d2d2', 2));
 //print_r(set_address($tORM, 'x2312x23d2d2', 'Chicago', '', 'Bella visasdasdasdta', '12345'));
 //print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
-$str = "maxi@gmail.com";
+$str = "maxigmail.com";
 print_r((false !== strpos($str, "@") && false !== strpos($str, ".")));
 
 echo "<pre/>";
