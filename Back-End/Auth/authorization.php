@@ -219,21 +219,25 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         return "400 Bad Request: Missing data";
     } elseif (!$type_verificator) {
         return "400 Bad Request: Wrong data type";
-    } elseif (!$length_verificator) {
-        return "400 Bad Request: Wrong data length";
     }
+    //elseif (!$length_verificator) {
+    //    return "400 Bad Request: Wrong data length";
+    //}
 
     if (!empty($token)) {
         session_close($ctl, $token);
     }
     $new_token = token_generator();
 
+
+    $passwd = md5($passwd);
     $query = "SELECT cliente.id, web.primer_nombre, web.primer_apellido, cliente.autorizacion
     FROM cliente 
     JOIN web  ON cliente.id = web.cliente_id
     WHERE cliente.email = '$mail' AND cliente.contrasenia = '$passwd'";
 
     $response = $ctl->setQuery($query)->call();
+    print_r($response);
 
     if ($response && count($response) === 4) {
         $id = $response[0];
@@ -491,8 +495,14 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
 
     $maximum = [15, 30, 30, 30, 30];
 
+
     foreach ($values as $index => $var) {
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    unset($values[3]);
+    if (in_array('', array($values))) {
+        return 'ERROR 400, BAD REQUEST';
     }
 
     $client_id = get_client_id($tORM, $token);
@@ -649,6 +659,15 @@ function delete_address(TORM $tORM, String $token, Int $address_id)
                     ->columns("direccion.id", 'direccion.cliente_id', 'direccion.direccion', 'direccion.calle',  'direccion.ciudad', 'direccion.predeterminado')
                     ->values('direccion', (intval($key) + 1), intval($address['cliente_id']), $address['direccion'], $address['calle'], $address['ciudad'], intval($address['predeterminado']))
                     ->do('insert');
+                if ($address['barrio']) {
+                    $tORM
+                        ->from('direccion')
+                        ->columns('direccion.barrio')
+                        ->values('direccion', $address['barrio'])
+                        ->where('direccion.id', 'eq', (intval($key) + 1))
+                        ->where('direccion.cliente_id', 'eq', intval($address['cliente_id']))
+                        ->do('update');
+                }
             }
         } else {
             return "ERROR 404, NOT FOUND";
