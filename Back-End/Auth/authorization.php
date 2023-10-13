@@ -281,12 +281,9 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 
     $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $password); //True si no hay ni caracteres especiales ni letras ni numeros
 
-    print_r($name_match);
-    print_r('hol');
-    print_r($passwd_verificator);
 
     if ($name_match || $passwd_verificator) {
-        return 'ERROR 400, BAD REQUEST';
+        return 'ERROR 400, BAD REQUEST: Password error';
     }
 
     $length_verificator = True;
