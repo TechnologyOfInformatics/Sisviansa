@@ -73,8 +73,9 @@ function options_del_personal_menu(String $token, Int $menu_id)
     return delete_personal_menu($tORM, $token, $menu_id);
 }
 
-function options_change_password(String $token, String $passwd, String $confirm_passwd)
+function options_change_password(String $token, String $actual_passwd, String $passwd, String $confirm_passwd)
 {
     global $tORM;
-    return change_password($tORM, $token, $passwd, $confirm_passwd);
+    global $ctl;
+    return change_password($tORM, $ctl, $token, $actual_passwd, $passwd, $confirm_passwd);
 }

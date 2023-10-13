@@ -1244,7 +1244,7 @@ function credit_card_change() //
 }
 
 
-function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
+function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd) //
 {
 
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
@@ -1252,6 +1252,7 @@ function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
+        //Verificacion de contrasenia
         $client_name = $tORM
             ->from('web')
             ->columns('web.primer_nombre')
@@ -1264,6 +1265,16 @@ function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
 
         $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
 
+        $client_actual_email = $tORM
+            ->from('cliente')
+            ->columns('cliente.email')
+            ->where('cliente.id', 'eq', $client_id[0]['cliente_id'])
+            ->do('select');
+
+        $login_response = login($ctl, $client_actual_email[0]['email'], $actual_passwd);
+        if (gettype($login_response) == 'string') {
+            return $login_response;
+        }
         if ($name_match || $passwd_verificator) {
             return 'ERROR 400, BAD REQUEST';
         } elseif ($passwd && ($passwd == $confirm_passwd)) {
@@ -1272,6 +1283,7 @@ function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
             return "ERROR 400, BAD REQUEST";
         }
 
+        //Cambio de contrasenia
         $result = $tORM
             ->from("cliente")
             ->columns('cliente.contrasenia')
