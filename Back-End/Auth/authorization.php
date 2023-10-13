@@ -1310,6 +1310,7 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
 
     $client_id = get_client_id($tORM, $token);
 
+
     if ($client_id && $length_verificator) {
         //Verificacion de contrasenia
         $client_name = $tORM
@@ -1353,7 +1354,7 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
         //
         //
 
-        return $result;
+        return $login_response;
     } else {
         return "ERROR 403, FORBIDDEN";
     }

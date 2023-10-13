@@ -446,7 +446,7 @@ class TORM //Techin Object-Relation Model (Basic)
         return $this;
     }
 
-    private function queryFormat(String $method)
+    public function queryFormat(String $method)
     {
         // Etapa 7: Formatear la consulta SQL
         // ...
