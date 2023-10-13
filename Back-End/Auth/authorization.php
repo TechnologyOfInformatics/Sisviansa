@@ -164,6 +164,7 @@ function session(QueryCall $ctl, $token)
     if (!is_array($is_session_active) || count($is_session_active) === 0 || is_string($is_session_active)) {
         return "404, NOT FOUND: The given TOKEN doesn't exist";
     } elseif ($is_session_active[0] === "Activa") {
+
         $query = "SELECT sesion.final_de_sesion,
                 sesion.estado,
                 web.primer_nombre, 
@@ -175,9 +176,36 @@ function session(QueryCall $ctl, $token)
             ";
 
         $response = $ctl->setQuery($query)->call();
-        if (!is_array($response) || count($response) === 0 || is_string($response)) {
+        if (is_string($response)) {
             return "404, NOT FOUND: The given TOKEN doesn't exist";
         } else {
+            if (!$response) {
+                $query = "SELECT sesion.final_de_sesion,
+                sesion.estado,
+                empresa.nombre
+                FROM inicia
+                JOIN sesion ON inicia.sesion_token = sesion.token
+                JOIN empresa ON inicia.cliente_id = empresa.cliente_id
+                WHERE inicia.sesion_token = '$token';
+            ";
+
+                $response = $ctl->setQuery($query)->call();
+
+                $actualDate = date('Y-m-d H:i:s');
+
+                $dbDate = $response[0];
+
+                if ($actualDate <= $dbDate) {
+                    $newDate = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 minutes'));
+
+                    $ctl->update("sesion", [$token, $actualDate, $newDate], ["token"], ["token", "ultima_sesion", "final_de_sesion"])->call();
+
+                    return [True,  $response[2]];
+                } else if ($actualDate > $dbDate) {
+
+                    return session_close($ctl, $token);
+                }
+            }
 
             $actualDate = date('Y-m-d H:i:s');
 
@@ -187,8 +215,9 @@ function session(QueryCall $ctl, $token)
                 $newDate = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 minutes'));
 
                 $ctl->update("sesion", [$token, $actualDate, $newDate], ["token"], ["token", "ultima_sesion", "final_de_sesion"])->call();
-                return [True, $response[2], $response[3]];
+                return [False, $response[2], $response[3]];
             } else if ($actualDate > $dbDate) {
+
                 return session_close($ctl, $token);
             }
         }
@@ -269,10 +298,10 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         JOIN empresa  ON cliente.id = empresa.cliente_id
         WHERE cliente.email = '$mail' AND cliente.contrasenia = '$passwd'";
         $response = $ctl->setQuery($query)->call();
+        print_r($passwd);
         if ($response && count($response) === 3) {
             $id = $response[0];
             $auth = $response[2];
-
 
             if ($auth === "Autorizado") {
                 $actual_session = date('Y-m-d H:i:s');
