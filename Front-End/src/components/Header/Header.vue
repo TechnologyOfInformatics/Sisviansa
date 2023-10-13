@@ -40,13 +40,13 @@
             <router-link to="/faq" class="link">Preguntas Frecuentes</router-link>
           </li>
           <div v-if="isAuthenticated">
-          <li :class="{ selected: $route.path === '/profile' }" v-if="web">
-            <router-link to="/profile" class="link">Perfil</router-link>
-          </li>
-          <li :class="{ selected: $route.path === '/profile' }" v-else-if="!web">
-            <router-link to="/profile" class="link">Empresa</router-link>
-          </li>
-        </div>
+            <li :class="{ selected: $route.path === '/profile' }" v-if="web">
+              <router-link to="/profile" class="link">Perfil</router-link>
+            </li>
+            <li :class="{ selected: $route.path === '/bussines' }" v-else-if="!web">
+              <router-link to="/bussines" class="link">Empresa</router-link>
+            </li>
+          </div>
         </ul>
         <div class="nav__bottom__cart" v-if="showCart">
           <i class="fa-solid fa-cart-shopping" @click="toggleCartModal"></i>
@@ -109,7 +109,7 @@ export default {
           .post("http://localhost/Back-End/server.php", dataToSend)
           .then((response) => {
             console.log(response.data)
-            if(response.data == false){
+            if (response.data == false) {
               console.log("fun")
             }
             if (response.data[0] == false) {

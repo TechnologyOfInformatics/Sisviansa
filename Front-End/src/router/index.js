@@ -5,6 +5,8 @@ import AuthView from '@/views/user/AuthView.vue'
 import ShopView from '@/views/user/ShopView.vue'
 import CartView from '@/views/user/CartView.vue'
 import ProfileView from '@/views/user/ProfileView.vue'
+import BussinesView from '@/views/user/BussinesView.vue'
+
 
 import AdminAuthView from '@/views/admin/AuthView.vue'
 import AdminUserView from '@/views/admin/UserView.vue'
@@ -29,7 +31,7 @@ const routes = [
     name: 'shop',
     component: ShopView
   },
- 
+
   {
     path: '/cart',
     name: 'cart',
@@ -39,6 +41,11 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: ProfileView
+  },
+  {
+    path: '/bussines',
+    name: 'bussines',
+    component: BussinesView
   },
 
   {
