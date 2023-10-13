@@ -206,7 +206,7 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
     $length_verificator = true;
 
     foreach ($values as $var) {
-        $length_verificator = $length_verificator && (strlen(strval($var)) <= 30) && (strlen(strval($var)) >= 2);
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= 30) && (strlen(strval($var)) >= 5);
     }
 
     $type_verificator = true;
@@ -230,6 +230,7 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
 
 
     $passwd = md5($passwd);
+
     $query = "SELECT cliente.id, web.primer_nombre, web.primer_apellido, cliente.autorizacion
     FROM cliente 
     JOIN web  ON cliente.id = web.cliente_id
@@ -258,12 +259,45 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
 
             $ctl->insert("sesion", [$new_token, $actual_session, $last_session, $last_session, "Activa"],  ["token", "inicio_de_sesion", "ultima_sesion", "final_de_sesion", "estado"])->call();
             $ctl->insert("inicia", [$new_token, $id],  ["sesion_token", "cliente_id"])->call();
-            return [True, $new_token, $response[1], $response[2]];
+            return [False, $new_token, $response[1], $response[2]];
         } else {
             return "403, FORBIDDEN: You are not allowed to enter the system";
         }
     } else {
-        return "404, NOT FOUND: The user wasn't found";
+        $query = "SELECT cliente.id, empresa.nombre, cliente.autorizacion
+        FROM cliente 
+        JOIN empresa  ON cliente.id = empresa.cliente_id
+        WHERE cliente.email = '$mail' AND cliente.contrasenia = '$passwd'";
+        $response = $ctl->setQuery($query)->call();
+        if ($response && count($response) === 3) {
+            $id = $response[0];
+            $auth = $response[2];
+
+
+            if ($auth === "Autorizado") {
+                $actual_session = date('Y-m-d H:i:s');
+
+                $query = "UPDATE sesion
+            JOIN inicia ON sesion.token = inicia.sesion_token
+            SET sesion.estado = 'Finalizada'
+            WHERE inicia.cliente_id = $response[0];";
+                $ctl->setQuery($query)->call();
+
+                $query = "DELETE
+            FROM inicia WHERE inicia.cliente_id = $response[0]";
+                $ctl->setQuery($query)->call();
+
+                $last_session = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +15 minutes'));
+
+                $ctl->insert("sesion", [$new_token, $actual_session, $last_session, $last_session, "Activa"],  ["token", "inicio_de_sesion", "ultima_sesion", "final_de_sesion", "estado"])->call();
+                $ctl->insert("inicia", [$new_token, $id],  ["sesion_token", "cliente_id"])->call();
+                return [True, $new_token, $response[1]];
+            } else {
+                return "403, FORBIDDEN: You are not allowed to enter the system";
+            }
+        } else {
+            return "404, NOT FOUND: The user wasn't found";
+        }
     }
 }
 
