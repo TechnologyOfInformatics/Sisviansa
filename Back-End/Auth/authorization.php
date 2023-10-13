@@ -306,8 +306,6 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
         return "400, BAD REQUEST: Missing data";
     } elseif (!$type_verificator) {
         return "400, BAD REQUEST: Wrong data type";
-    } elseif (!ctype_digit($values[4])) {
-        return "400, BAD REQUEST: Wrong data type";
     } elseif (!$length_verificator) {
         return "400, BAD REQUEST: Wrong data type";
     }
@@ -321,7 +319,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
         return "409, CONFLICT: This Email is already in use";
     }
 
-    if ($ctl->insert("cliente", [$mail, $password, "En espera"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
+    if ($ctl->insert("cliente", [$mail, md5($password), "En espera"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
         $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
         $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "tipo", "numero"])->call();
         $response = login($ctl, $mail, $password, "");
