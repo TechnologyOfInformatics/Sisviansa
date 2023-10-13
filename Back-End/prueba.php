@@ -35,7 +35,7 @@ echo "<pre>";
 //print_r(set_address($tORM, 'x2312x23d2d2', 'Chicago', '', 'Bella visasdasdasdta', '12345'));
 //print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
 
-print_r(md5('Contrasenia18'));
+print_r(md5('Contrasenia_1'));
 
 
 echo "<pre/>";
