@@ -600,6 +600,12 @@ function toggle_default(TORM $tORM, String $token, Int $address_id)
             $response = $tORM
                 ->from("direccion")
                 ->columns('direccion.predeterminado')
+                ->values('direccion', 0)
+                ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
+                ->do('update');
+            $response = $tORM
+                ->from("direccion")
+                ->columns('direccion.predeterminado')
                 ->values('direccion', ($state[0][0] ? 0 : 1))
                 ->where('direccion.id', 'eq', $address_id)
                 ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
