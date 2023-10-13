@@ -95,7 +95,7 @@ export default {
                 return;
             }
             const dataToSend = {
-                functionName: "options_modify_web",
+                functionName: "options_change_web",
                 token: sessionStorage.getItem('miToken') || 0,
                 current_password: this.current_password,
                 password: this.new_password,

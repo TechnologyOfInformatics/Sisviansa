@@ -39,9 +39,14 @@
           <li :class="{ selected: $route.path === '/faq' }">
             <router-link to="/faq" class="link">Preguntas Frecuentes</router-link>
           </li>
-          <li :class="{ selected: $route.path === '/profile' }">
+          <div v-if="isAuthenticated">
+          <li :class="{ selected: $route.path === '/profile' }" v-if="web">
             <router-link to="/profile" class="link">Perfil</router-link>
           </li>
+          <li :class="{ selected: $route.path === '/profile' }" v-else-if="!web">
+            <router-link to="/profile" class="link">Empresa</router-link>
+          </li>
+        </div>
         </ul>
         <div class="nav__bottom__cart" v-if="showCart">
           <i class="fa-solid fa-cart-shopping" @click="toggleCartModal"></i>
@@ -76,6 +81,7 @@ export default {
       menuOpen: false,
       user: "",
       isAuthenticated: false,
+      web: true,
     };
   },
   created() {
@@ -96,13 +102,27 @@ export default {
           functionName: "base_session",
           token: token,
         };
+        console.log(dataToSend
+        )
 
         this.$http
           .post("http://localhost/Back-End/server.php", dataToSend)
           .then((response) => {
-            const userData = response.data;
-            this.user = userData[1] + " " + userData[2];
-            this.isAuthenticated = userData[0];
+            console.log(response.data)
+            if(response.data == false){
+              console.log("fun")
+            }
+            if (response.data[0] == false) {
+              const userData = response.data;
+              this.user = userData[1] + " " + userData[2];
+              this.isAuthenticated = true;
+              this.web = true;
+            } else {
+              const bussinesData = response.data;
+              this.user = bussinesData[1];
+              this.isAuthenticated = true;
+              this.web = false;
+            }
           })
           .catch((error) => {
             console.error(error);

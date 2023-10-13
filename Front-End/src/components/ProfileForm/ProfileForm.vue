@@ -62,8 +62,6 @@ export default {
             const dataToSend = {
                 functionName: "options_modify_web",
                 token: sessionStorage.getItem('miToken') || 0,
-                password: '',
-                confirm_passwd: '',
                 first_name: this.first_name,
                 second_name: this.second_name,
                 first_surname: this.first_surname,

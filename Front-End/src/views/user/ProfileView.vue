@@ -84,6 +84,9 @@ export default {
           if (this.login) {
             if (response.data[0] !== true) {
               this.$router.push("/login");
+            } else if(response.data[0] === true){
+              this.$router.push("/");
+
             }
           }
         })
