@@ -26,16 +26,17 @@
             </div>
             <div class="user-form-id">
                 <div>
-                    <span>Documento de Identidad:</span>
-                    <span id="id">{{ id }}</span>
+                    <span class="id-span">Documento de Identidad: <span id="id">{{ id }}</span></span>
+
                 </div>
                 <div>
-                    <span>Tipo de Documento:</span>
-                    <span id="tipo">{{ idtype }}</span>
+                    <span class="id-span">Tipo de Documento: <span id="tipo">{{ idtype }}</span></span>
+
                 </div>
             </div>
-
-            <button type="submit">Guardar Cambios</button>
+            <div class="button-form">
+                <button type="submit">Guardar Cambios</button>
+            </div>
         </form>
     </div>
 </template>
@@ -110,29 +111,32 @@ export default {
 <style scoped>
 .form-container {
     background-color: #243328;
-    padding: 1.63em;
-    border: 1px solid white;
+    padding: 1.45em;
     border-radius: 15px;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
 
 .user-form {
     width: 62.5vw;
+    margin: 0 auto;
     background-color: #243328;
-    padding: 2em;
-    border: 1px solid #ccc;
+    padding: 2em 3em;
     border-radius: 5px;
+    border: 1px solid white;
+
+
 }
 
 .user-form div {
     margin-bottom: 10px;
-    
+
 }
 
-.user-form-id{
+.user-form-id {
     display: flex;
     flex-direction: row;
     display: flex;
@@ -140,6 +144,7 @@ export default {
     align-items: center;
     width: 40vw;
     margin: 0 auto;
+
 }
 
 .user-form label {
@@ -149,7 +154,7 @@ export default {
 .user-form input[type="text"],
 .user-form input[type="mail"],
 .user-form button {
-    width: 60vw;
+    width: 61vw;
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #ccc;
@@ -157,12 +162,28 @@ export default {
     margin: 0 auto;
 }
 
-.user-form span {
+.user-form button {
+    width: 50vw;
+    text-align: center;
+    margin: 0 auto;
+    align-self: center;
+    
+}
+
+.user-form .id-span {
     display: inline-block;
     padding: 10px;
     background-color: #243328;
     border: 1px solid #ddd;
     border-radius: 3px;
+}
+
+.user-form .button-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 62.5vw;
+
 }
 
 .user-form button {
@@ -175,5 +196,4 @@ export default {
 .user-form button:hover {
     background-color: #243328;
     color: #fff;
-}
-</style>
+}</style>

@@ -11,10 +11,11 @@
           <li @click="selectOption('OrderHistory')"
             :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">Historial de Pedidos</li>
           <li @click="selectOption('ShippingAddress')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones de envío</li>
-            <li @click="selectOption('Favorites')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones de envío
+          </li>
+          <li @click="selectOption('Favorites')"
             :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Favorites' }">Menus Favoritos</li>
-            <li @click="selectOption('Customs')"
+          <li @click="selectOption('Customs')"
             :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">Tus menus</li>
         </ul>
       </nav>
@@ -24,6 +25,7 @@
         <ProfileForm />
       </div>
       <div v-if="selectedOption === 'Security'">
+        <SecurityForm />
       </div>
       <div v-if="selectedOption === 'OrderHistory'">
         <h2>Order History</h2>
@@ -45,12 +47,15 @@
 import MainHeader from "@/components/Header/Header.vue";
 import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
+import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
+
 
 export default {
   components: {
     MainHeader,
     ProfileForm,
-    ProfileDirection
+    ProfileDirection,
+    SecurityForm,
   },
   data() {
     return {
@@ -97,8 +102,9 @@ export default {
 </script>
 <style scoped>
 .profile-container {
+  max-width: 100vw;
+  max-height: 83.8vh;
   display: flex;
-  height: 100%;
 }
 
 .profile-sidebar {
@@ -134,6 +140,8 @@ export default {
 }
 
 .profile-main {
+  height: 78.2vh;
+
   background-color: #ebeadf;
 
   flex: 1;
