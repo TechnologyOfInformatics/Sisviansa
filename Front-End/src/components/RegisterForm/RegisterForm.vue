@@ -1,7 +1,12 @@
 <template>
-  <div class="sign-up">
-    <form @submit.prevent="register">
-      <h1>Crear cuenta</h1>
+  <div class="sign-up" v-if="web">
+    <div class="toggle-btn">
+      <label for="toggle">Eres una empresa?</label>
+      <input type="checkbox" @click="toggleOption" id="toggle">
+    </div>
+    <form @submit.prevent="registerWeb">
+
+      <h1>Crear cuenta de Usuario</h1>
       <input v-model="name" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="first_name" />
       <input v-model="surname" type="text" name="txt" placeholder="Apellido" required autocomplete="name"
         id="first_surname" />
@@ -17,9 +22,29 @@
       <button type="submit">Registrate</button>
     </form>
   </div>
-</template>
+  <div class="sign-up" v-else-if="!web">
+    <div class="toggle-btn">
+      <label for="toggle">Eres una empresa?</label>
+      <input type="checkbox" @click="toggleOption" id="toggle">
+    </div>
+    <form @submit.prevent="registerBussines">
 
+      <h1>Crear cuenta de Empresa</h1>
+      <input v-model="nameb" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="nameb" />
+      <input v-model="rut" type="text" name="txt" placeholder="Rut" required id="rut" />
+      <input v-model="mailb" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email"
+        id="mailb" />
+      <input v-model="passwdb" type="password" name="passwdb" placeholder="Contraseña" required
+        autocomplete="new-password" id="passwdb" />
+      <input v-model="confirmPasswdb" type="password" name="confirmPasswdb" placeholder="Confirma la contraseña" required
+        autocomplete="new-password" id="confirmPasswdb" />
+
+      <button type="submit">Registrate</button>
+    </form>
+  </div>
+</template>
 <script>
+
 export default {
   data() {
     return {
@@ -30,11 +55,24 @@ export default {
       mail: "",
       passwd: "",
       confirmPasswd: "",
+
+      nameb: '',
+      rut: '',
+      mailb: "",
+      passwdb: "",
+      confirmPasswdb: "",
+
+      web: true,
     };
   },
 
   methods: {
-    register() {
+
+    toggleOption() {
+
+      this.web = !this.web
+    },
+    registerWeb() {
       if (this.passwd !== this.confirmPasswd) {
         console.error("Las contraseñas no coinciden");
         return;
@@ -46,6 +84,36 @@ export default {
         surname: this.surname,
         doc_type: this.doc_type,
         doc: this.doc,
+        mail: this.mail,
+        passwd: this.passwd,
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data);
+          if (Array.isArray(response.data)) {
+            let token = response.data[1];
+            if (token) {
+              sessionStorage.setItem('miToken', token);
+              window.history.back();
+            }
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    registerBussines() {
+      if (this.passwd !== this.confirmPasswd) {
+        console.error("Las contraseñas no coinciden");
+        return;
+      }
+
+      const dataToSend = {
+        functionName: "register_register_bussines_first",
+        name: this.nameb,
+        doc: this.rut,
         mail: this.mail,
         passwd: this.passwd,
       };
@@ -88,7 +156,7 @@ form {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 0 50px;
+  padding: 20px 50px;
   height: 100%;
   text-align: center;
   border-left: 1px solid #243328;
@@ -124,7 +192,7 @@ a {
   margin: 15px 0;
 }
 
-button {
+button[type='submit'] {
   border: 1px solid #ebeadf;
   color: white;
   background: #243328;
@@ -140,8 +208,34 @@ button {
   cursor: pointer;
 }
 
-button:active {
+button[type='submit']:active {
   transform: scale(0.9);
+}
+
+button[type='submit']:hover {
+  background: #304035;
+}
+
+.toggle-btn {
+  width: 20vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  position: absolute;
+  transform: translate(.5vw, .2vh);
+}
+
+.toggle-btn label {
+  width: 95%;
+
+}
+
+.toggle-btn input {
+  width: 5%;
+  color: red;
+  transform: translateX(-4vw);
 }
 
 #signUp {

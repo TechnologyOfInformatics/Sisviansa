@@ -62,6 +62,10 @@ main {
 
 }
 
+.direction-item div{
+width: 60%;
+}
+
 .direction-button {
     width: 3vw;
     padding: 1em 2em;
@@ -69,13 +73,15 @@ main {
     background-color: #ebeadf;
     cursor: pointer;
 }
-.fa-house-flag{
+
+.fa-house-flag {
     padding-right: 0.3em;
 }
+
 .gears {
     margin-top: 1em;
     padding: 1.5em 0 .5em 0;
-padding-left: 1em;
+    padding-left: 1em;
     border-bottom-left-radius: 50%;
     border-top-left-radius: 50%;
     border-right: 2px solid black;
@@ -85,10 +91,12 @@ padding-left: 1em;
     color: #515151;
 
 }
-.fa-route{
+
+.fa-route {
     font-size: 1.5em;
     padding-right: 0.3em;
 }
+
 .trash {
     margin-top: 1em;
     padding: 1.25em 0 .75em 0;
@@ -119,6 +127,7 @@ padding-left: 1em;
 
 
 .direction-item-city {
+    width: 45%;
     font-size: 2em;
     padding-right: 3em;
 }
