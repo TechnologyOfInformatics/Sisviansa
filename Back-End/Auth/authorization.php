@@ -1321,7 +1321,7 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
 
         $regex = '/\b' . preg_quote(strtolower($client_name[0]['primer_nombre']), '/') . '\b/';
 
-        $name_match = preg_match($regex, strtolower($passwd)) || (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['primer_nombre'])));
+        $name_match = preg_match($regex, strtolower($passwd)) || ($client_name ? (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['primer_nombre']))) : True);
 
         $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
 
