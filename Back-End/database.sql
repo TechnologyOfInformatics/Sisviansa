@@ -400,37 +400,37 @@ INSERT INTO
 VALUES
   (
     NULL,
-    'contrasenia1',
+    'e1c3aa7169437a4201e01e3cc312de6f',
     'Autorizado',
     'email1@gmail.com'
   ),
   (
     NULL,
-    'contrasenia9',
+    'af5812c3573aedc3ab7a1679520eaa4f',
     'En espera',
     'email9@hotmail.com'
   ),
   (
     NULL,
-    'contrasenia17',
+    '019f3b7b05507009e4bb2d2351848a9f',
     'No autorizado',
     'email17@gmail.com'
   ),
   (
     NULL,
-    'contrasenia1',
+    'b2ead35ffcbd25c5aeaafb4adac3fc19',
     'Autorizado',
     'email4@gmail.com'
   ),
   (
     NULL,
-    'contrasenia9',
+    'e5f62a17e25d3e88a1a60b762b2f3233',
     'En espera',
     'email10@hotmail.com'
   ),
   (
     NULL,
-    'contrasenia17',
+    'db796fed8c709d7ac8a8b4cdfbe3846b',
     'No autorizado',
     'email18@gmail.com'
   );
