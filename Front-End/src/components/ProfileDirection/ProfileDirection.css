@@ -28,6 +28,20 @@ main {
 
 }
 
+.direction-item-modal {
+    border-radius: 15px;
+    width: 60vw;
+}
+
+.modal button {
+    padding: 10px 15px;
+    margin: 10px 15px;
+    border-radius: 15px;
+    background-color: #ebeadf;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
 .direction-quantity {
     text-align: center;
     align-self: center;
@@ -58,12 +72,11 @@ main {
     justify-content: center;
     align-items: center;
     margin-top: 1em;
-
-
+    border: 1px solid black;
 }
 
-.direction-item div{
-width: 60%;
+.direction-item div {
+    width: 60%;
 }
 
 .direction-button {
@@ -96,10 +109,20 @@ width: 60%;
     font-size: 1.5em;
     padding-right: 0.3em;
 }
+.star{
+    width: 40px;
+    transform: translate(-10vw, 1vh);
+
+}
+.fa-star {
+    color: yellow;
+    transform: rotate(-16deg);
+    font-size: 1.5em;
+}
 
 .trash {
     margin-top: 1em;
-    padding: 1.25em 0 .75em 0;
+    padding: 1.3em 0 .72em 0;
     padding-left: 1em;
     border-bottom-right-radius: 50%;
     border-top-right-radius: 50%;
@@ -125,12 +148,55 @@ width: 60%;
     margin: 1em auto;
 }
 
+.direction-item input {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    font-size: 16px;
+}
+
+.direction-item div {
+    display: flex;
+    flex-direction: row;
+}
+
+.direction-item .bottom-form input {
+    width: 8vw;
+}
+
 
 .direction-item-city {
     width: 45%;
     font-size: 2em;
     padding-right: 3em;
 }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    border: 1px solid white;
+    padding-left: 3em;
+    padding-top: 2em;
+    background: rgba(255, 255, 255, 0.6);
+
+    position: absolute;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transform: translate(10vw, 1px);
+    border-radius: 15px;
+}
+
 
 .direction-link {
     color: white;
