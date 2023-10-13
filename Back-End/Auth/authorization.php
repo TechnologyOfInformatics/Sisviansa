@@ -219,10 +219,9 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         return "400 Bad Request: Missing data";
     } elseif (!$type_verificator) {
         return "400 Bad Request: Wrong data type";
+    } elseif (!$length_verificator) {
+        return "400 Bad Request: Wrong data length";
     }
-    //elseif (!$length_verificator) {
-    //    return "400 Bad Request: Wrong data length";
-    //}
 
     if (!empty($token)) {
         session_close($ctl, $token);
@@ -237,7 +236,6 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
     WHERE cliente.email = '$mail' AND cliente.contrasenia = '$passwd'";
 
     $response = $ctl->setQuery($query)->call();
-    print_r($response);
 
     if ($response && count($response) === 4) {
         $id = $response[0];
