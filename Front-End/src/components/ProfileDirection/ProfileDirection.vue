@@ -81,22 +81,21 @@ export default {
                 });
         },
         addNewAddress() {
-            
+
             if (this.directions.length > 2) {
                 console.log("exceso")
                 return;
             }
 
             const dataToSend = {
-                functionName: "options_add_address",
+                functionName: "options_set_address",
                 token: sessionStorage.getItem('miToken') || 0,
                 address: this.newAddress,
             };
-
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    this.directions.push(response.data);
+                    console.log(response)
                     this.showAddAddressModal = false;
                 })
                 .catch((error) => {
