@@ -6,10 +6,10 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 $login = __FILE__;
 
-function options_modify_web($token, $passwd = "", $confirm_passwd = "", $first_name = "", $second_name = "", $first_surname = "", $second_surname = "",  $mail = "")
+function options_modify_web($token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "",  $mail = "")
 {
     global $tORM;
-    return modify_web($tORM, $token, $passwd, $confirm_passwd, $first_name, $second_name, $first_surname, $second_surname,  $mail);
+    return modify_web($tORM, $token, $first_name, $second_name, $first_surname, $second_surname,  $mail);
 }
 
 function options_get_address(String $token)
@@ -71,4 +71,10 @@ function options_del_personal_menu(String $token, Int $menu_id)
 {
     global $tORM;
     return delete_personal_menu($tORM, $token, $menu_id);
+}
+
+function options_change_password(String $token, String $passwd, String $confirm_passwd)
+{
+    global $tORM;
+    return change_password($tORM, $token, $passwd, $confirm_passwd);
 }

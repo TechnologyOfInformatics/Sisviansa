@@ -270,10 +270,14 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
     $values = func_get_args();
 
     unset($values[0]);
-    $name_match = (preg_match('|' . strtolower($first_surname) . '|', $password)); //True si esta el nombre del cliente en la contrasenia
+
+    $regex = '/\b' . preg_quote(strtolower($first_name), '/') . '\b/';
+
+    $name_match = preg_match($regex, strtolower($password)) || (strtolower(strval($password)) == strtolower(strval($first_name)));
 
     $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $password); //True si no hay ni caracteres especiales ni letras ni numeros
-    if ($name_match && $passwd_verificator) {
+
+    if ($name_match || $passwd_verificator) {
         return 'ERROR 400, BAD REQUEST';
     }
 
@@ -1243,8 +1247,6 @@ function credit_card_change() //
 function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
 {
 
-
-
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
 
     $client_id = get_client_id($tORM, $token);
@@ -1256,10 +1258,13 @@ function change_password(TORM $tORM, $token, $passwd, $confirm_passwd) //
             ->where('web.cliente_id', 'eq', $client_id[0]['cliente_id'])
             ->do('select');
 
-        $name_match = $client_name ? (preg_match('|' . strtolower($client_name[0]['primer_nombre']) . '|', $passwd)) : False; //True si esta el nombre del cliente en la contrasenia
+        $regex = '/\b' . preg_quote(strtolower($client_name[0]['primer_nombre']), '/') . '\b/';
+
+        $name_match = preg_match($regex, strtolower($passwd)) || (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['primer_nombre'])));
 
         $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
-        if ($name_match && $passwd_verificator) {
+
+        if ($name_match || $passwd_verificator) {
             return 'ERROR 400, BAD REQUEST';
         } elseif ($passwd && ($passwd == $confirm_passwd)) {
             $passwd = md5($passwd);
