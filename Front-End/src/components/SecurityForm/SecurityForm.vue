@@ -41,6 +41,7 @@ export default {
             current_password: "",
             new_password: "",
             confirm_password: "",
+            name: '',
             errors: {
                 length: false,
                 number: false,
@@ -50,13 +51,16 @@ export default {
             }
         };
     },
+    created() {
+        this.fetchUserData()
+    },
     methods: {
         validatePassword() {
             this.errors = {
                 length: this.new_password.length < 8,
                 number: !/\d/.test(this.new_password),
                 letter: !/[a-zA-Z]/.test(this.new_password),
-                name: this.new_password.includes('tu_nombre'), // Reemplaza 'tu_nombre' con tu nombre real
+                name: this.new_password.includes(this.name),
                 match: this.new_password !== this.confirm_password
             };
 
@@ -93,8 +97,9 @@ export default {
             const dataToSend = {
                 functionName: "options_modify_web",
                 token: sessionStorage.getItem('miToken') || 0,
-                password: this.current_password,
-                confirm_passwd: this.new_password,
+                current_password: this.current_password,
+                password: this.new_password,
+                confirm_passwd: this.confirm_password,
             };
 
             this.$http
@@ -105,6 +110,22 @@ export default {
                 .catch((error) => {
                     console.error(error);
                 });
+        },
+        fetchUserData() {
+            const dataToSend = {
+                functionName: "base_session",
+                token: sessionStorage.getItem('miToken') | 0,
+            };
+            this.$http
+                .post("http://localhost/Back-End/server.php", dataToSend)
+                .then((response) => {
+                    const userData = response.data;
+                    this.name = userData[1];
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+
         }
     }
 };
