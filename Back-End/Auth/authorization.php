@@ -610,6 +610,9 @@ function toggle_default(TORM $tORM, String $token, Int $address_id)
                 ->where('direccion.id', 'eq', $address_id)
                 ->where('direccion.cliente_id', 'eq', $client_id[0]['cliente_id'])
                 ->do('update');
+            if ($response == "OK, 200") {
+                return (get_address($tORM, $token));
+            }
             return $response;
         } else {
             return "ERROR 404, NOT FOUND";
