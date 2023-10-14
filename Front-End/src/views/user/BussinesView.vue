@@ -21,6 +21,7 @@
         </aside>
         <main class="profile-main">
             <div v-if="selectedOption === 'Account'">
+                <ProfileForm :web=this.web />
             </div>
             <div v-if="selectedOption === 'Security'">
                 <SecurityForm />
@@ -39,6 +40,7 @@
 import MainHeader from "@/components/Header/Header.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
+import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
 
 
 
@@ -47,11 +49,13 @@ export default {
         MainHeader,
         ProfileDirection,
         SecurityForm,
+        ProfileForm,
     },
     data() {
         return {
             selectedOption: "Account",
             login: true,
+            web: false,
         };
     },
     methods: {

@@ -1,5 +1,5 @@
 <template>
-    <div class="form-container">
+    <div class="form-container" v-if="web">
         <form class="user-form" @submit.prevent="updateUserInfo">
             <div>
                 <div>
@@ -39,11 +39,37 @@
             </div>
         </form>
     </div>
+    <div class="form-container" v-else>
+        <form class="user-form" @submit.prevent="updateUserInfo">
+            <div>
+                <div>
+                    <label for="name">Nombre de empresa:</label>
+                    <input type="text" id="name" v-model="name" />
+                </div>
+                <div>
+                    <label for="mailb">Correo:</label>
+                    <input type="mailb" id="mailb" v-model="mailb" />
+                </div>
+            </div>
+            <div class="user-form-id">
+                <div>
+                    <span class="id-span">Rut: <span id="tipo">{{ rut }}</span></span>
+
+                </div>
+            </div>
+            <div class="button-form">
+                <button type="submit">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
 </template>
 <script>
 export default {
-
+    props: {
+        web: Boolean,
+    },
     data() {
+
         return {
             first_name: "",
             second_name: "",
@@ -52,6 +78,10 @@ export default {
             mail: "",
             id: "",
             idtype: "",
+
+            name: '',
+            mailb: '',
+            rut: ''
         };
     },
     created() {
@@ -80,26 +110,26 @@ export default {
                 });
         },
         fetchUserData() {
-            const dataToSend = {
-                functionName: "options_user_info",
-                token: sessionStorage.getItem('miToken') || 0,
-            };
+            if (this.web) {
+                const dataToSend = {
+                    functionName: "options_bussines_info",
+                    token: sessionStorage.getItem('miToken') || 0,
+                };
 
-            this.$http
-                .post("http://localhost/Back-End/server.php", dataToSend)
-                .then((response) => {
-                    console.log(response);
-                    this.first_name = response.data.primerNombre;
-                    this.second_name = response.data.segundoNombre;
-                    this.first_surname = response.data.primerApellido;
-                    this.second_surname = response.data.segundoApellido;
-                    this.mail = response.data.correo;
-                    this.id = response.data.documento;
-                    this.idtype = response.data.tipoDocumento;
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                this.$http
+                    .post("http://localhost/Back-End/server.php", dataToSend)
+                    .then((response) => {
+                        console.log(response.data);
+                        this.name = response.data.nombre;
+                        this.rut = response.data.rut;
+                        this.mailb = response.data.correo;
+
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+
         },
     },
 
@@ -165,7 +195,7 @@ export default {
     text-align: center;
     margin: 0 auto;
     align-self: center;
-    
+
 }
 
 .user-form .id-span {
@@ -194,4 +224,5 @@ export default {
 .user-form button:hover {
     background-color: #243328;
     color: #fff;
-}</style>
+}
+</style>

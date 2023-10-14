@@ -78,7 +78,7 @@ export default {
                 length: this.new_password.length < 8,
                 number: !/\d/.test(this.new_password),
                 letter: !/[a-zA-Z]/.test(this.new_password),
-                name: this.new_password.includes('tu_nombre'),
+                name: this.new_password.includes(this.name),
                 match: this.new_password !== this.confirm_password
             };
             Object.keys(this.errors).forEach(errorKey => {

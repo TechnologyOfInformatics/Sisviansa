@@ -56,7 +56,6 @@
 import DirectionProfileButton from '@/components/DirectionProfileButton/DirectionProfileButton.vue'
 export default {
     name: "ProfileDirection",
-
     components: {
         DirectionProfileButton
     },

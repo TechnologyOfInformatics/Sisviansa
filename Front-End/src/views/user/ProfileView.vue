@@ -22,7 +22,7 @@
     </aside>
     <main class="profile-main">
       <div v-if="selectedOption === 'Account'">
-        <ProfileForm />
+        <ProfileForm :web=this.web />
       </div>
       <div v-if="selectedOption === 'Security'">
         <SecurityForm />
@@ -61,6 +61,7 @@ export default {
     return {
       selectedOption: "Account",
       login: true,
+      web: true,
     };
   },
   methods: {
