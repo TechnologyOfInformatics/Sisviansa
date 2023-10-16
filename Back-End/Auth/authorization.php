@@ -533,8 +533,8 @@ function user_information_web(TORM $tORM, $token)
             'segundoApellido' => $result['segundo_apellido'],
             'correo' => $result['email'],
             'direccion' => $because_i_used_numero_twice,
-            'documento' => $result['numero'],
-            'tipoDocumento' => $result['tipo'],
+            'documento' => $result['documento_numero'],
+            'tipoDocumento' => $result['documento_tipo'],
 
         ];
         return $formatted_result;
@@ -1071,82 +1071,6 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
     }
 }
 
-function get_menus(TORM $tORM)
-{
-    //Funcion para recibir TODOS los menus, es una funcion para admin
-
-    $menus = $tORM
-        ->from("menu")
-        ->do("select");
-
-    $foods = $tORM
-        ->from("vianda")
-        ->do("select");
-
-    $relation = $tORM
-        ->from("conforma")
-        ->columns("conforma.vianda_id", "conforma.menu_id")
-        ->do("select");
-
-    $diets = $tORM
-        ->from("vianda_dieta")
-        ->do("select");
-
-    foreach ($diets as $diet) {
-        foreach ($foods as $key => $food) {
-            unset($foods[$key]['tiempo_de_coccion']);
-            unset($foods[$key]['productos']);
-            if ($food['id'] == $diet['vianda_id']) {
-                $foods[$key]['dietas'][] = $diet['dieta'];
-            }
-        }
-    }
-    foreach ($foods as $food) {
-        foreach ($menus as $key => $menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
-
-            if (in_array(['menu_id' => $menus[$key]['id'], 'vianda_id' => $food['id']], $relation)) {
-                if (!isset($menus[$key]['viandas'])) {
-                    $menus[$key]['viandas'] = [];
-                }
-                $menus[$key]['viandas'][$food['nombre']] = $food;
-            }
-        }
-    }
-
-
-    $filtered_menus = array_values($menus);
-
-
-    return [$filtered_menus];
-}
-
-function get_foods(TORM $tORM) //
-{
-    //Funcion para recibir TODOS los menus, es una funcion para admin
-
-    $foods = $tORM
-        ->from("vianda")
-        ->do("select");
-
-    $diets = $tORM
-        ->from("vianda_dieta")
-        ->do("select");
-
-    foreach ($diets as $diet) {
-        foreach ($foods as $key => $food) {
-            if ($food['id'] == $diet['vianda_id']) {
-                $foods[$key]['dietas'][] = $diet['dieta'];
-            }
-        }
-    }
-
-
-    $filtered_menus = array_values($foods);
-
-
-    return [$filtered_menus];
-}
-
 function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
@@ -1479,6 +1403,84 @@ function get_orders(TORM $tORM, $token) // Funcion incompleta: se devuelven los 
 function credit_card_delete(TORM $tORM, String $token, $actual_card) //
 {
 }
+
+
+function get_menus(TORM $tORM)
+{
+    //Funcion para recibir TODOS los menus, es una funcion para admin
+
+    $menus = $tORM
+        ->from("menu")
+        ->do("select");
+
+    $foods = $tORM
+        ->from("vianda")
+        ->do("select");
+
+    $relation = $tORM
+        ->from("conforma")
+        ->columns("conforma.vianda_id", "conforma.menu_id")
+        ->do("select");
+
+    $diets = $tORM
+        ->from("vianda_dieta")
+        ->do("select");
+
+    foreach ($diets as $diet) {
+        foreach ($foods as $key => $food) {
+            unset($foods[$key]['tiempo_de_coccion']);
+            unset($foods[$key]['productos']);
+            if ($food['id'] == $diet['vianda_id']) {
+                $foods[$key]['dietas'][] = $diet['dieta'];
+            }
+        }
+    }
+    foreach ($foods as $food) {
+        foreach ($menus as $key => $menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
+
+            if (in_array(['menu_id' => $menus[$key]['id'], 'vianda_id' => $food['id']], $relation)) {
+                if (!isset($menus[$key]['viandas'])) {
+                    $menus[$key]['viandas'] = [];
+                }
+                $menus[$key]['viandas'][$food['nombre']] = $food;
+            }
+        }
+    }
+
+
+    $filtered_menus = array_values($menus);
+
+
+    return [$filtered_menus];
+}
+
+function get_foods(TORM $tORM) //
+{
+    //Funcion para recibir TODOS los menus, es una funcion para admin
+
+    $foods = $tORM
+        ->from("vianda")
+        ->do("select");
+
+    $diets = $tORM
+        ->from("vianda_dieta")
+        ->do("select");
+
+    foreach ($diets as $diet) {
+        foreach ($foods as $key => $food) {
+            if ($food['id'] == $diet['vianda_id']) {
+                $foods[$key]['dietas'][] = $diet['dieta'];
+            }
+        }
+    }
+
+
+    $filtered_menus = array_values($foods);
+
+
+    return [$filtered_menus];
+}
+
 function register_bussiness() //Funcion admin
 {
 }
