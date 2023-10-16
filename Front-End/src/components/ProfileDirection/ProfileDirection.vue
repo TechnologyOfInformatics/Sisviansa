@@ -149,7 +149,6 @@ export default {
                 token: sessionStorage.getItem('miToken') || 0,
                 id: addressId,
             };
-            console.log(dataToSend.id)
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {

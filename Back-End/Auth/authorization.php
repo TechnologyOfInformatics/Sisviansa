@@ -1069,7 +1069,7 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
                 }
             }
         }
-        return $menus;
+        return [$menus];
     } else {
 
         return "ERROR 403, FORBIDDEN";

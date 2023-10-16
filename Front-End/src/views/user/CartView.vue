@@ -100,8 +100,9 @@ export default {
         .then((response) => {
 
           if (this.login) {
-            if (response.data[0] !== true) {
+            if (!Array.isArray(response.data)) {
               this.$router.push("/login");
+
             }
           }
         })

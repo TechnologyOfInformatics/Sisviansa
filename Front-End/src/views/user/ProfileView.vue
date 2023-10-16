@@ -5,18 +5,37 @@
       <nav class="profile-sidebar__nav">
         <ul>
           <li @click="selectOption('Account')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Account' }">Datos de tu cuenta</li>
-          <li @click="selectOption('Security')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Security' }">Seguridad</li>
-          <li @click="selectOption('OrderHistory')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">Historial de Pedidos</li>
-          <li @click="selectOption('ShippingAddress')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones de envío
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Account' }">
+            <span v-if="isDesktop">Datos de tu cuenta</span>
+            <i class="fa-solid fa-user" v-else></i>
           </li>
+          <li @click="selectOption('Security')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Security' }">
+            <span v-if="isDesktop">Seguridad</span>
+            <i class="fas fa-shield-alt" v-else></i>
+          </li>
+          <li @click="selectOption('OrderHistory')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">
+            <span v-if="isDesktop"> Historial de Pedidos</span>
+            <i class="fa-solid fa-timeline" v-else></i>
+          </li>
+          <li @click="selectOption('ShippingAddress')"
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">
+            <span v-if="isDesktop">Direcciones de envío</span>
+            <i class="fa-solid fa-truck-fast" v-else></i>
+          </li>
+
           <li @click="selectOption('Favorites')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Favorites' }">Menus Favoritos</li>
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Favorites' }">
+            <span v-if="isDesktop">Menus Favoritos</span>
+            <i class="fa-solid fa-heart" v-else></i>
+          </li>
           <li @click="selectOption('Customs')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">Tus menus</li>
+            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">
+
+            <span v-if="isDesktop">Tus menus</span>
+            <i class="fa-solid fa-sliders" v-else></i>
+          </li>
         </ul>
       </nav>
     </aside>
@@ -28,7 +47,7 @@
         <SecurityForm />
       </div>
       <div v-if="selectedOption === 'OrderHistory'">
-        <h2>Order History</h2>
+        <OrderHistory />
       </div>
       <div v-if="selectedOption === 'ShippingAddress'">
         <ProfileDirection />
@@ -37,7 +56,7 @@
         <h2>Favoritos</h2>
       </div>
       <div v-if="selectedOption === 'Customs'">
-        <h2>Personalizados</h2>
+        <CustomMenu />
       </div>
     </main>
   </div>
@@ -48,6 +67,8 @@ import MainHeader from "@/components/Header/Header.vue";
 import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
+import OrderHistory from '@/components/OrderHistory/OrderHistory.vue';
+import CustomMenu from '@/components/CustomMenu/CustomMenu.vue'
 
 
 export default {
@@ -56,12 +77,15 @@ export default {
     ProfileForm,
     ProfileDirection,
     SecurityForm,
+    OrderHistory,
+    CustomMenu,
   },
   data() {
     return {
       selectedOption: "Account",
       login: true,
       web: true,
+      isDesktop: window.innerWidth >= 1024
     };
   },
   methods: {
@@ -83,11 +107,15 @@ export default {
         .then((response) => {
 
           if (this.login) {
-            if (response.data[0] == false) {
-              this.$router.push("/profile");
-            } else if (response.data[0] === true) {
-              this.$router.push("/bussines");
+            if (Array.isArray(response.data)) {
+              if (response.data[0] == false) {
+                this.$router.push("/profile");
+              } else if (response.data[0] === true) {
+                this.$router.push("/bussines");
 
+              }
+            } else{
+              this.$router.push("/login");
             }
           }
         })
