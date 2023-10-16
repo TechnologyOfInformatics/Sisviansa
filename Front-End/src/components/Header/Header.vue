@@ -121,6 +121,7 @@ export default {
               }
             } else{
               this.isAuthenticated = false
+              this.$router.push("/login");
             }
 
           })
