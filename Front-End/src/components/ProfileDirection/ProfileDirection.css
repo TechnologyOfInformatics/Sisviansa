@@ -58,9 +58,9 @@ main {
 }
 
 .direction {
-    width: 46vw;
+    width: 40vw;
     margin: 1em auto;
-    margin-right: 9vw;
+    margin-left: 7.5vw;
 }
 
 .direction-item {
@@ -72,11 +72,11 @@ main {
     justify-content: center;
     align-items: center;
     border: 1px solid black;
-    height: 5vh;
+    height: 3.7vh;
 }
 
 .direction-item div {
-    width: 60%;
+    width: 40vw;
     margin: auto;
 
 }
@@ -118,9 +118,9 @@ main {
     color: rgb(239, 80, 80);
     width: 3vw;
     padding: 1em;
-    height: 2.7vh;
+    height: 2.28vh;
+    font-size: 1.3em;
     border: 1px solid black;
-    font-size: 1.5em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -133,9 +133,10 @@ main {
     border-left: 2px solid black;
     width: 3vw;
     padding: 1em;
-    height: 2.7vh;
+    height: 2.28vh;
+    font-size: 1.3em;
     border: 1px solid black;
-    font-size: 1.5em;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -168,16 +169,20 @@ main {
     display: flex;
     flex-direction: row;
 }
-
+.direction-item .bottom-form {
+    width: 40vw;
+}
 .direction-item .bottom-form input {
     width: 8vw;
 }
 
 
 .direction-item-city {
-    width: 45%;
+    width: 40vw;
     font-size: 2em;
-    padding-right: 3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .modal-overlay {
@@ -192,18 +197,23 @@ main {
     align-items: center;
 }
 
+.directions {
+    width: 40vw;
+    margin: 1em;
+    margin-left: 3vw;
+}
+
 .modal {
     border: 1px solid white;
-    padding-left: 3em;
-    padding-top: 2em;
     background: rgba(255, 255, 255, 0.6);
-
     position: absolute;
     border-radius: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     text-align: center;
     transform: translate(10vw, 1px);
     border-radius: 15px;
+    height: 25vh;
+    width: 50vw;
 }
 
 

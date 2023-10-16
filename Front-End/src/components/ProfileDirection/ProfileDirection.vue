@@ -31,10 +31,10 @@
         </div>
         <div v-if="addModal" class="modal-overlay">
             <div class="modal">
-                <div class="modal-content direction">
+                <div class="modal-content directions">
                     <div class="direction-item direction-item-modal">
                         <i class="fa-solid fa-route"></i>
-                        <input type="text" v-model="newAddress.ciudad" placeholder="Ciudad">
+                        <input type="text" v-model="newAddress.ciudad" placeholder="Ciudad" class="city">
                         <i class="fa-solid fa-house-flag"></i>
                         <div class="bottom-form">
                             <input type="text" v-model="newAddress.barrio" placeholder="Barrio">
@@ -49,10 +49,10 @@
         </div>
         <div v-if="editModal" class="modal-overlay">
             <div class="modal">
-                <div class="modal-content direction">
+                <div class="modal-content directions">
                     <div class="direction-item direction-item-modal">
                         <i class="fa-solid fa-route"></i>
-                        <input type="text" v-model="editingAddress.ciudad" placeholder="Ciudad">
+                        <input type="text" v-model="editingAddress.ciudad" placeholder="Ciudad" class="city">
                         <i class="fa-solid fa-house-flag"></i>
                         <div class="bottom-form">
                             <input type="text" v-model="editingAddress.barrio" placeholder="Barrio">
