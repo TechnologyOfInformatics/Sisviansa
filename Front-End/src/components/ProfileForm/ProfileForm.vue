@@ -125,8 +125,8 @@ export default {
                         this.first_surname = response.data.primerApellido
                         this.second_surname = response.data.segundoApellido
                         this.mail = response.data.correo
-                        this.id = response.data.documento
-                        this.idtype = response.data.tipoDocumento
+                        this.id = response.data.documento_numero
+                        this.idtype = response.data.documento_tipo
 
                     })
                     .catch((error) => {
