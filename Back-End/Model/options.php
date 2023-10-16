@@ -79,3 +79,11 @@ function options_change_password(String $token, String $actual_passwd, String $p
     global $ctl;
     return change_password($tORM, $ctl, $token, $actual_passwd, $passwd, $confirm_passwd);
 }
+
+
+function options_get_orders(String $token, String $actual_passwd, String $passwd, String $confirm_passwd)
+{
+    global $tORM;
+    global $ctl;
+    return get_orders($tORM, $token);
+}

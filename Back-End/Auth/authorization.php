@@ -543,7 +543,7 @@ function user_information_web(TORM $tORM, $token)
     }
 }
 
-function set_address(TORM $tORM, String $token, String $city, String $neighborhood = "", String $street, String $address)
+function set_address(TORM $tORM, String $token, String $city, String $neighborhood, String $street, String $address)
 {
     $values = func_get_args();
 
@@ -559,7 +559,6 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
     }
 
-    unset($values[3]);
     if (in_array('', array($values))) {
         return 'ERROR 400, BAD REQUEST';
     }
@@ -925,14 +924,20 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
     // Se ingresa un pedido
     if ($client_id) {
 
+        $addresses = get_address($tORM, $token);
         $actual_date = date('Y-m-d H:i:s');
+        $address = [];
+        for ($i = 0; $i < count($addresses); $i++) {
+            if ($addresses[$i]['predeterminado']) {
+                $address = $addresses[$i];
+            }
+        }
 
-
-        if ($order_id == "Start") {
+        if (strtolower($order_id) == "start") {
             $tORM
                 ->from("pedido")
-                ->columns("pedido.fecha_del_pedido", "pedido.cliente_id")
-                ->values("pedido", $actual_date, intval($client_id[0]['cliente_id']))
+                ->columns("pedido.fecha_del_pedido", "pedido.cliente_id", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
+                ->values("pedido", $actual_date, intval($client_id[0]['cliente_id']), $address['direccion'], $address['calle'], $address['barrio'], $address['ciudad'])
                 ->do("insert");
 
             $order_id = $tORM
@@ -1319,81 +1324,43 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
     }
 }
 
-function get_orders(TORM $tORM, $token) // Funcion incompleta: se devuelven los menues pedidos pero necesito una lista con los estados que contenga el estado actual y los anteriores con su fecha de cambio de estado
+function get_orders(TORM $tORM, $token) // Funcion incompleta
 {
 
     //Esta funcion no divide por pedido los menus sino que te da todos los menues que tiene pedidos el cliente dado, el problema radica en que no hay una division por pedidos y no hay estados
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id) {
-        $menus_array = [];
-        $menu_id = $tORM
+        $orders = $tORM
             ->from("pedido")
-            ->columns("none column")
+            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
             ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
-            ->join("compone", "compone.pedido_id", "pedido.id")
-            ->joined_columns("compone.menu_id")
             ->do("select");
-        print_r($menu_id);
+        $response = [];
 
-
-        foreach ($menu_id as $id) {
-            $menu = $tORM
-                ->from("menu")
-                ->where("menu.id", "eq", $id["menu_id"])
+        foreach ($orders as $order) {
+            $states = $tORM
+                ->from("estado")
+                ->columns("estado.estado", "estado.inicio_del_estado", "estado.final_del_estado")
+                ->where("estado.pedido_id", "eq", $order['id'])
                 ->do("select");
-            if ($menu) {
-                $menus_array[] = $menu[0];
+
+            $response[$order['id']]['fecha_del_pedido'] = $order['fecha_del_pedido'];
+            $response[$order['id']]['direccion'] = array_values(array_slice($order, 2, 4));
+            $response[$order['id']]['estados'] = $states;
+            $requested_menus = $tORM
+                ->from("compone")
+                ->columns("none column")
+                ->where("compone.pedido_id", "eq", $order['id'])
+                ->join("menu", "compone.menu_id", "menu.id")
+                ->joined_columns("menu.id", "menu.nombre", "menu.categoria", "menu.frecuencia")
+                ->do("select");
+            foreach ($requested_menus as $menu) {
+                $menu['precio'] = doubleval($tORM->do(query: "SELECT sum(vianda.precio) from vianda JOIN conforma on vianda.id = conforma.vianda_id JOIN menu on menu.id = conforma.menu_id where conforma.menu_id = {$menu['id']}")[0][0]);
+                $response[$order['id']][$menu['id']] = $menu;
             }
         }
-
-        $unique_menus = array();
-
-        foreach ($menus_array as $menu) {
-            $id = $menu['id'];
-            if (!isset($unique_menus[$id])) {
-                $unique_menus[$id] = $menu;
-            }
-        }
-
-        $menus = array_values($unique_menus);
-
-        $foods = $tORM
-            ->from("vianda")
-            ->do("select");
-
-        $relation = $tORM
-            ->from("conforma")
-            ->columns("conforma.vianda_id", "conforma.menu_id")
-            ->do("select");
-
-        $diets = $tORM
-            ->from("vianda_dieta")
-            ->do("select");
-
-        foreach ($diets as $diet) {
-            foreach ($foods as $key => $food) {
-                unset($foods[$key]['tiempo_de_coccion']);
-                unset($foods[$key]['productos']);
-                if ($food['id'] == $diet['vianda_id']) {
-                    $foods[$key]['dietas'][] = $diet['dieta'];
-                }
-            }
-        }
-        foreach ($foods as $food) {
-            foreach ($menus as &$menu) {
-                unset($menu['estado']);
-                unset($menu['calorias']);
-
-                if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
-                    if (!isset($menu['viandas'])) {
-                        $menu['viandas'] = [];
-                    }
-                    $menu['viandas'][$food['nombre']] = $food;
-                }
-            }
-        }
-        return $menus;
+        return $response;
     } else {
 
         return "ERROR 403, FORBIDDEN";

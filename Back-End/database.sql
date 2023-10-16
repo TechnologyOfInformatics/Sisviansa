@@ -88,6 +88,10 @@ CREATE TABLE Pedido(
   ID INT(11) AUTO_INCREMENT COMMENT 'Número del pedido correspondiente',
   Fecha_del_pedido DATETIME NOT NULL COMMENT 'Fecha del pedido',
   Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha efectuado el pedido',
+  Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
+  Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
+  Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
+  Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
   PRIMARY KEY(ID, Cliente_ID),
   FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
@@ -525,13 +529,41 @@ VALUES
 INSERT INTO
   Pedido (
     `ID`,
+    `Direccion`,
+    `Calle`,
+    `Barrio`,
+    `Ciudad`,
     `Fecha_del_pedido`,
     `Cliente_ID`
   )
 VALUES
-  (1, NOW(), 1),
-  (2, NOW(), 2),
-  (3, NOW(), 3);
+  (
+    1,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    1
+  ),
+  (
+    2,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    2
+  ),
+  (
+    3,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    3
+  );
 
 INSERT INTO
   Paquete (
@@ -709,7 +741,7 @@ VALUES
   ),
   (
     5,
-    'Envasada',
+    'Envasado',
     NOW(),
     DATE_ADD(NOW(), INTERVAL 1 DAY),
     2,
@@ -725,7 +757,7 @@ VALUES
   ),
   (
     7,
-    'Entregada',
+    'Entregado',
     NOW(),
     DATE_ADD(NOW(), INTERVAL 1 DAY),
     1,
@@ -733,7 +765,7 @@ VALUES
   ),
   (
     8,
-    'Devuelta',
+    'Devuelto',
     NOW(),
     DATE_ADD(NOW(), INTERVAL 1 DAY),
     NULL,

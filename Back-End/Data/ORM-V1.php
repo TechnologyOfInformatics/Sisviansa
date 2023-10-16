@@ -278,7 +278,7 @@ class TORM //Techin Object-Relation Model (Basic)
             return $this;
         } elseif ($this->state == "Join") {
 
-            if (!($columns[0] == "None column")) {
+            if (!(strtolower($columns[0]) == "none column")) {
                 foreach ($columns as $column) {
                     $column_array = explode(".", $column);
                     if (!in_array(strtolower($column_array[1]), array_keys($this->table_columns($column_array[0])))) {
