@@ -1337,7 +1337,9 @@ function get_orders(TORM $tORM, $token) // Funcion incompleta
             ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
             ->do("select");
         $response = [];
-
+        if (empty($orders)) {
+            return "ERROR 404, NOT FOUND";
+        }
         foreach ($orders as $order) {
             $states = $tORM
                 ->from("estado")
