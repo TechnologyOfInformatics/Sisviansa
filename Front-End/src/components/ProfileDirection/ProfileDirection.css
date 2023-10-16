@@ -59,25 +59,26 @@ main {
 
 .direction {
     width: 46vw;
-    margin: 0 auto;
+    margin: 1em auto;
+    margin-right: 9vw;
 }
 
 .direction-item {
     width: 40vw;
     padding: 1em 1em;
-    height: 4vh;
     background-color: #ebeadf;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-top: 1em;
     border: 1px solid black;
+    height: 5vh;
 }
 
 .direction-item div {
     width: 60%;
     margin: auto;
+
 }
 
 .direction-button {
@@ -97,11 +98,13 @@ main {
     font-size: 1.5em;
     padding-right: 0.3em;
 }
-.star{
+
+.star {
     width: 40px;
-    transform: translate(-10vw, 1vh);
+    transform: translate(-10vw, -2vh);
 
 }
+
 .fa-star {
     color: yellow;
     transform: rotate(-16deg);
@@ -109,23 +112,34 @@ main {
 }
 
 .trash {
-    padding: .7em;
     border-bottom-right-radius: 40%;
     border-top-right-radius: 40%;
     border-left: 2px solid black;
-    font-size: 1.5em;
     color: rgb(239, 80, 80);
-    margin-top: .68em;
-
+    width: 3vw;
+    padding: 1em;
+    height: 2.7vh;
+    border: 1px solid black;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.gears {
-    padding: .7em;
+
+
+.edit {
     border-bottom-left-radius: 40%;
     border-top-left-radius: 40%;
-    border-right: 2px solid black;
+    border-left: 2px solid black;
+    width: 3vw;
+    padding: 1em;
+    height: 2.7vh;
+    border: 1px solid black;
     font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #515151;
-    margin-top: .68em;
 }
 
 
