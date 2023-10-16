@@ -194,7 +194,7 @@ class TORM //Techin Object-Relation Model (Basic)
             $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
             return $this;
         } elseif (count($columns) != 0 && empty($this->error)) {
-            if (!($columns[0] == "None column") && str_contains($columns[0], ".")) {
+            if (!(strtolower($columns[0]) == "none column") && str_contains($columns[0], ".")) {
                 $syntax_verificator = True;
 
                 $current_table_columns = $this->table_columns($this->current_table);

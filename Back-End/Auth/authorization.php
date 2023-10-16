@@ -222,7 +222,7 @@ function session(QueryCall $ctl, $token)
             }
         }
     } else {
-        return [false];
+        return "ERROR 403, FORBIDDEN";
     }
 }
 
@@ -916,40 +916,41 @@ function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
     }
 }
 
-function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
+function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
     $client_id = get_client_id($tORM, $token);
 
-    $foods = $tORM
-        ->from("conforma")
-        ->columns("conforma.vianda_id")
-        ->where("conforma.menu_id", "eq", intval($menu_id))
-        ->do("select");
 
-    $response = [];
+    // Se ingresa un pedido
+    if ($client_id) {
 
-    if ($client_id && $foods) {
-        $order_id = $tORM
-            ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
-        $order_id = $tORM
-            ->do(query: "SELECT MAX(numero_de_pedido) FROM pide WHERE cliente_id = {$client_id[0]['cliente_id']}")[0];
+        $actual_date = date('Y-m-d H:i:s');
 
-        for ($i = 0; $i < $amount; $i++) { //Se repetirá por la cantidad de menues que se manden
-            $actual_date = date('Y-m-d H:i:s');
 
-            foreach ($foods as $food) {
-                $response = $tORM
-                    ->from("pide")
-                    ->columns("pide.numero_de_pedido", "pide.menu_id", "pide.vianda_id", "pide.cliente_id",   "pide.fecha_pedido")
-                    ->values("pide", ($order_id ? intval($order_id) : 1), intval($menu_id), intval($food["vianda_id"]), intval($client_id[0]["cliente_id"]),  strval($actual_date))
-                    ->do("insert");
-            }
+        if ($order_id == "Start") {
+            $tORM
+                ->from("pedido")
+                ->columns("pedido.fecha_del_pedido", "pedido.cliente_id")
+                ->values("pedido", $actual_date, intval($client_id[0]['cliente_id']))
+                ->do("insert");
+
+            $order_id = $tORM
+                ->do(query: "SELECT MAX(id) FROM pedido WHERE Cliente_ID = {$client_id[0]['cliente_id']}")[0][0];
         }
+        $tORM
+            ->from("estado")
+            ->columns("estado.pedido_id", "estado.estado", "estado.inicio_del_estado")
+            ->values("estado", intval($order_id), "Solicitado", $actual_date)
+            ->do("insert");
 
+        $tORM
+            ->from("compone")
+            ->columns("compone.pedido_id", "compone.menu_id", "compone.cantidad")
+            ->values("compone", intval($order_id), intval($menu_id), intval($amount))
+            ->do("insert");
 
-
-        return $response;
+        return $order_id;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
@@ -957,26 +958,19 @@ function buy_menu(TORM $tORM, String $token, Int $amount, Int $menu_id)
 
 function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $menus_ids)
 {
-    $response = '';
+    $response = 0;
     if ($token && (count($amounts) == count($menus_ids))) {
         for ($i = 0; $i < count($amounts); $i++) {
-            $response = buy_menu($tORM, $token, intval($amounts[$i]),  $menus_ids[$i]);
+            if ($response) {
+                $response = intval(buy_menu($tORM, $response, $token, intval($amounts[$i]),  $menus_ids[$i]));
+            } else {
+                $response = intval(buy_menu($tORM, "Start", $token, intval($amounts[$i]),  $menus_ids[$i]));
+            }
         }
-        return $response == "OK, 200" ? $response : "ERROR 500, SERVER ERROR";
+        return gettype($response) == "integer" ? "OK, 200" : "ERROR 500, SERVER ERROR";
     } else {
         return "ERROR 400, WRONG DATA TYPE";
     }
-}
-
-function get_orders(TORM $tORM, $token) // Funcion incompleta
-{
-
-    $client_id = get_client_id($tORM, $token);
-    $menu_id = $tORM
-        ->from("pide")
-        ->columns("pide.menu_id")
-        ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
-        ->do("select");
 }
 
 function get_fav_and_personal_menus(TORM $tORM, String $token)
@@ -985,12 +979,13 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id) {
-        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
         $menus_array = [];
         $menu_id = $tORM
-            ->from("pide")
-            ->columns("pide.menu_id")
-            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->from("pedido")
+            ->columns("None column")
+            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->join("compone", "pedido.id", "compone.pedido_id")
+            ->joined_columns("Compone.menu_id")
             ->do("select");
 
 
@@ -1203,13 +1198,21 @@ function create_personal_menu(TORM $tORM, String $token, String $name, Int $freq
         ORDER BY id DESC
         LIMIT 1;")[0];
 
+        /**Es igual a :
+         * $menu_id = $tORM
+         * ->from("menu")
+         * ->columns("menu.id")
+         * ->order("menu.id", "DESC")
+         * ->limit(1);
+         */
+
         foreach ($foods as $food) {
             $result_conformation = $tORM
                 ->from("conforma")
                 ->columns("conforma.menu_id", "conforma.vianda_id")
                 ->values("conforma", intval($menu_id[0]), intval($food))
                 ->do("insert");
-            buy_menu($tORM, 1, $token, $menu_id[0]);
+            buy_menu($tORM, "Start", $token, 1, $menu_id[0]);
         }
         if ($result_conformation ==  $result_menu) {
             return "OK, 200";
@@ -1242,29 +1245,52 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         ->columns("menu.nombre")
         ->where("menu.id", "eq", $menu_id)
         ->where("menu.categoria", "eq", "Personalizado")
-        ->join("pide", "pide.menu_id", "menu.id")
+        ->join("compone", "compone.menu_id", "menu.id")
         ->joined_columns("None column")
-        ->where("pide.cliente_id", "eq", $client_id[0]["cliente_id"])
+        ->join("pedido", "pedido.id", "compone.pedido_id")
+        ->joined_columns("Pedido.id")
+        ->where("pedido.cliente_id", "eq", $client_id[0]["cliente_id"])
         ->do("select");
 
+    $response = "OK, 200";
     if ($menu_existence) {
         $deletion_result_one = $tORM
             ->from("conforma")
             ->where("conforma.menu_id", "eq", $menu_id)
             ->do("delete");
+        $response = ($response == $deletion_result_one ? $response : "ERROR 500, SERVER ERROR");
+
         $deletion_result_two = $tORM
-            ->from("pide")
-            ->where("pide.menu_id", "eq", $menu_id)
+            ->from("compone")
+            ->where("compone.menu_id", "eq", $menu_id)
             ->do("delete");
-        $deletion_result_three = $tORM
+        $response = ($response == $deletion_result_two ? $response : "ERROR 500, SERVER ERROR");
+
+        $tORM
+            ->from("genera")
+            ->where("genera.menu_id", "eq", $menu_id)
+            ->where("genera.paquete_id", "eq", $menu_existence[0]['id'])
+            ->do("delete");
+
+        $deletion_result_four = $tORM
             ->from("menu")
             ->where("menu.id", "eq", $menu_id)
             ->do("delete");
-        if ($deletion_result_one == $deletion_result_two && $deletion_result_two == $deletion_result_three) {
-            return "OK, 200";
-        } else {
-            return [$deletion_result_one, $deletion_result_two, $deletion_result_three];
-        }
+        $response = ($response == $deletion_result_four ? $response : "ERROR 500, SERVER ERROR");
+
+
+        $tORM
+            ->from("asigna")
+            ->where("asigna.pedido_id", "eq", $menu_existence[0]['id'])
+            ->do("delete");
+
+        $deletion_result_six = $tORM
+            ->from("pedido")
+            ->where("pedido.id", "eq", $menu_existence[0]['id'])
+            ->do("delete");
+        $response = ($response == $deletion_result_six ? $response : "ERROR 500, SERVER ERROR");
+
+        return $response;
     } else {
         return "ERROR 403, FORBIDDEN";
     }
@@ -1291,9 +1317,11 @@ function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $freq
         ->from("menu")
         ->columns("menu.nombre")
         ->where("menu.id", "eq", $menu_id)
-        ->join("pide", "pide.menu_id", "menu.id")
+        ->join("compone", "compone.menu_id", "menu.id")
         ->joined_columns("None column")
-        ->where("pide.cliente_id", "eq", $client_id[0]["cliente_id"])
+        ->join("pedido", "compone.pedido_id", "pedido.id")
+        ->joined_columns("None column")
+        ->where("pedido.cliente_id", "eq", $client_id[0]["cliente_id"])
         ->do("select");
 
     if ($menu_existence) {
@@ -1310,28 +1338,7 @@ function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $freq
     }
 }
 
-function login_bussiness() //
-{
-}
-
-function register_bussiness() //
-{
-}
-
-function modify_bussiness() //
-{
-}
-
-function show_food_list() //
-{
-}
-
-function credit_card_change() //
-{
-}
-
-
-function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd) //
+function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd) //Debería funcionar para web y empresa
 {
 
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
@@ -1347,12 +1354,12 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
             ->where('web.cliente_id', 'eq', $client_id[0]['cliente_id'])
             ->do('select');
 
-        $regex = '/\b' . preg_quote(strtolower($client_name[0]['primer_nombre']), '/') . '\b/';
-
-        $name_match = preg_match($regex, strtolower($passwd)) || ($client_name ? (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['primer_nombre']))) : True);
-
+        $name_match = True;
+        if ($client_name) {
+            $regex = '/\b' . preg_quote(strtolower($client_name[0]['primer_nombre']), '/') . '\b/';
+            $name_match = preg_match($regex, strtolower($passwd)) || (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['primer_nombre'])));
+        }
         $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
-
         $client_actual_email = $tORM
             ->from('cliente')
             ->columns('cliente.email')
@@ -1387,6 +1394,105 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
         return "ERROR 403, FORBIDDEN";
     }
 }
+
+function get_orders(TORM $tORM, $token) // Funcion incompleta: se devuelven los menues pedidos pero necesito una lista con los estados que contenga el estado actual y los anteriores con su fecha de cambio de estado
+{
+
+    //Esta funcion no divide por pedido los menus sino que te da todos los menues que tiene pedidos el cliente dado, el problema radica en que no hay una division por pedidos y no hay estados
+    $client_id = get_client_id($tORM, $token);
+
+    if ($client_id) {
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pedido")
+            ->columns("none column")
+            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->join("compone", "compone.pedido_id", "pedido.id")
+            ->joined_columns("compone.menu_id")
+            ->do("select");
+        print_r($menu_id);
+
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+        $unique_menus = array();
+
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $menus = array_values($unique_menus);
+
+        $foods = $tORM
+            ->from("vianda")
+            ->do("select");
+
+        $relation = $tORM
+            ->from("conforma")
+            ->columns("conforma.vianda_id", "conforma.menu_id")
+            ->do("select");
+
+        $diets = $tORM
+            ->from("vianda_dieta")
+            ->do("select");
+
+        foreach ($diets as $diet) {
+            foreach ($foods as $key => $food) {
+                unset($foods[$key]['tiempo_de_coccion']);
+                unset($foods[$key]['productos']);
+                if ($food['id'] == $diet['vianda_id']) {
+                    $foods[$key]['dietas'][] = $diet['dieta'];
+                }
+            }
+        }
+        foreach ($foods as $food) {
+            foreach ($menus as &$menu) {
+                unset($menu['estado']);
+                unset($menu['calorias']);
+
+                if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
+                    if (!isset($menu['viandas'])) {
+                        $menu['viandas'] = [];
+                    }
+                    $menu['viandas'][$food['nombre']] = $food;
+                }
+            }
+        }
+        return $menus;
+    } else {
+
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function credit_card_delete(TORM $tORM, String $token, $actual_card) //
+{
+}
+function register_bussiness() //Funcion admin
+{
+}
+
+function modify_bussiness() //Funcion admin
+{
+}
+
+function show_food_list() //Funcion admin
+{
+}
+
+
+
 
 function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
 {
@@ -1433,9 +1539,11 @@ function get_client_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!
         //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
         $menus_array = [];
         $menu_id = $tORM
-            ->from("pide")
-            ->columns("pide.menu_id")
-            ->where("pide.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->from("pedido")
+            ->columns("none column")
+            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->join("compone", "compone.pedido_id", "pedido.id")
+            ->joined_columns("compone.menu_id")
             ->do("select");
 
         foreach ($menu_id as $id) {
