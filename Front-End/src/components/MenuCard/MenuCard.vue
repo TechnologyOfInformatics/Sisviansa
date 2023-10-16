@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!custom">
     <div class="options-filter">
       <form class="form" @submit.prevent="searchMenu">
         <button>
@@ -60,41 +60,90 @@
         </div>
       </div>
     </div>
-    <transition name="fade" mode="out-in">
-      <div v-if="addedToCart" class="added-to-cart-message">
-        <div>
-          <p>¡Se ha agregado al carrito!</p>
-        </div>
-      </div>
-    </transition>
-    <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <div class="menu-details">
-          <h2>{{ selectedMenu.title }}</h2>
-          <p>{{ selectedMenu.description }}</p>
-          <p class="price">Precio: {{ selectedMenu.price }} USD</p>
-        </div>
-        <div class="viandas">
-          <h3>Viandas</h3>
-          <ul>
-            <li v-for="vianda in selectedMenu.viandas" :key="vianda.name">
-              <span class="vianda-name">{{ vianda.name }}</span>
-              <div class="vianda-details">
-                <span class="diet">{{ vianda.diet }}</span>
-                <span class="calories">{{ vianda.calories }} calorías</span>
-              </div>
-            </li>
-          </ul>
 
+
+  </div>
+  <div v-if="custom">
+    <div class="menu-list">
+
+      <div v-for="menu in transformMenusData(customMenus)" :key="menu.id" class="menu-card">
+        <div class="menu-top">
+          <div class="menu-top-text">
+            <div>
+              <p class="menu-top-text-description">{{ menu.title }}</p>
+            </div>
+          </div>
         </div>
-        <div class="buttons">
-          <button class="add-to-cart-btn" @click="addToCart(selectedMenu)">
-            Añadir al carrito
-          </button>
-          <button class="close-btn" @click="closeModal">
-            <i class="fa-solid fa-circle-xmark"></i>
-          </button>
+        <hr />
+        <div class="menu-footer">
+          <div class="description">
+            <p>{{ menu.description }}</p>
+          </div>
+          <div class="menu-footer-buttons">
+            <div class="footer-bottom-icons">
+              <button @click="openModal(menu)" class="viewMore button-bottom">
+                <i class="fa-solid fa-circle-chevron-down"></i>
+              </button>
+              <button class="button-bottom" v-if="isAuthenticated">
+                <i class="fa-solid fa-heart" :class="{ favorite: isFavorite(menu.id) }"
+                  @click="toggleFavorite(menu.id)"></i>
+              </button>
+              <button class="button-bottom" @click="selectMenu(menu)">
+                <i class="fa-solid fa-cart-plus"></i>
+              </button>
+            </div>
+            <div class="footer-side-icons">
+              <button class="button-side" v-if="showSinGlutenButton">
+                <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
+              </button>
+              <button class="button-side" v-if="showVeganoButton">
+                <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
+              </button>
+              <button class="button-side" v-if="showVegetarianoButton">
+                <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
+              </button>
+            </div>
+
+          </div>
         </div>
+
+      </div>
+    </div>
+  </div>
+  <transition name="fade" mode="out-in">
+    <div v-if="addedToCart" class="added-to-cart-message">
+      <div>
+        <p>¡Se ha agregado al carrito!</p>
+      </div>
+    </div>
+  </transition>
+  <div v-if="showModal" class="modal" @click="closeModal">
+    <div class="modal-content" @click.stop>
+      <div class="menu-details">
+        <h2>{{ selectedMenu.title }}</h2>
+        <p>{{ selectedMenu.description }}</p>
+        <p class="price">Precio: {{ selectedMenu.price }} USD</p>
+      </div>
+      <div class="viandas">
+        <h3>Viandas</h3>
+        <ul>
+          <li v-for="vianda in selectedMenu.viandas" :key="vianda.name">
+            <span class="vianda-name">{{ vianda.name }}</span>
+            <div class="vianda-details">
+              <span class="diet">{{ vianda.diet }}</span>
+              <span class="calories">{{ vianda.calories }} calorías</span>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+      <div class="buttons">
+        <button class="add-to-cart-btn" @click="addToCart(selectedMenu)">
+          Añadir al carrito
+        </button>
+        <button class="close-btn" @click="closeModal">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -103,6 +152,10 @@
 <script>
 export default {
   name: "MenuCard",
+  props: {
+    custom: Boolean,
+    customMenus: Object,
+  }, emits: ["updateCart"],
   data() {
     return {
       cart: [],

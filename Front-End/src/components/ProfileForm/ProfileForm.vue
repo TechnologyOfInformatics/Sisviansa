@@ -112,6 +112,29 @@ export default {
         fetchUserData() {
             if (this.web) {
                 const dataToSend = {
+                    functionName: "options_user_info",
+                    token: sessionStorage.getItem('miToken') || 0,
+                };
+
+                this.$http
+                    .post("http://localhost/Back-End/server.php", dataToSend)
+                    .then((response) => {
+                        console.log(response.data);
+                        this.first_name = response.data.primerNombre
+                        this.second_name = response.data.segundoNombre
+                        this.first_surname = response.data.primerApellido
+                        this.second_surname = response.data.segundoApellido
+                        this.mail = response.data.correo
+                        this.id = response.data.documento
+                        this.idtype = response.data.tipoDocumento
+
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+            else {
+                const dataToSend = {
                     functionName: "options_bussines_info",
                     token: sessionStorage.getItem('miToken') || 0,
                 };
@@ -129,8 +152,7 @@ export default {
                         console.error(error);
                     });
             }
-
-        },
+        }
     },
 
 };
