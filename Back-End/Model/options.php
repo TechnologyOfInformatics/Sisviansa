@@ -81,7 +81,7 @@ function options_change_password(String $token, String $actual_passwd, String $p
 }
 
 
-function options_get_orders(String $token, String $actual_passwd, String $passwd, String $confirm_passwd)
+function options_get_orders(String $token)
 {
     global $tORM;
     global $ctl;
