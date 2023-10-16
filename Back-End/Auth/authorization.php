@@ -509,7 +509,7 @@ function user_information_web(TORM $tORM, $token)
         ->joined_columns("None column")
         ->where("inicia.sesion_token", "eq", $token)
         ->join("web", "web.cliente_id", "cliente.id")
-        ->joined_columns('web.primer_nombre', 'web.primer_apellido', 'web.segundo_nombre', 'web.segundo_apellido', 'web.numero', 'web.tipo')
+        ->joined_columns('web.primer_nombre', 'web.primer_apellido', 'web.segundo_nombre', 'web.segundo_apellido', 'web.documento_numero', 'web.documento_tipo')
         ->join("cliente_simplificado", "cliente_simplificado.id", "web.cliente_id")
         ->joined_columns('cliente_simplificado.email')
         //
