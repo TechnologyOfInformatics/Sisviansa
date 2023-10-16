@@ -1463,6 +1463,9 @@ function show_food_list() //Funcion admin
 
 
 
+function modify_order()
+{
+}
 function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
 {
 }
@@ -1497,48 +1500,3 @@ function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora 
     }
     return False;
 }
-
-/*
-function get_client_menus(TORM $tORM, String $token) //Funcion incompleta!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-{
-    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, es especial para admins, para ver TODOS los menues
-    $client_id = get_client_id($tORM, $token);
-
-    if ($client_id) {
-        //debo pedir los menus con el mismo id que el de favorito y el mismo id que el de pide que sean personalizados
-        $menus_array = [];
-        $menu_id = $tORM
-            ->from("pedido")
-            ->columns("none column")
-            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
-            ->join("compone", "compone.pedido_id", "pedido.id")
-            ->joined_columns("compone.menu_id")
-            ->do("select");
-
-        foreach ($menu_id as $id) {
-            $menu = $tORM
-                ->from("menu")
-                ->where("menu.id", "eq", $id["menu_id"])
-                ->do("select");
-            if ($menu) {
-                $menus_array[] = $menu[0];
-            }
-        }
-
-
-        $unique_menus = array();
-        foreach ($menus_array as $menu) {
-            $id = $menu['id'];
-            if (!isset($unique_menus[$id])) {
-                $unique_menus[$id] = $menu;
-            }
-        }
-
-        $unique_menus = array_values($unique_menus);
-        return $unique_menus;
-    } else {
-
-        return "ERROR 403, FORBIDDEN";
-    }
-}
-*/
