@@ -102,27 +102,27 @@ export default {
           functionName: "base_session",
           token: token,
         };
-        console.log(dataToSend
-        )
 
         this.$http
           .post("http://localhost/Back-End/server.php", dataToSend)
           .then((response) => {
             console.log(response.data)
-            if (response.data == false) {
-              console.log("fun")
+            if (Array.isArray(response.data)) {
+              if (response.data[0] == false) {
+                const userData = response.data;
+                this.user = userData[1] + " " + userData[2];
+                this.isAuthenticated = true;
+                this.web = true;
+              } else {
+                const bussinesData = response.data;
+                this.user = bussinesData[1];
+                this.isAuthenticated = true;
+                this.web = false;
+              }
+            } else{
+              this.isAuthenticated = false
             }
-            if (response.data[0] == false) {
-              const userData = response.data;
-              this.user = userData[1] + " " + userData[2];
-              this.isAuthenticated = true;
-              this.web = true;
-            } else {
-              const bussinesData = response.data;
-              this.user = bussinesData[1];
-              this.isAuthenticated = true;
-              this.web = false;
-            }
+
           })
           .catch((error) => {
             console.error(error);
