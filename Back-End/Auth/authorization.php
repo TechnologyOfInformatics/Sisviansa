@@ -1324,10 +1324,9 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
     }
 }
 
-function get_orders(TORM $tORM, $token) // Funcion incompleta
+function get_orders(TORM $tORM, $token)
 {
 
-    //Esta funcion no divide por pedido los menus sino que te da todos los menues que tiene pedidos el cliente dado, el problema radica en que no hay una division por pedidos y no hay estados
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id) {
@@ -1369,8 +1368,71 @@ function get_orders(TORM $tORM, $token) // Funcion incompleta
     }
 }
 
-function credit_card_delete(TORM $tORM, String $token, $actual_card) //
+function create_credit_card(TORM $tORM, String $token, String $card_code, String $expire_date, String $name) //
 {
+
+    if (in_array('', func_get_args()) || !in_array(strlen(strval($card_code)), range(5, 30)) || count(explode(" ", $name)) < 2) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $passed_date = explode("/", $expire_date); // Mes/Año
+        $date = date("y/m/d", mktime(hour: 0, day: 1, month: $passed_date[0], year: $passed_date[1]));
+        $response = $tORM
+            ->from("tarjeta")
+            ->columns("tarjeta.numero", "tarjeta.digitos_verificadores", "tarjeta.fecha_de_vencimiento", "tarjeta.nombre_de_titular", "tarjeta.cliente_id")
+            ->values("tarjeta", md5($card_code), substr($card_code, -4, 4), $date, $name, intval($client_id[0]['cliente_id']))
+            ->do("insert");
+
+        return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function get_credit_card(TORM $tORM, String $token) //debo decodificar la tarjeta y tomar los ultimos 4 valores para devolver
+{
+
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $response = $tORM
+            ->from("tarjeta")
+            ->columns("tarjeta.digitos_verificadores", "tarjeta.fecha_de_vencimiento", "tarjeta.nombre_de_titular")
+            ->where("tarjeta.cliente_id", "eq", intval($client_id[0]['cliente_id']))
+            ->do("select");
+        foreach ($response as &$card) {
+            $card['fecha_de_vencimiento'] = date('m/y', strtotime($card['fecha_de_vencimiento']));
+        }
+        return (gettype($response) == "array" ? $response : "ERROR 409, CONFLICT");
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function delete_credit_card(TORM $tORM, String $token, String $verification_code, String $expire_date, String $name) //
+{
+
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $client_id = get_client_id($tORM, $token);
+    if ($client_id) {
+        $passed_date = explode("/", $expire_date); // Mes/Año
+        $date = date("y/m/d", mktime(hour: 0, day: 1, month: $passed_date[0], year: $passed_date[1]));
+        $response = $tORM
+            ->from("tarjeta")
+            ->where("tarjeta.cliente_id", "eq", intval($client_id[0]['cliente_id']))
+            ->where("tarjeta.digitos_verificadores", "eq", $verification_code)
+            ->where("tarjeta.fecha_de_vencimiento", "eq", $date)
+            ->where("tarjeta.nombre_de_titular", "eq", $name)
+            ->do("delete");
+        return ($response == "OK, 200" ? $response : "ERROR 400, BAD REQUEST");
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
 }
 
 
@@ -1502,3 +1564,24 @@ function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora 
     }
     return False;
 }
+
+
+/*
+Metodo que forme para encontrar entre 2 valores de forma facil:
+function len($variable, $minimum, $maximum){
+    $minimum = intval($minimum);
+    $maximum = intval($maximum);
+    if(!empty($minimum)!empty($maximum)){
+        switch (gettype($variable)) {
+            case "array":
+                return in_array(count($variable), range($minimum, $maximum));
+                break;
+            default:
+                return in_array(strlen(strval($variable)), range($minimum, $maximum));
+                break;
+    }
+    }else{
+    return [$variable, $minimum, $maximum];
+    }
+}
+ */
