@@ -13,7 +13,7 @@ USE sisviansa_techin_v1;
 -- Creación de la tabla Cliente
 CREATE TABLE Cliente (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT 'ID único de cliente el cual es autogenerado',
-  Contrasenia VARCHAR(40) NOT NULL COMMENT 'Contraseña de la cuenta correspondiente al cliente',
+  Contrasenia VARCHAR(100) NOT NULL COMMENT 'Contraseña de la cuenta correspondiente al cliente',
   Autorizacion ENUM('Autorizado', 'En espera', 'No autorizado') NOT NULL COMMENT 'Estado del pedido de autorizacion del administrador',
   Email VARCHAR(50) NOT NULL COMMENT 'ID único correspondiente al cliente'
 );
@@ -21,6 +21,7 @@ CREATE TABLE Cliente (
 -- Creación de la tabla Tarjeta
 CREATE TABLE Tarjeta (
   Numero VARCHAR(30) PRIMARY KEY NOT NULL COMMENT 'Número de la tarjeta de crédito a usarse',
+  Digitos_verificadores VARCHAR(4) NOT NULL COMMENT 'Últimos 4 digitos numeros de la tarjeta de crédito a usarse',
   Fecha_de_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento de la tarjeta de crédito a usarse',
   Nombre_de_titular VARCHAR(30) NOT NULL COMMENT 'Nombre del titular que figura en la tarjeta de crédito correspondiente',
   Cliente_ID INT(11) COMMENT 'ID que pertenece a un cliente, el poseedor de esta tarjeta de crédito',
@@ -262,6 +263,7 @@ VALUES
 INSERT INTO
   Tarjeta (
     `Numero`,
+    `Digitos_verificadores`,
     `Fecha_de_vencimiento`,
     `Nombre_de_titular`,
     `Cliente_ID`
@@ -269,18 +271,21 @@ INSERT INTO
 VALUES
   (
     '112312331123121233123',
+    '3123',
     '2023-09-30',
     'Titular Tarjeta 1',
     1
   ),
   (
     '686868678678678678678',
+    '8678',
     '2023-09-30',
     'Titular Tarjeta 2',
     2
   ),
   (
     '17171717171717171717',
+    '1717',
     '2023-09-30',
     'Titular Tarjeta 3',
     3
