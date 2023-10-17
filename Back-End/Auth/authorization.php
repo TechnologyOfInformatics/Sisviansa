@@ -1366,7 +1366,7 @@ function get_orders(TORM $tORM, $token)
                 $menu['precio'] = doubleval($tORM->do(query: "SELECT sum(vianda.precio) from vianda JOIN conforma on vianda.id = conforma.vianda_id JOIN menu on menu.id = conforma.menu_id where conforma.menu_id = {$menu['id']}")[0][0]);
                 $response[$key]['menus'][$menu['id']] = $menu;
             }
-
+            $response[$key]['pedido_id'] = $order['id'];
             $response[$key]['fecha_del_pedido'] = $order['fecha_del_pedido'];
             $response[$key]['direccion'] = array_values(array_slice($order, 2, 4));
             $response[$key]['estados'] = $states;
