@@ -1,101 +1,125 @@
 <template>
-    <div>
-      <h1>Mis Pedidos</h1>
-      <ul class="pedido-list">
-        <li v-for="(pedido, pedidoId) in pedidos" :key="pedidoId" class="pedido-item">
-          <div class="pedido-info">
-            <div class="pedido-item">
-              <span class="label">Nombre del Pedido:</span>
-              <span>{{ pedido[1].nombre }}</span>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Frecuencia:</span>
-              <span>{{ pedido[1].frecuencia }}</span>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Categoría:</span>
-              <span>{{ pedido[1].categoria }}</span>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Precio:</span>
-              <span>{{ pedido[1].precio }}</span>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Fecha del Pedido:</span>
-              <span>{{ pedido.fecha_del_pedido }}</span>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Dirección de Entrega:</span>
-              <ul>
-                <li v-for="(direccion, index) in pedido.direccion" :key="index">{{ direccion }}</li>
-              </ul>
-            </div>
-            <div class="pedido-item">
-              <span class="label">Estado Actual:</span>
-              <span>{{ pedido.estados[0].estado }}</span>
-            </div>
-          </div>
-        </li>
-      </ul>
+  <div class="orders">
+    <div v-for="(pedido, pedidoId) in pedidos" :key="pedidoId" class="order-container">
+      <div>
+        <span class="label">ID del Pedido: </span>
+        <span class="value">{{ pedido.pedido_id || 'N/A' }} </span>
+
+        <span class="label">Total Precio de Menús: </span>
+        <span class="value">{{ calcularPrecioTotal(pedido.menus) || 'N/A' }} </span>
+
+        <span class="label">Estado Actual:</span>
+        <span class="value">{{ pedido.estados[0] && pedido.estados[0].estado || 'N/A' }} </span>
+
+        <div v-for="(menu, menuId) in pedido.menus" :key="menuId" class="order-menu">
+          <span class="label">Menus: </span>
+          <span class="value">{{ menu.nombre || 'N/A' }} </span>
+          <span class="label">Frecuencia: </span>
+          <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
+
+          <span class="label">Categoría: </span>
+          <span class="value">{{ menu.categoria || 'N/A' }} </span>
+
+          <span class="label">Precio: </span>
+          <span class="value">{{ menu.precio || 'N/A' }} </span>
+
+
+        </div>
+      </div>
+
+      <div>
+        <span class="label">Fecha del Pedido: </span>
+        <span class="value">{{ pedido.fecha_del_pedido || 'N/A' }}</span>
+
+        <span class="label">Dirección de Entrega: </span>
+        <li v-for="(direccion, index) in pedido.direccion" :key="index">{{ direccion || 'N/A' }}</li>
+
+
+      </div>
     </div>
-  </template>
-  
-  
+  </div>
+</template>
+
 <script>
 export default {
-    data() {
-        return {
-            pedidos: []
-        };
-    },
-    created() {
-        this.fetchPedidosFromBackend();
-    },
-    methods: {
-        fetchPedidosFromBackend() {
-            const dataToSend = {
-                functionName: "options_get_orders",
-                token: sessionStorage.getItem('miToken') || 0,
-            };
+  data() {
+    return {
+      pedidos: [],
+    };
+  },
+  created() {
+    this.fetchPedidosFromBackend();
+  },
 
-            this.$http
-                .post("http://localhost/Back-End/server.php", dataToSend)
-                .then((response) => {
-                    console.log(response.data)
-                    this.pedidos = response.data;
-
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-
+  methods: {
+    calcularPrecioTotal(menus) {
+      let totalPrecio = 0;
+      for (const menuId in menus) {
+        if (menus.hasOwnProperty(menuId)) {
+          totalPrecio += menus[menuId].precio || 0;
         }
-    }
+      }
+      return totalPrecio;
+    },
+    fetchPedidosFromBackend() {
+      const dataToSend = {
+        functionName: "options_get_orders",
+        token: sessionStorage.getItem("miToken") || 0,
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data);
+          this.pedidos = response.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  },
 };
 </script>
-  
+
 <style scoped>
-.pedido-list {
-    list-style: none;
-    padding: 0;
+.orders {
+  background-color: #243328;
+  margin-bottom: 1em;
+  overflow-y: auto;
+  height: 77.5vh;
+  color: white;
+  padding: 2em 0;
+
 }
 
-.pedido-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #f5f5f5;
+.orders::-webkit-scrollbar {
+  width: 6px;
 }
 
-.pedido-info {
-    display: flex;
-    flex-wrap: wrap;
+.orders::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
-.label {
-    font-weight: bold;
-    width: 150px;
-    margin-right: 10px;
+.orders::-webkit-scrollbar-thumb {
+  background-color: #999999;
+  border-radius: 3px;
+}
+
+.orders::-webkit-scrollbar-thumb:hover {
+  background-color: #888888;
+}
+
+.order-container {
+  height: 30vh;
+  margin: 1em auto;
+  width: 80%;
+  border: 1px solid white;
+  padding: 4em;
+}
+.order-menu{
+  background-color: #ebeadf;
+  padding: .8em;
+  color: black;
+  margin: 15px;
 }
 </style>
-  

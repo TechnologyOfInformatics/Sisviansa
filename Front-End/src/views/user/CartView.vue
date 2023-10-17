@@ -20,14 +20,13 @@
         </div>
       </div>
       <div class="cart-summary">
-        <p>Total: ${{ cartTotal }}</p>
+        <p>Total: ${{ calculateTotalPrice() }}</p>
         <button @click="checkout" :disabled="cart.length === 0">Finalizar Compra</button>
       </div>
     </div>
   </div>
   <MainFooter />
 </template>
-
 <script>
 import MainHeader from '@/components/Header/Header.vue'
 import MainFooter from '@/components/Footer/Footer.vue'
@@ -46,14 +45,18 @@ export default {
     const cartString = sessionStorage.getItem("cart");
     if (cartString) {
       this.cart = JSON.parse(cartString);
+      console.log(this.cart)
     }
   },
-  computed: {
-    cartTotal() {
-      return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    },
-  },
+
   methods: {
+    calculateTotalPrice() {
+      let totalPrice = 0;
+      for (const item of this.cart) {
+        totalPrice += item.price * item.quantity;
+      }
+      return totalPrice.toFixed(2);
+    },
     incrementQuantity(item) {
       item.quantity++;
       this.updateCart();
@@ -71,6 +74,7 @@ export default {
         this.updateCart();
       }
     },
+
     checkout() {
       if (this.cart.length === 0) {
         return;
@@ -78,8 +82,8 @@ export default {
       const dataToSend = {
         functionName: "shop_buy_menu",
         token: sessionStorage.getItem('miToken') || 0,
+        quantities: this.cart.map(item => item.quantity),
         menuIds: this.cart.map(item => item.id),
-        quantities: this.cart.map(item => item.quantity)
       };
       console.log(dataToSend)
 

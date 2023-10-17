@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      selectedOption: "Account",
+      selectedOption: "OrderHistory",
       login: true,
       web: true,
       isDesktop: window.innerWidth >= 1024
@@ -114,7 +114,7 @@ export default {
                 this.$router.push("/bussines");
 
               }
-            } else{
+            } else {
               this.$router.push("/login");
             }
           }
@@ -141,10 +141,12 @@ export default {
 
 .profile-sidebar {
   width: 20vw;
+  height: 83.9vh;
   background-color: #243328;
   color: #fff;
   display: flex;
   flex-direction: column;
+  position: fixed;
 }
 
 .profile-sidebar__nav ul {
@@ -173,7 +175,8 @@ export default {
 
 .profile-main {
   height: 78.2vh;
-
+  width: 80vw;
+  margin-left: 20vw;
   background-color: #ebeadf;
 
   flex: 1;
