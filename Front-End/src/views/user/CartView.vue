@@ -75,7 +75,24 @@ export default {
       if (this.cart.length === 0) {
         return;
       }
-      // Lógica de finalización de la compra
+      const dataToSend = {
+        functionName: "shop_buy_menu",
+        token: sessionStorage.getItem('miToken') || 0,
+        menuIds: this.cart.map(item => item.id),
+        quantities: this.cart.map(item => item.quantity)
+      };
+      console.log(dataToSend)
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          this.cart = [];
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
     updateCart() {
       const cartString = JSON.stringify(this.cart);
