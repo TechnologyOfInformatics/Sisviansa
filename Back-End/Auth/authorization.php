@@ -943,11 +943,18 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
             $order_id = $tORM
                 ->do(query: "SELECT MAX(id) FROM pedido WHERE Cliente_ID = {$client_id[0]['cliente_id']}")[0][0];
         }
-        $tORM
+        $is_state = $tORM
             ->from("estado")
-            ->columns("estado.pedido_id", "estado.estado", "estado.inicio_del_estado")
-            ->values("estado", intval($order_id), "Solicitado", $actual_date)
-            ->do("insert");
+            ->where("estado.pedido_id", "eq", intval($order_id))
+            ->where("estado.estado", "eq", "Solicitado")
+            ->do("select");
+        if (!($is_state || $is_state[0]['final_del_estado'])) {
+            $tORM
+                ->from("estado")
+                ->columns("estado.pedido_id", "estado.estado", "estado.inicio_del_estado")
+                ->values("estado", intval($order_id), "Solicitado", $actual_date)
+                ->do("insert");
+        }
 
         $tORM
             ->from("compone")
@@ -1339,16 +1346,14 @@ function get_orders(TORM $tORM, $token)
         if (empty($orders)) {
             return "ERROR 404, NOT FOUND";
         }
-        foreach ($orders as $order) {
+        foreach ($orders as $key => $order) {
+
             $states = $tORM
                 ->from("estado")
-                ->columns("estado.estado", "estado.inicio_del_estado", "estado.final_del_estado")
+                ->columns("estado.id", "estado.estado", "estado.inicio_del_estado", "estado.final_del_estado")
                 ->where("estado.pedido_id", "eq", $order['id'])
                 ->do("select");
 
-            $response[$order['id']]['fecha_del_pedido'] = $order['fecha_del_pedido'];
-            $response[$order['id']]['direccion'] = array_values(array_slice($order, 2, 4));
-            $response[$order['id']]['estados'] = $states;
             $requested_menus = $tORM
                 ->from("compone")
                 ->columns("none column")
@@ -1356,10 +1361,15 @@ function get_orders(TORM $tORM, $token)
                 ->join("menu", "compone.menu_id", "menu.id")
                 ->joined_columns("menu.id", "menu.nombre", "menu.categoria", "menu.frecuencia")
                 ->do("select");
+
             foreach ($requested_menus as $menu) {
                 $menu['precio'] = doubleval($tORM->do(query: "SELECT sum(vianda.precio) from vianda JOIN conforma on vianda.id = conforma.vianda_id JOIN menu on menu.id = conforma.menu_id where conforma.menu_id = {$menu['id']}")[0][0]);
-                $response[$order['id']][$menu['id']] = $menu;
+                $response[$key]['menus'][$menu['id']] = $menu;
             }
+
+            $response[$key]['fecha_del_pedido'] = $order['fecha_del_pedido'];
+            $response[$key]['direccion'] = array_values(array_slice($order, 2, 4));
+            $response[$key]['estados'] = $states;
         }
         return $response;
     } else {
