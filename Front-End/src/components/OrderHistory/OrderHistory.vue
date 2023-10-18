@@ -25,6 +25,11 @@
         </div>
 
         <div>
+          <span class="label">Cantidad: </span>
+          <span class="value">{{ menu.cantidad || 'N/A' }} </span>
+        </div>
+
+        <div>
           <span class="label">Frecuencia: </span>
           <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
         </div>
@@ -36,8 +41,9 @@
 
         <div>
           <span class="label">Precio: </span>
-          <span class="value">{{ menu.precio || 'N/A' }} </span>
+          <span class="value">{{ menu.precio * menu.cantidad || 'N/A' }} </span>
         </div>
+
 
       </div>
 
@@ -86,7 +92,8 @@ export default {
       let totalPrecio = 0;
       const menuKeys = Object.keys(menus);
       for (const menuKey of menuKeys) {
-        totalPrecio += menus[menuKey].precio || 0;
+        totalPrecio += menus[menuKey].precio * menus[menuKey].cantidad || 0;
+        console.log(totalPrecio)
       }
       return totalPrecio;
     },

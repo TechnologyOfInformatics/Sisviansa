@@ -4,10 +4,13 @@
       <h1>Inicia sesión</h1>
       <p>Coloca los datos de tu cuenta</p>
       <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
-      <input v-model="password" type="password" name="pswd" placeholder="Password" required autocomplete="current-password"
-        id="password" />
+      <input v-model="password" type="password" name="pswd" placeholder="Password" required
+        autocomplete="current-password" id="password" />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     </form>
   </div>
 </template>
@@ -20,6 +23,7 @@ export default {
       mail: "",
       password: "",
       token: sessionStorage.getItem("miToken") || 0,
+      errorMessage: "",
 
     };
   },
@@ -58,12 +62,13 @@ export default {
               if (attempts < maxAttempts) {
                 attemptLogin();
               } else {
-                console.error("Credenciales inválidas.");
+                this.errorMessage = "Credenciales inválidas.";
               }
             }
           })
           .catch((error) => {
-            console.error(error);
+            console.log(error)
+            this.errorMessage = "Error al conectar con el servidor.";
           });
       };
 
@@ -76,6 +81,10 @@ export default {
 </script>
 
 <style scoped>
+
+.error-message{
+  color: red;
+}
 .sign-in {
   position: absolute;
   top: 0;

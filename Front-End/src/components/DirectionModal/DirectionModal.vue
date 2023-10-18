@@ -3,12 +3,11 @@
         <div class="direction-modal" :style="{ transform: `translate(2vw, -${translateY}vh)` }">
 
             <div class="direction-modal-content">
-                <div v-if="this.directions.length === 0" class="empty-direction-message directions-container">
+                <div v-if="directions.length === 0" class="empty-direction-message directions-container">
                     <span>Usted no tiene direcciones</span> <br>
                     <span>Puedes añadir una en </span><router-link to="/profile" class="link">tú perfil</router-link>
-
                 </div>
-                <div v-else>
+                <div v-else-if="directions.length > 0">
                     <div class="directions-container">
                         <ul class="direction-list">
                             <li v-for="direction in directions" :key="direction.id" class="direction-list-item">
@@ -85,6 +84,7 @@ export default {
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
                     console.log(response.data)
+                    if(Array.isArray(response.data))
                     this.directions = response.data;
 
                 })

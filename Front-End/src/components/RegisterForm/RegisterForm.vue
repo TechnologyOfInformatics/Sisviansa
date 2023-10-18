@@ -18,7 +18,9 @@
         id="passwd" />
       <input v-model="confirmPasswd" type="password" name="cmpswd" placeholder="Confirma la contraseña" required
         autocomplete="new-password" id="cmfpasswd" />
-
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
       <button type="submit">Registrate</button>
     </form>
   </div>
@@ -38,9 +40,14 @@
         autocomplete="new-password" id="passwdb" />
       <input v-model="confirmPasswdb" type="password" name="confirmPasswdb" placeholder="Confirma la contraseña" required
         autocomplete="new-password" id="confirmPasswdb" />
-
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
       <button type="submit">Registrate</button>
+
     </form>
+
+
   </div>
 </template>
 <script>
@@ -63,6 +70,8 @@ export default {
       confirmPasswdb: "",
 
       web: true,
+
+      errorMessage: "",
     };
   },
 
@@ -92,7 +101,11 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
-          if (Array.isArray(response.data)) {
+          console.log(typeof (response.data))
+          if (typeof (response.data) == 'string') {
+            this.errorMessage = 'Error, intente nuevamente.'
+            console.log('funca')
+          } else {
             let token = response.data[1];
             if (token) {
               sessionStorage.setItem('miToken', token);
@@ -139,6 +152,10 @@ export default {
 </script>
 
 <style scoped>
+.error-message {
+  color: red;
+}
+
 .sign-up {
   position: absolute;
   top: 0;

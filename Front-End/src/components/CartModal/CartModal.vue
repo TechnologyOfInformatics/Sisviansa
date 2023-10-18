@@ -14,8 +14,8 @@
             <div v-for="item in cart" :key="item.title" class="cart-item">
               <div class="cart-item-info">
                 <span class="item-title">{{ item.title }}</span>
-                <span class="item-price">{{ item.price }} USD</span> <span class="item-type">Vegan</span>
-                <!-- {{ item.diets }} -->
+                <span class="item-price">{{ item.price }} USD</span>
+                
               </div>
               <div class="quantity-controls">
                 <button class="quantity-button" @click.stop="decreaseQuantity(item)" :disabled="item.quantity === 1">
