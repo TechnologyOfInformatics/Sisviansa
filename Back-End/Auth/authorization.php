@@ -1439,7 +1439,7 @@ function delete_credit_card(TORM $tORM, String $token, String $verification_code
             ->where("tarjeta.fecha_de_vencimiento", "eq", $date)
             ->where("tarjeta.nombre_de_titular", "eq", $name)
             ->do("delete");
-        return ($response == "OK, 200" ? $response : "ERROR 400, BAD REQUEST");
+        return ($response == get_credit_card($tORM, $token) ? $response : "ERROR 400, BAD REQUEST");
     } else {
         return "ERROR 403, FORBIDDEN";
     }
