@@ -86,3 +86,21 @@ function options_get_orders(String $token)
     global $tORM;
     return get_orders($tORM, $token);
 }
+
+function options_create_credit_card(String $token, String $card_code, String $expire_date, String $name)
+{
+    global $tORM;
+    return create_credit_card($tORM, $token, $card_code, $expire_date, $name);
+}
+
+function options_delete_credit_card(String $token, String $verification_code, String $expire_date, String $name)
+{
+    global $tORM;
+    return delete_credit_card($tORM, $token, $verification_code, $expire_date, $name);
+}
+
+function options_get_credit_card(String $token)
+{
+    global $tORM;
+    return get_credit_card($tORM, $token);
+}
