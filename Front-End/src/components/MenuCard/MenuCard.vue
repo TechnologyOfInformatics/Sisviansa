@@ -213,8 +213,7 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-
-          console.log(response)
+          console.log(response.data)
 
         })
         .catch((error) => {
@@ -251,7 +250,6 @@ export default {
         viandas.push(vianda);
         totalCalories += parseInt(viandaData.calorias);
       }
-      console.log(this.calculateTotalPrice(menuData.viandas))
       return {
         id: parseInt(menuData.id),
         title: menuData.nombre,

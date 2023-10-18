@@ -1,39 +1,69 @@
 <template>
   <div class="orders">
     <div v-for="(pedido, pedidoId) in pedidos" :key="pedidoId" class="order-container">
-      <div>
-        <span class="label">ID del Pedido: </span>
-        <span class="value">{{ pedido.pedido_id || 'N/A' }} </span>
+      <div class="menu-data">
+        <div>
+          <span class="label">ID del Pedido: </span>
+          <span class="value">{{ pedido.pedido_id || 'N/A' }} </span>
+        </div>
 
-        <span class="label">Total Precio de Menús: </span>
-        <span class="value">{{ calcularPrecioTotal(pedido.menus) || 'N/A' }} </span>
+        <div>
+          <span class="label">Total Precio de Menús: </span>
+          <span class="value">{{ calcularPrecioTotal(pedido.menus) || 'N/A' }} </span>
+        </div>
 
-        <span class="label">Estado Actual:</span>
-        <span class="value">{{ pedido.estados[0] && pedido.estados[0].estado || 'N/A' }} </span>
-
-        <div v-for="(menu, menuId) in pedido.menus" :key="menuId" class="order-menu">
-          <span class="label">Menus: </span>
-          <span class="value">{{ menu.nombre || 'N/A' }} </span>
-          <span class="label">Frecuencia: </span>
-          <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
-
-          <span class="label">Categoría: </span>
-          <span class="value">{{ menu.categoria || 'N/A' }} </span>
-
-          <span class="label">Precio: </span>
-          <span class="value">{{ menu.precio || 'N/A' }} </span>
-
-
+        <div>
+          <span class="label">Estado Actual:</span>
+          <span class="value">{{ pedido.estados[0] && pedido.estados[0].estado || 'N/A' }} </span>
         </div>
       </div>
 
-      <div>
-        <span class="label">Fecha del Pedido: </span>
-        <span class="value">{{ pedido.fecha_del_pedido || 'N/A' }}</span>
+      <div v-for="(menu, menuId) in pedido.menus" :key="menuId" class="order-menu menu-data">
+        <div>
+          <span class="label">Menus: </span>
+          <span class="value">{{ menu.nombre || 'N/A' }} </span>
+        </div>
 
-        <span class="label">Dirección de Entrega: </span>
-        <li v-for="(direccion, index) in pedido.direccion" :key="index">{{ direccion || 'N/A' }}</li>
+        <div>
+          <span class="label">Frecuencia: </span>
+          <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
+        </div>
 
+        <div>
+          <span class="label">Categoría: </span>
+          <span class="value">{{ menu.categoria || 'N/A' }} </span>
+        </div>
+
+        <div>
+          <span class="label">Precio: </span>
+          <span class="value">{{ menu.precio || 'N/A' }} </span>
+        </div>
+
+      </div>
+
+      <div class="menu-data">
+        <div>
+          <span class="label">Fecha del Pedido: </span>
+          <span class="value">{{ pedido.fecha_del_pedido || 'N/A' }}</span>
+        </div>
+
+        <div>
+          <span class="label">Dirección de Entrega: </span>
+          <ul class="direction">
+            <li>
+              <span>{{ pedido.direccion[3] || 'N/A' }}</span>
+            </li>
+            <li>
+              <span>{{ pedido.direccion[2] || 'N/A' }}</span>
+            </li>
+            <li>
+              <span>{{ pedido.direccion[1] || 'N/A' }}</span>
+            </li>
+            <li>
+              <span>{{ pedido.direccion[0] || 'N/A' }}</span>
+            </li>
+          </ul>
+        </div>
 
       </div>
     </div>
@@ -121,5 +151,18 @@ export default {
   padding: .8em;
   color: black;
   margin: 15px;
+}
+
+.menu-data {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.direction {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
 }
 </style>

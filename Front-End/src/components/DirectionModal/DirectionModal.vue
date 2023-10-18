@@ -11,20 +11,21 @@
                 <div v-else>
                     <div class="directions-container">
                         <ul class="direction-list">
-                            <li v-for="(direction, index) in directions" :key="index" class="direction-list-item">
-                                <div>
-                                    <p>Ciudad:</p>
-                                    {{ direction.ciudad }}<br>
+                            <li v-for="direction in directions" :key="direction.id" class="direction-list-item">
+                                <div class="direction">
+                                    <div class="direction-item">
+                                        <div class="direction-top">
+                                            <i class="fa-solid fa-route"></i>
+                                            <p class="direction-item-city">{{ direction.ciudad }}</p>
+                                        </div>
 
-                                    <p>Barrio:</p> {{ direction.barrio }}
+                                        <div class="direction-bottom">
+                                            <i class="fa-solid fa-house-flag"></i>
+                                            <p> {{ direction.barrio }}, {{ direction.calle }} {{ direction.direccion }}</p>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <div>
-
-                                    <p>Calle:</p> {{ direction.calle }}<br>
-                                    <p>Número:</p> {{ direction.direccion }}
-                                </div>
-
-
                             </li>
                         </ul>
                         <p class="direction-link">Modifica tus direcciones, <router-link to="/profile"
@@ -83,9 +84,9 @@ export default {
             this.$http
                 .post("http://localhost/Back-End/server.php", dataToSend)
                 .then((response) => {
-                    if (Array.isArray(response.data)) {
-                        this.directions = response.data;
-                    } 
+                    console.log(response.data)
+                    this.directions = response.data;
+
                 })
                 .catch((error) => {
                     console.error(error);

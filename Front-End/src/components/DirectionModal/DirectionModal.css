@@ -2,10 +2,9 @@
     position: fixed;
     margin-top: 5em;
     background-color: #243328;
-    padding: 20px;
     border: 1px solid white;
     border-radius: 4px;
-    width: 32vw;
+    width: 31vw;
     z-index: 9999;
     transition: transform 0.20s;
 }
@@ -33,23 +32,6 @@
     text-decoration: underline;
 }
 
-.direction-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.direction-item-info {
-    display: flex;
-    flex-direction: column;
-}
-
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-}
 
 
 .direction-modal-content {
@@ -64,77 +46,152 @@
     cursor: pointer;
     background-color: transparent;
     border: none;
-    margin-left: 10px;
+    padding: 10px;
     color: white;
 
+}
+
+
+.direction-modal {
+    position: fixed;
+    background-color: #243328;
+    padding: 20px;
+    border: 1px solid white;
+    border-radius: 4px;
+    z-index: 9999;
+    transition: transform 0.20s;
+}
+
+.direction-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+}
+
+
+
+
+.empty-direction-message {
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.empty-direction-message .link {
+    color: white;
+    text-decoration: underline;
+}
+
+
+.directions-container {
+    margin: 1em auto;
+    margin-left: 1em;
+    border: 1px solid white;
+    border-radius: 10px;
 }
 
 .direction-list {
-    list-style-type: none;
-    padding: 0;
+    width: 95%;
+    margin: 2em auto;
+
 }
 
 .direction-list-item {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #ebeadf;
-}
-
-.direction-list-item p {
-    margin: 0;
-}
-
-.direction-title {
-    font-weight: bold;
-}
-
-.direction-list-item {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    list-style: none;
 }
 
 .direction-list-item div {
-    width: 60%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 13vw;
+    display: flex;
+
 }
 
-.direction-list-item div p {
-    color: black;
-    font-size: 1em;
-    font-weight: bold;
+.direction-item-modal {
+    border-radius: 15px;
+}
+
+.modal button {
+    padding: 10px 15px;
+    margin: 10px 15px;
+    border-radius: 15px;
+    background-color: #ebeadf;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.direction-quantity {
+    text-align: center;
+    align-self: center;
+    color: white;
+    font-size: 2em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     text-decoration: underline;
-
 }
 
-.directions-container {
-    padding: 1em;
-    margin-top: 10px;
+.direction-quantity-index {
+    color: white;
+    font-size: 2em;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.direction {
     width: 28vw;
-    border: 1px solid white;
-    border-radius: 5px;
+    margin: 1em auto;
 }
+
+.direction-item {
+    width: 23vw;
+    padding: 1em 1em;
+    background-color: #ebeadf;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    height: 4.8vh;
+    border-radius: 15px;
+    margin-left: .5em;
+
+}
+
+.direction-item .direction-bottom {
+    width: 20vw;
+    left: 0;
+    margin-right: 4em;
+}
+
+.direction-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.fa-route {
+    font-size: 1.7em;
+}
+
+.direction-item-city {
+    font-size: 2em;
+}
+
+.directions {
+    width: 40vw;
+    margin: 1em;
+}
+
+
 
 .direction-link {
-    font-size: 10px;
     color: white;
-
+    font-size: 12px;
+    padding: 5px;
 }
 
 .direction-link .link {
-    color: white;
     text-decoration: underline;
-}
-
-h2 {
     color: white;
-    font-size: 1.7em;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin-left: 5px;
+    font-size: 12px;
 }
