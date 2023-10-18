@@ -54,10 +54,9 @@ export default {
   methods: {
     calcularPrecioTotal(menus) {
       let totalPrecio = 0;
-      for (const menuId in menus) {
-        if (menus.hasOwnProperty(menuId)) {
-          totalPrecio += menus[menuId].precio || 0;
-        }
+      const menuKeys = Object.keys(menus);
+      for (const menuKey of menuKeys) {
+        totalPrecio += menus[menuKey].precio || 0;
       }
       return totalPrecio;
     },
@@ -116,7 +115,8 @@ export default {
   border: 1px solid white;
   padding: 4em;
 }
-.order-menu{
+
+.order-menu {
   background-color: #ebeadf;
   padding: .8em;
   color: black;

@@ -45,7 +45,6 @@ export default {
     const cartString = sessionStorage.getItem("cart");
     if (cartString) {
       this.cart = JSON.parse(cartString);
-      console.log(this.cart)
     }
   },
 
@@ -57,6 +56,7 @@ export default {
       }
       return totalPrice.toFixed(2);
     },
+
     incrementQuantity(item) {
       item.quantity++;
       this.updateCart();
