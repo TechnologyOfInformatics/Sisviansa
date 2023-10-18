@@ -948,7 +948,7 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
             ->where("estado.pedido_id", "eq", intval($order_id))
             ->where("estado.estado", "eq", "Solicitado")
             ->do("select");
-        if (!($is_state || $is_state[0]['final_del_estado'])) {
+        if (empty($is_state) || !($is_state)) {
             $tORM
                 ->from("estado")
                 ->columns("estado.pedido_id", "estado.estado", "estado.inicio_del_estado")
@@ -1356,7 +1356,7 @@ function get_orders(TORM $tORM, $token)
 
             $requested_menus = $tORM
                 ->from("compone")
-                ->columns("none column")
+                ->columns("compone.cantidad")
                 ->where("compone.pedido_id", "eq", $order['id'])
                 ->join("menu", "compone.menu_id", "menu.id")
                 ->joined_columns("menu.id", "menu.nombre", "menu.categoria", "menu.frecuencia")
