@@ -13,7 +13,7 @@ $base = __FILE__;
 function fast_verification_doc($doc_type, $doc)
 {
     global $ctl;
-    return [empty($ctl->select("web", ["numero"], [$doc_type, $doc], ["tipo", "numero"])->call())];
+    return [!empty($ctl->select("web", ["numero"], [$doc_type, $doc], ["documento_tipo", "documento_numero"])->call())];
 }
 
 function fast_verification_mail($mail)

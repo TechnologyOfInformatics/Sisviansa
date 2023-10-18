@@ -34,8 +34,7 @@ echo "<pre>";
 //print_r(delete_address($tORM, 'x2312x23d2d2', 2));
 //print_r(set_address($tORM, 'x2312x23d2d2', 'Chicago', '', 'Bella visasdasdasdta', '12345'));
 //print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
-print_r(get_orders($tORM, 'x2312x23d2d2'));
-
+print_r(register_register_web_first('maxi', 'da silva', 'Cedula', '50889824', 'maximiliano@mail.com', 'Contrasenia_1234'));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado

@@ -371,7 +371,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
         return "400, BAD REQUEST: Wrong data type";
     }
 
-    $existence_verificator_doc = empty($ctl->select("web", ["cliente_id"], [$doc_type, $doc], ["tipo", "numero"])->call());
+    $existence_verificator_doc = empty($ctl->select("web", ["cliente_id"], [$doc_type, $doc], ["documento_tipo", "documento_numero"])->call());
     $existence_verificator_mail = empty($ctl->select("cliente", ["email"], [$mail], ["email"])->call());
 
     if (!$existence_verificator_doc) {
@@ -382,7 +382,7 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
 
     if ($ctl->insert("cliente", [$mail, md5($password), "En espera"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
         $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
-        $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "tipo", "numero"])->call();
+        $ctl->insert("web", [$id[0], $first_name, $first_surname, $doc_type, $doc], ["cliente_id", "primer_nombre", "primer_apellido", "documento_tipo", "documento_numero"])->call();
         $response = login($ctl, $mail, $password, "");
         return $response;
     }
