@@ -1,30 +1,36 @@
 <template>
   <MainHeader />
-  <div class="cart">
-    <h2>Carrito de Compras</h2>
-    <div v-if="cart.length === 0">Tu carrito está vacío.</div>
-    <div v-else>
-      <div v-for="(item, index) in cart" :key="index" class="cart-item">
-        <div class="item-details">
-          <h3>{{ item.title }}</h3>
-          <p>Precio: ${{ item.price }}</p>
-          <p>Calorías: {{ item.calories }}</p>
-          <p>Descripción: {{ item.description }}</p>
-          <div>
-            Cantidad:
-            <button @click="decrementQuantity(item)" :disabled="item.quantity === 1">-</button>
-            {{ item.quantity }}
-            <button @click="incrementQuantity(item)">+</button>
+  <div class="container">
+    <div class="data">
+      
+    </div>
+    <div class="cart">
+      <h2>Carrito de Compras</h2>
+      <div v-if="cart.length === 0">Tu carrito está vacío.</div>
+      <div v-else>
+        <div v-for="(item, index) in cart" :key="index" class="cart-item">
+          <div class="item-details">
+            <h3>{{ item.title }}</h3>
+            <p>Precio: ${{ item.price }}</p>
+            <p>Calorías: {{ item.calories }}</p>
+            <p>Descripción: {{ item.description }}</p>
+            <div>
+              Cantidad:
+              <button @click="decrementQuantity(item)" :disabled="item.quantity === 1">-</button>
+              {{ item.quantity }}
+              <button @click="incrementQuantity(item)">+</button>
+            </div>
+            <button @click="removeFromCart(item)">Eliminar</button>
           </div>
-          <button @click="removeFromCart(item)">Eliminar</button>
         </div>
-      </div>
-      <div class="cart-summary">
-        <p>Total: ${{ calculateTotalPrice() }}</p>
-        <button @click="checkout" :disabled="cart.length === 0">Finalizar Compra</button>
+        <div class="cart-summary">
+          <p>Total: ${{ calculateTotalPrice() }}</p>
+          <button @click="checkout" :disabled="cart.length === 0">Finalizar Compra</button>
+        </div>
       </div>
     </div>
   </div>
+
   <MainFooter />
 </template>
 <script>
@@ -142,13 +148,20 @@ export default {
 
 </script>
 <style scoped>
+.container{
+  display: flex;
+}
+.data {
+  background-color: #ebeadf;
+  width: 60vw;
+  border: 1px solid white;
+}
+
 .cart {
-  width: 80%;
-  margin: 0 auto;
+  width: 40vw;
   padding: 20px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  border-radius: 5px;
+  border: 1px solid white;
+  background-color: #243328;
 }
 
 .cart-title {
