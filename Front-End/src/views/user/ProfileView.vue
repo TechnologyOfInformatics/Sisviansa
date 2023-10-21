@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      selectedOption: "OrderHistory",
+      selectedOption: "Account",
       login: true,
       web: true,
       isDesktop: window.innerWidth >= 1024
@@ -178,7 +178,6 @@ export default {
   width: 80vw;
   margin-left: 20vw;
   background-color: #ebeadf;
-
   flex: 1;
   padding: 20px;
 }

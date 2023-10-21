@@ -5,7 +5,7 @@
       <p>Coloca los datos de tu cuenta</p>
       <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
       <input v-model="password" type="password" name="pswd" placeholder="Password" required
-        autocomplete="current-password" id="password" />
+        autocomplete="current-password" id="password" @input="clearErrorMessage" />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
       <div v-if="errorMessage" class="error-message">
@@ -63,6 +63,8 @@ export default {
                 attemptLogin();
               } else {
                 this.errorMessage = "Credenciales inválidas.";
+                this.password = ''
+
               }
             }
           })
@@ -74,6 +76,12 @@ export default {
 
       attemptLogin();
     },
+    clearErrorMessage() {
+      if (this.password.length >= 4) {
+        this.errorMessage = "";
+      }
+
+    },
 
   },
 
@@ -81,10 +89,10 @@ export default {
 </script>
 
 <style scoped>
-
-.error-message{
+.error-message {
   color: red;
 }
+
 .sign-in {
   position: absolute;
   top: 0;

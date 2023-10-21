@@ -21,6 +21,9 @@
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
+      <div v-if="succesMessage" class="succes-message">
+        {{ succesMessage }}
+      </div>
       <button type="submit">Registrate</button>
     </form>
   </div>
@@ -42,6 +45,9 @@
         autocomplete="new-password" id="confirmPasswdb" />
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
+      </div>
+      <div v-if="succesMessage" class="succes-message">
+        {{ succesMessage }}
       </div>
       <button type="submit">Registrate</button>
 
@@ -72,6 +78,7 @@ export default {
       web: true,
 
       errorMessage: "",
+      succesMessage: "",
     };
   },
 
@@ -83,7 +90,7 @@ export default {
     },
     registerWeb() {
       if (this.passwd !== this.confirmPasswd) {
-        console.error("Las contraseñas no coinciden");
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
         return;
       }
 
@@ -102,9 +109,10 @@ export default {
         .then((response) => {
           console.log(response.data);
           console.log(typeof (response.data))
-          if (typeof (response.data) == 'string') {
+          if (response.data == '403, FORBIDDEN: You are not allowed to enter the system') {
+            this.succesMessage = 'Se ha registrado, aguarde a ser autorizado.'
+          } else if (typeof (response.data) == 'string') {
             this.errorMessage = 'Error, intente nuevamente.'
-            console.log('funca')
           } else {
             let token = response.data[1];
             if (token) {
@@ -119,7 +127,7 @@ export default {
     },
     registerBussines() {
       if (this.passwd !== this.confirmPasswd) {
-        console.error("Las contraseñas no coinciden");
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
         return;
       }
 
