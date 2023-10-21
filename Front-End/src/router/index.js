@@ -10,6 +10,8 @@ import BussinesView from '@/views/user/BussinesView.vue'
 
 import AdminAuthView from '@/views/admin/AuthView.vue'
 import AdminUserView from '@/views/admin/UserView.vue'
+
+import TestView from '@/views/TestView.vue'
 const routes = [
   {
     path: '/',
@@ -59,6 +61,12 @@ const routes = [
     component: AdminUserView
   },
 
+
+  {
+    path: '/test',
+    name: 'test',
+    component: TestView
+  },
 ]
 
 const router = createRouter({
