@@ -3,7 +3,7 @@
   <div class="container">
     <div class="data">
 
-      <form @submit.prevent="checkout">
+      <form @submit.prevent="checkout" v-if="cart.length == 0">
         <div class="row">
           <div class="col">
 
@@ -95,7 +95,50 @@
         <input type="submit" value="Completar compra" class="submit-btn">
 
       </form>
+      <div v-else>
+        <div>
+          <div class="card">
+            <div class="card__front card__part">
+              <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
+              <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
+              <p class="card_numer">
+                <span> {{ formattedCardNumber }}</span>
+              </p>
+              <div class="card__space-75">
+                <span class="card__label">Nombre en Tarjeta</span>
+                <p class="card__info">{{ cardData.cardholderName || 'Jorge Rodriguez' }}</p>
+              </div>
+              <div class="card__space-25">
+                <span class="card__label">Expiración</span>
+                <div class="card__info">
+                  <p>{{ cardData.expirationMonth || '03' }}{{ '/' }}{{ cardData.expirationYear || '2024' }}</p>
 
+                </div>
+              </div>
+            </div>
+
+            <div class="card__back card__part">
+              <div class="card__black-line"></div>
+              <div class="card__back-content">
+                <div class="card__secret">
+                  <p class="card__secret--last">{{ cardData.cvv || '420' }}</p>
+                </div>
+
+                <div class="card-back-tex">
+                  <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
+                    offense. If found, please
+                    return to the issuing institution or to the nearest bank that accepts cards with the same card
+                    network
+                    logo.</p>
+                  <p class="card-back-text"> Use of this card is subject to the credit card agreement
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
     <div class="cart">
       <h2>Carrito de Compras</h2>
@@ -156,6 +199,7 @@ export default {
     if (cartString) {
       this.cart = JSON.parse(cartString);
     }
+    this.fetchCardUser()
   },
   computed: {
     formattedCardNumber() {
@@ -210,6 +254,23 @@ export default {
         this.cart.splice(index, 1);
         this.updateCart();
       }
+    },
+
+    fetchCardUser() {
+      const dataToSend = {
+        functionName: "options_get_credit_card",
+        token: sessionStorage.getItem('miToken') || 0,
+
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
 
     checkout() {
@@ -571,4 +632,5 @@ form .submit-btn:hover {
 
 .card-back-text {
   font-size: 10px;
-}</style>
+}
+</style>
