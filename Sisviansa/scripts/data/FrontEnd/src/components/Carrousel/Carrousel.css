@@ -1,0 +1,136 @@
+ main .home__banner {
+     position: relative;
+     height: 82vh;
+     ;
+ }
+
+ main .home__banner img {
+     width: 100%;
+     height: 80vh;
+ }
+
+ main .home__banner .home__banner__text {
+     background-color: rgb(255, 255, 255, 0.9);
+     padding: 2vw 2.5vw;
+     width: 35vw;
+     transform: translate(5vw, -225%);
+ }
+
+ main .home__banner .home__banner__text p {
+     font-family: "Faustina", serif;
+     font-size: 1.2vw;
+ }
+
+ main .home__banner .home__banner__text h1 {
+     margin-bottom: 0.3em;
+     font-family: "PT Sans Narrow", sans-serif;
+     text-align: center;
+     font-size: 2.5vw;
+ }
+
+ .home__banner__buttons {
+
+     bottom: 0;
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     z-index: 10;
+     justify-content: space-around;
+ }
+
+ .home__banner__button {
+     transform: translateY(-140%);
+     width: 100%;
+     height: .5vw;
+     background-color: rgba(204, 204, 204, 0.8);
+     cursor: pointer;
+     transition: background-color 0.3s;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .home__banner__button:nth-child(1),
+ .home__banner__button:nth-child(2) {
+     border-right: 1px solid #ccc;
+ }
+
+ .home__banner__button:hover {
+     background-color: rgba(0, 0, 0, 0.7);
+ }
+
+ .home__banner__button-active {
+     background-color: rgba(0, 0, 0, 0.7);
+ }
+
+ .home__banner__button i {
+     color: #fff;
+     transition: color 0.3s;
+ }
+
+ .home__banner__button:hover i {
+     color: #ccc;
+ }
+
+ .home__banner__arrow {
+     position: absolute;
+     top: 50%;
+     transform: translate(-10%, -100%);
+     width: 3vw;
+     height: 3vw;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     cursor: pointer;
+ }
+
+ .home__banner__arrow.left {
+     left: 1vw;
+ }
+
+ .home__banner__arrow.right {
+     right: 1vw;
+ }
+
+ .home__banner__arrow i {
+     font-size: 2.6em;
+     color: #e2e2e2;
+     transition: color 0.3s;
+ }
+
+ .home__banner__arrow:hover,
+ .home__banner__arrow:hover i {
+     color: #fff;
+ }
+
+ @media (max-width: 768px) {
+     main .home__banner {
+         height: 40vh;
+     }
+
+     main .home__banner img {
+         width: 100%;
+         height: 20vh;
+     }
+
+     main .home__banner .home__banner__text {
+         width: 90vw;
+         transform: translate(0, 0);
+         margin-bottom: 1em;
+     }
+
+     main .home__banner .home__banner__text p {
+         font-size: 1.2em;
+     }
+
+     main .home__banner .home__banner__text h1 {
+         font-size: 2.0em;
+     }
+
+     .home__banner__arrow {
+         position: absolute;
+         top: 50%;
+         width: 10%;
+         transform: translate(0%, -700%);
+     }
+ }
