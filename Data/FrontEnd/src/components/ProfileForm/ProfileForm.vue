@@ -102,7 +102,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response);
         })
@@ -118,7 +118,7 @@ export default {
         };
 
         this.$http
-          .post("http://localhost/BackEnd/server.php", dataToSend)
+          .post("http://sisviansa_php/server.php", dataToSend)
           .then((response) => {
             console.log(response.data);
             this.first_name = response.data.primerNombre;
@@ -139,7 +139,7 @@ export default {
         };
 
         this.$http
-          .post("http://localhost/BackEnd/server.php", dataToSend)
+          .post("http://sisviansa_php/server.php", dataToSend)
           .then((response) => {
             console.log(response.data);
             this.name = response.data.nombre;

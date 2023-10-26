@@ -1,6 +1,7 @@
 <?php
-include_once "Data/database_model.php";
-include_once "Data/ORM-V1.php";
+require_once(dirname(__FILE__) . '/' .  "../Data/database_model.php");
+require_once(dirname(__FILE__) . '/' .  "../Data/ORM-V1.php");
+
 header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -1574,7 +1575,6 @@ function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora 
     }
     return False;
 }
-
 
 /*
 Metodo que forme para encontrar entre 2 valores de forma facil:

@@ -1,7 +1,11 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.1-apache
 
-RUN set -ex \
-    && apk --no-cache add mariadb-dev nodejs npm zip unzip php-zip\
-    && docker-php-ext-install pdo pdo_mysql mysqli
 
-WORKDIR /var/www/html
+RUN mkdir /app
+
+COPY vhost.conf /etc/apache2/sites-available/000-default.conf
+
+RUN docker-php-ext-install mysqli
+WORKDIR /app
+
+RUN chown -R www-data:www-data /app && a2enmod rewrite

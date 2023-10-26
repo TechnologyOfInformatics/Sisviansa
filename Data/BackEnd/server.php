@@ -1,12 +1,12 @@
 <?php
-include_once "Model/base.php";
-include_once "Model/index.php";
-include_once "Model/login.php";
-include_once "Model/menu.php";
-include_once "Model/register.php";
-include_once "Model/shop.php";
-include_once "Model/options.php";
-include_once "Model/admin.php";
+require_once("Model/base.php");
+require_once("Model/index.php");
+require_once("Model/login.php");
+require_once("Model/menu.php");
+require_once("Model/register.php");
+require_once("Model/shop.php");
+require_once("Model/options.php");
+require_once("Model/admin.php");
 header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");

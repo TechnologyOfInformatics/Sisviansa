@@ -17,11 +17,9 @@ services:
     container_name: sisviansa_mariadb
     environment:
       MYSQL_ROOT_PASSWORD: "12345"
-      MYSQL_DATABASE: "prueba"
-      MYSQL_USER: "maxi"
-      MYSQL_PASSWORD: "12345"
     volumes:
-      - ./data/mariadb/:/var/lib/mysql
+      - ./Data/mariadb/:/var/lib/mysql
+      - ./Data/SQL/:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     networks:
@@ -31,48 +29,52 @@ services:
   #
   sisviansa_php:
     build:
-      context: ./data/BackEnd
+      context: ./Data/BackEnd
       dockerfile: Dockerfile
     container_name: sisviansa_php
-    volumes:
-      - ./data/BackEnd/:/var/www/html/BackEnd/
+    environment:
+      - "APACHE_LOG_DIR:/app"
     ports:
-      - "9000:9000"
+      - 9000:80
+    volumes:
+      - ./Data/BackEnd:/app
     depends_on:
       - sisviansa_mariadb
     networks:
       - app_network
+      - connection_network
   #
   #                                                                         VUE.JS
   #
-  sisviansa_vue:
-    container_name: sisviansa_vue
-    build:
-      context: ./data/FrontEnd
-      dockerfile: Dockerfile
-    volumes:
-      - './data/FrontEnd:/app'
-      - '/app/node_modules' # Hotfix para que se detecte el vue-cli
-    ports:
-      - "8080:8080"
-    depends_on:
-      - sisviansa_php
-    networks:
-      - app_network
+
+  #sisviansa_vue:
+  #  container_name: sisviansa_vue
+  #  build:
+  #    context: ./Data/FrontEnd
+  #    dockerfile: Dockerfile
+  #  volumes:
+  #    - './Data/FrontEnd:/app'
+  #    - '/app/node_modules' # Hotfix para que se detecte el vue-cli
+  #  ports:
+  #    - "8080:8080"
+  #  depends_on:
+  #    - sisviansa_php
+  #  networks:
+  #    - app_network
   #
   #                                                                         NGINX
   #
-  sisviansa_nginx:
-    image: nginx:stable-alpine
-    container_name: sisviansa_nginx
-    ports:
-      - "8081:80"
-    volumes:
-      - ./data/:/var/www/html
-      - ./data/docker/nginx/site.conf:/etc/nginx/conf.d/default.conf:rw
-      - ./data/docker/logs/nginx:/var/logs/nginx:rw
-    depends_on:
-      - sisviansa_vue
-    networks:
-      - app_network
-      - connection_network
+  #sisviansa_nginx:
+  #  image: nginx:stable-alpine
+  #  container_name: sisviansa_nginx
+  #  ports:
+  #    - "8081:80"
+  #  volumes:
+  #    - ./Data/:/var/www/html
+  #    - ./Data/docker/nginx/site.conf:/etc/nginx/conf.d/default.conf:rw
+  #    - ./Data/docker/logs/nginx:/var/logs/nginx:rw
+  #  depends_on:
+  #    - sisviansa_vue
+  #  networks:
+  #    - app_network
+  #    - connection_network

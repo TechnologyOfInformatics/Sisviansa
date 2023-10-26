@@ -327,7 +327,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
         })
@@ -353,7 +353,7 @@ export default {
       console.log(dataToSend);
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           this.cart = [];
@@ -377,7 +377,7 @@ export default {
         token: token,
       };
 
-      return this.$http.post("http://localhost/BackEnd/server.php", dataToSend);
+      return this.$http.post("http://sisviansa_php/server.php", dataToSend);
     },
     handleRouteLogic() {
       this.validateUserData()

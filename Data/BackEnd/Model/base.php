@@ -1,5 +1,5 @@
 <?php
-include_once "Auth\authorization.php";
+require_once(dirname(__FILE__) . '/' .  "../Auth/authorization.php");
 
 header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");

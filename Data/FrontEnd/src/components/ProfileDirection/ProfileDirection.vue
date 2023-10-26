@@ -165,7 +165,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           this.directions = response.data;
@@ -188,7 +188,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           this.directions[this.editingIndex] = { ...editedAddress };
@@ -215,7 +215,7 @@ export default {
         numero: this.newAddress.direccion,
       };
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           this.directions.push(this.newAddress);
@@ -240,7 +240,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response);
           this.directions.splice(index, 1);
@@ -257,7 +257,7 @@ export default {
         id: addressId,
       };
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           this.directions = response.data;
         })

@@ -127,7 +127,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response);
         })
@@ -141,7 +141,7 @@ export default {
         token: sessionStorage.getItem("miToken") | 0,
       };
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           const userData = response.data;
           this.name = userData[1];

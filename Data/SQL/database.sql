@@ -178,23 +178,23 @@ CREATE TABLE Compone(
 
 CREATE TABLE Estado (
   ID INT(11) PRIMARY KEY AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente a un paquete o pedido',
-  Pedido_ID INT(11) NOT NULL COMMENT "ID del pedido",
-  Paquete_ID INT(11) NOT NULL COMMENT "ID del paquete",
+  Pedido_ID INT(11) COMMENT "ID del pedido",
+  Paquete_ID INT(11) COMMENT "ID del paquete",
   Estado ENUM(
     'Solicitado',
+    'Entregado',
+    --
     'En stock',
     'En producción',
     'Envasado',
-    'Entregado',
     'Devuelto',
     --
     'Desechado',
     'Confirmado',
     'Enviado',
-    'Entregado',
     'Rechazado'
   ) NOT NULL COMMENT "Estado en si del paquete o pedido",
-  -- Los estados de Paquete son desde En Stock hasta Desechado, y desde Confirmado hasta Rechazado es de Pedido, se comparte "Solicitado"
+  -- Los estados de Paquete son desde En Stock hasta Desechado, y desde Confirmado hasta Rechazado es de Pedido, se comparte "Solicitado" y "Entregado"
   Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del pedido o paquete inicio",
   Final_del_estado DATETIME COMMENT "Fecha en donde el estado del pedido o paquete finalizó" -- AQUI, NO SE QUE HACER CON EL ASUNTO DE LAS PK Y FOREIGN
 );

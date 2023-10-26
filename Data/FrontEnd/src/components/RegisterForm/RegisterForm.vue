@@ -183,7 +183,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           console.log(typeof response.data);
@@ -221,7 +221,7 @@ export default {
       };
 
       this.$http
-        .post("http://localhost/BackEnd/server.php", dataToSend)
+        .post("http://sisviansa_php/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           if (Array.isArray(response.data)) {
