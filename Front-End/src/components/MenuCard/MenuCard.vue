@@ -16,6 +16,9 @@
           </svg>
         </button>
       </form>
+      <button class="button-top">
+        Menu Personalizado
+      </button>
     </div>
     <div class="menu-list">
       <div v-for="menu in menus" :key="menu.id" class="menu-card">
@@ -225,174 +228,174 @@ export default {
       for (const vianda of viandas) {
         total += parseFloat(vianda.precio);
       }
-          return total.toFixed(2); 
-  },
-  transformMenusData(data) {
-    return data.map((menuData) => {
-      const viandas = [];
-      let totalCalories = 0;
+      return total.toFixed(2);
+    },
+    transformMenusData(data) {
+      return data.map((menuData) => {
+        const viandas = [];
+        let totalCalories = 0;
 
-      for (const viandaData of menuData.viandas) {
-        const vianda = {
-          id: viandaData.id,
-          name: viandaData.nombre,
-          calories: parseInt(viandaData.calorias),
+        for (const viandaData of menuData.viandas) {
+          const vianda = {
+            id: viandaData.id,
+            name: viandaData.nombre,
+            calories: parseInt(viandaData.calorias),
+          };
+
+          if (viandaData.precio) {
+            vianda.precio = parseFloat(viandaData.precio);
+          }
+
+          if (viandaData.dietas) {
+            vianda.diets = viandaData.dietas;
+          }
+
+          viandas.push(vianda);
+          totalCalories += parseInt(viandaData.calorias);
+        }
+        return {
+          id: parseInt(menuData.id),
+          title: menuData.nombre,
+          calories: totalCalories,
+          frequency: parseInt(menuData.frecuencia),
+          description: menuData.descripcion,
+          price: this.calculateTotalPrice(menuData.viandas),
+          viandas: viandas,
         };
+      });
+    },
 
-        if (viandaData.precio) {
-          vianda.precio = parseFloat(viandaData.precio);
-        }
 
-        if (viandaData.dietas) {
-          vianda.diets = viandaData.dietas;
-        }
 
-        viandas.push(vianda);
-        totalCalories += parseInt(viandaData.calorias);
-      }
-      return {
-        id: parseInt(menuData.id),
-        title: menuData.nombre,
-        calories: totalCalories,
-        frequency: parseInt(menuData.frecuencia),
-        description: menuData.descripcion,
-        price: this.calculateTotalPrice(menuData.viandas),
-        viandas: viandas,
+
+    fetchUserData() {
+      const dataToSend = {
+        functionName: "shop_show_shop",
+        token: sessionStorage.getItem('miToken'),
       };
-    });
-  },
 
-
-
-
-  fetchUserData() {
-    const dataToSend = {
-      functionName: "shop_show_shop",
-      token: sessionStorage.getItem('miToken'),
-    };
-
-    this.$http
-      .post("http://localhost/Back-End/server.php", dataToSend)
-      .then((response) => {
-        console.log(response.data[0])
-        this.menus = this.transformMenusData(response.data[0]);
-        this.menus.forEach((menu) => {
-          menu.isFavorite = false;
-        });
-
-        if (Array.isArray(response.data[1])) {
-          this.isAuthenticated = true;
-          const menuIds = response.data[1].map(menuId => parseInt(menuId, 10));
-          this.favorites = menuIds;
-
-          menuIds.forEach((menuId) => {
-            const menu = this.menus.find((m) => m.id === menuId);
-            if (menu) {
-              menu.isFavorite = true;
-            }
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data[0])
+          this.menus = this.transformMenusData(response.data[0]);
+          this.menus.forEach((menu) => {
+            menu.isFavorite = false;
           });
+
+          if (Array.isArray(response.data[1])) {
+            this.isAuthenticated = true;
+            const menuIds = response.data[1].map(menuId => parseInt(menuId, 10));
+            this.favorites = menuIds;
+
+            menuIds.forEach((menuId) => {
+              const menu = this.menus.find((m) => m.id === menuId);
+              if (menu) {
+                menu.isFavorite = true;
+              }
+            });
+          }
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    openModal(menu) {
+      this.selectedMenu = menu;
+      this.showModal = true;
+    },
+    closeModal() {
+      this.selectedMenu = null;
+      this.showModal = false;
+    },
+    addToCart(menu) {
+      console.log(menu)
+      if (menu && menu.id) {
+        const existingItem = this.cart.find((item) => item.id === menu.id);
+        if (existingItem) {
+          existingItem.quantity++;
+        } else {
+          const newItem = {
+            ...menu,
+            quantity: 1,
+          };
+          this.cart.push(newItem);
         }
+        this.$emit("update-cart", this.cart);
+        this.showAddedToCartMessage();
+      }
+    },
 
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  },
-  openModal(menu) {
-    this.selectedMenu = menu;
-    this.showModal = true;
-  },
-  closeModal() {
-    this.selectedMenu = null;
-    this.showModal = false;
-  },
-  addToCart(menu) {
-    console.log(menu)
-    if (menu && menu.id) {
-      const existingItem = this.cart.find((item) => item.id === menu.id);
-      if (existingItem) {
-        existingItem.quantity++;
+    showAddedToCartMessage() {
+      this.addedToCart = true;
+      setTimeout(() => {
+        this.addedToCart = false;
+      }, 900);
+    },
+    selectMenu(menu) {
+      this.selectedMenu = menu;
+      this.addToCart(menu);
+    },
+    getImgUrl(image) {
+      return require(`@/assets/imgs/${image}.png`);
+    },
+    truncatedDescription(description) {
+      const maxLength = 70;
+      if (description.length > maxLength) {
+        return `${description.substring(0, maxLength)}...`;
+      }
+      return description;
+    },
+    isFavorite(menuId) {
+      return this.favorites.includes(menuId);
+    },
+
+    setFavorite(menuId, isFavorite) {
+      if (isFavorite) {
+        this.favorites.push(menuId);
       } else {
-        const newItem = {
-          ...menu,
-          quantity: 1,
-        };
-        this.cart.push(newItem);
+        const index = this.favorites.indexOf(menuId);
+        if (index > -1) {
+          this.favorites.splice(index, 1);
+        }
       }
-      this.$emit("update-cart", this.cart);
-      this.showAddedToCartMessage();
-    }
-  },
+    },
+    toggleFavorite(menuId) {
+      const isFavorite = this.isFavorite(menuId);
 
-  showAddedToCartMessage() {
-    this.addedToCart = true;
-    setTimeout(() => {
-      this.addedToCart = false;
-    }, 900);
-  },
-  selectMenu(menu) {
-    this.selectedMenu = menu;
-    this.addToCart(menu);
-  },
-  getImgUrl(image) {
-    return require(`@/assets/imgs/${image}.png`);
-  },
-  truncatedDescription(description) {
-    const maxLength = 70;
-    if (description.length > maxLength) {
-      return `${description.substring(0, maxLength)}...`;
-    }
-    return description;
-  },
-  isFavorite(menuId) {
-    return this.favorites.includes(menuId);
-  },
-
-  setFavorite(menuId, isFavorite) {
-    if (isFavorite) {
-      this.favorites.push(menuId);
-    } else {
-      const index = this.favorites.indexOf(menuId);
-      if (index > -1) {
-        this.favorites.splice(index, 1);
+      if (isFavorite) {
+        this.setFavorite(menuId, false);
+        this.favoritesActions.push({ action: "remove", id: menuId });
+      } else {
+        this.setFavorite(menuId, true);
+        this.favoritesActions.push({ action: "add", id: menuId });
       }
+
+      const lastAction = this.favoritesActions[this.favoritesActions.length - 1];
+      this.updateFavoritesOnServer(lastAction);
+    },
+
+    lastFavorite() {
+      return this.favorites[this.favorites.length - 1];
+    },
+    updateFavoritesOnServer(action) {
+      const dataToSend = {
+        functionName: "shop_favorites_toggle",
+        token: sessionStorage.getItem('miToken'),
+        favorite: action.id,
+      };
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
+
   },
-  toggleFavorite(menuId) {
-    const isFavorite = this.isFavorite(menuId);
-
-    if (isFavorite) {
-      this.setFavorite(menuId, false);
-      this.favoritesActions.push({ action: "remove", id: menuId });
-    } else {
-      this.setFavorite(menuId, true);
-      this.favoritesActions.push({ action: "add", id: menuId });
-    }
-
-    const lastAction = this.favoritesActions[this.favoritesActions.length - 1];
-    this.updateFavoritesOnServer(lastAction);
-  },
-
-  lastFavorite() {
-    return this.favorites[this.favorites.length - 1];
-  },
-  updateFavoritesOnServer(action) {
-    const dataToSend = {
-      functionName: "shop_favorites_toggle",
-      token: sessionStorage.getItem('miToken'),
-      favorite: action.id,
-    };
-    this.$http
-      .post("http://localhost/Back-End/server.php", dataToSend)
-      .then((response) => {
-        console.log(response.data)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-},
 };
 </script>
 
