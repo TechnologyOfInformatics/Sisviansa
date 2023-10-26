@@ -3,7 +3,7 @@
   <div class="container">
     <div class="data">
 
-      <form @submit.prevent="checkout" v-if="cart.length == 0">
+      <form @submit.prevent="checkout" v-if="cards.length == 0">
         <div class="row">
           <div class="col">
 
@@ -176,6 +176,7 @@ export default {
     return {
       login: true,
       cart: [],
+      cards: [],
       cardData: {
         cardholderName: "",
         cardNumber: "",
