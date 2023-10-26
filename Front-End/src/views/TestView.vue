@@ -5,6 +5,8 @@
         <br>
         <label for="functions">Funcion </label>
         <input type="text" name="functions" class="input" placeholder="Type your text" id="functions" v-model="functions">
+        <label for="functions">Host </label>
+        <input type="text" name="host" class="input" placeholder="Type your text" id="host" v-model="host">
         <button type="submit">Enviar</button>
     </form>
 </template>
@@ -16,6 +18,7 @@ export default {
         return {
             data: '',
             functions: '',
+            host: '',
         };
     },
 
@@ -27,7 +30,7 @@ export default {
             };
 
             this.$http
-                .post("http://localhost/Back-End/server.php", dataToSend)
+                .post(this.host, dataToSend)
                 .then((response) => {
                     console.log(response.data);
                 })
