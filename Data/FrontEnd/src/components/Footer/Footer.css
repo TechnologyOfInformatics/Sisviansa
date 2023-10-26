@@ -1,0 +1,142 @@
+.footer {
+    max-width: 100vw;
+    background: #eceff3;
+    display: block;
+    border-top: 1px solid rgba(128, 128, 128, 0.6);
+}
+
+
+.footer .inner-footer {
+    width: 95%;
+    margin: auto;
+    padding: 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.footer .footer-item {
+    width: 25%;
+    padding: 5px 20px;
+    box-sizing: border-box;
+}
+
+.footer .footer-title {
+    padding: 5px 0;
+    font-size: 25px;
+    color: black;
+    text-transform: uppercase;
+}
+
+.footer .footer-description {
+    margin-top: 1em;
+    color: black;
+    font-size: 16px;
+    text-align: justify;
+    line-height: 25px;
+}
+
+.footer .footer-subtitle {
+    margin: 10px 0;
+    color: black;
+    font-size: 16px;
+    font-weight: lighter;
+    text-transform: uppercase;
+}
+
+.footer .footer-border {
+    height: 2px;
+    width: 40px;
+    background: #ff9800;
+}
+
+.footer .footer-links {
+    list-style: none;
+    color: black;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.footer .footer-links a {
+    text-decoration: none;
+    outline: none;
+    color: black;
+    transition: 0.3s;
+}
+
+.footer .footer-links a:hover {
+    color: #ff9800;
+}
+
+.footer .footer-links li {
+    margin: 10px 0;
+    height: 25px;
+}
+
+.footer .footer-contact {
+    list-style: none;
+    color: black;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.footer .footer-contact li {
+    margin: 10px 0;
+    height: 25px;
+}
+
+.footer .footer-contact li i {
+    margin-right: 20px;
+}
+
+.footer .footer-social-media {
+    width: 100%;
+    color: black;
+    text-align: center;
+}
+
+.footer .footer-social-media a {
+    text-decoration: none;
+}
+
+.footer .footer-social-media i {
+    height: 15px;
+    width: 15px;
+    margin: 20px 5px;
+    padding: 10px;
+    color: black;
+    border-radius: 50%;
+    border: 1px solid grey;
+    transition: 0.3s;
+}
+
+.footer .footer-social-media i:hover {
+    background: white;
+}
+
+.footer .footer-bottom {
+    background: #243328;
+    padding: 5px;
+}
+
+.footer .footer-bottom .footer-copyright {
+    font-size: 10px;
+    color: #fff;
+
+}
+
+@media screen and (max-width: 1085px) {
+    .footer .footer-item {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .footer {
+        max-width: 99.4vw;
+    }
+
+    .footer .footer-item {
+        width: 100%;
+    }
+}

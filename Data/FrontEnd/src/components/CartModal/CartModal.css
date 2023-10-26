@@ -1,0 +1,155 @@
+.cart-modal {
+    position: fixed;
+    margin-top: 5em;
+    background-color: #243328;
+    padding: 20px;
+    border: 1px solid white;
+    border-radius: 4px;
+    width: 33vw;
+    z-index: 9999;
+    transition: transform 0.20s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-modal-content {
+    padding: 1em;
+    margin-top: 10px;
+    width: 28vw;
+    border: 1px solid white;
+    border-radius: 5px;
+
+
+}
+
+.cart-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+}
+
+.close-button {
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin-right: 15px;
+    color: white;
+    
+}
+
+.cart-items {
+    margin-bottom: 10px;
+}
+
+.empty-cart-message {
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ebeadf;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-title {
+    font-weight: bold;
+}
+
+.item-price {
+    color: #777;
+}
+
+.item-type {
+    color: #888;
+    font-style: italic;
+    font-size: 12px;
+
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    
+}
+
+.quantity-button {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    color: #555;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quantity-button:hover {
+    background-color: #ebebeb;
+}
+
+.quantity {
+    margin: 0 10px;
+}
+
+.remove-item-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.remove-item-btn i {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.cart-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.complete-purchase-btn {
+    background-color: #ebeadf;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #243328;
+}
+
+.complete-purchase-btn:hover {
+    background-color: #243328;
+    color: white;
+    border: 1px solid white;
+}
+
+.quantity-button[disabled] {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+}
