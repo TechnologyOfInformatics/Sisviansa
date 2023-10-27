@@ -125,7 +125,10 @@ export default {
         token: token,
       };
 
-      return this.$http.post("http://sisviansa_php/server.php", dataToSend);
+      return this.$http.post(
+        "http://sisviansa_php/server.php",
+        dataToSend
+      );
     },
     handleRouteLogic() {
       this.validateUserData()

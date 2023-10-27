@@ -1,9 +1,9 @@
 <?php
-require_once(dirname(__FILE__) . '/' .  "../Auth/authorization.php");
-header("Access-Control-Allow-Origin: http://localhost:8080");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
+require_once(dirname(__FILE__) . '/' .  "../Auth/authorization.php");
 $login = __FILE__;
 
 function options_modify_web($token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "",  $mail = "")
@@ -18,7 +18,7 @@ function options_get_address(String $token)
     return get_address($tORM, $token);
 }
 
-function options_set_address($token, String $city, String $neighborhood = "", String $street, String $address)
+function options_set_address($token, String $city, String $neighborhood, String $street, String $address)
 {
     global $tORM;
     return set_address($tORM, $token, $city, $neighborhood,  $street,  $address);
