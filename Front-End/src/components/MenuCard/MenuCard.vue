@@ -106,7 +106,7 @@
           </div>
         </div>
       </div>
-      <div v-else>
+      <div v-else-if="custom">
         <div class="empty-favorites">
           <p>No tienes menus favoritos, si quieres puedes añadirlos en la <router-link to="/shop"
               class="link">Tienda</router-link> </p>
@@ -283,7 +283,9 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data[0])
-          this.customMenus = this.transformMenusData(response.data);
+          if (Array.isArray(response.data[0])) {
+            this.customMenus = this.transformMenusData(response.data);
+          }
         })
         .catch((error) => {
           console.error(error);
