@@ -30,12 +30,7 @@
             <span v-if="isDesktop">Menus Favoritos</span>
             <i class="fa-solid fa-heart" v-else></i>
           </li>
-          <li @click="selectOption('Customs')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">
 
-            <span v-if="isDesktop">Tus menus</span>
-            <i class="fa-solid fa-sliders" v-else></i>
-          </li>
         </ul>
       </nav>
     </aside>
@@ -53,10 +48,7 @@
         <ProfileDirection />
       </div>
       <div v-if="selectedOption === 'Favorites'">
-        <h2>Favoritos</h2>
-      </div>
-      <div v-if="selectedOption === 'Customs'">
-        <CustomMenu />
+        <MenuCard :custom="true"/>
       </div>
     </main>
   </div>
@@ -68,7 +60,8 @@ import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
 import OrderHistory from '@/components/OrderHistory/OrderHistory.vue';
-import CustomMenu from '@/components/CustomMenu/CustomMenu.vue'
+import MenuCard from '@/components/MenuCard/MenuCard.vue';
+
 
 
 export default {
@@ -78,7 +71,7 @@ export default {
     ProfileDirection,
     SecurityForm,
     OrderHistory,
-    CustomMenu,
+    MenuCard
   },
   data() {
     return {
