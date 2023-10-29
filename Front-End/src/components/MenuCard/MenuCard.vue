@@ -64,44 +64,51 @@
       </div>
     </div>
 
-    <div class="menu-list" v-if="custom">
-      <div v-for="menu in favoriteMenus" :key="menu.id" class="menu-card">
-        <div class="menu-top">
-          <div class="menu-top-text">
-            <div>
-              <p class="menu-top-text-description">{{ menu.title }}</p>
+    <div >
+      <div v-if="favoriteMenus.length > 0 && custom" class="menu-list">
+        <div v-for="menu in favoriteMenus" :key="menu.id" class="menu-card">
+          <div class="menu-top">
+            <div class="menu-top-text">
+              <div>
+                <p class="menu-top-text-description">{{ menu.title }}</p>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="menu-footer">
+            <div class="description">
+              <p>{{ truncatedDescription(menu.description) }}</p>
+            </div>
+            <div class="menu-footer-buttons">
+              <div class="footer-bottom-icons">
+                <button @click="openModal(menu)" class="viewMore button-bottom">
+                  <i class="fa-solid fa-circle-chevron-down"></i>
+                </button>
+                <button class="button-bottom" v-if="isAuthenticated">
+                  <i class="fa-solid fa-heart favorite"></i>
+                </button>
+                <button class="button-bottom" @click="selectMenu(menu)">
+                  <i class="fa-solid fa-cart-plus"></i>
+                </button>
+              </div>
+              <div class="footer-side-icons">
+                <button class="button-side" v-if="showSinGlutenButton">
+                  <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
+                </button>
+                <button class="button-side" v-if="showVeganoButton">
+                  <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
+                </button>
+                <button class="button-side" v-if="showVegetarianoButton">
+                  <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <hr />
-        <div class="menu-footer">
-          <div class="description">
-            <p>{{ truncatedDescription(menu.description) }}</p>
-          </div>
-          <div class="menu-footer-buttons">
-            <div class="footer-bottom-icons">
-              <button @click="openModal(menu)" class="viewMore button-bottom">
-                <i class="fa-solid fa-circle-chevron-down"></i>
-              </button>
-              <button class="button-bottom" v-if="isAuthenticated">
-                <i class="fa-solid fa-heart favorite"></i>
-              </button>
-              <button class="button-bottom" @click="selectMenu(menu)">
-                <i class="fa-solid fa-cart-plus"></i>
-              </button>
-            </div>
-            <div class="footer-side-icons">
-              <button class="button-side" v-if="showSinGlutenButton">
-                <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
-              </button>
-              <button class="button-side" v-if="showVeganoButton">
-                <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
-              </button>
-              <button class="button-side" v-if="showVegetarianoButton">
-                <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
-              </button>
-            </div>
-          </div>
+      </div>
+      <div v-else>
+        <div class="empty-favorites">
+          <p>No tienes menus favoritos, si quieres puedes añadirlos en la <router-link to="/shop" class="link">Tienda</router-link>  </p>
         </div>
       </div>
     </div>
@@ -152,7 +159,7 @@
       <ul>
         <li v-for="customMenu in customMenus[0]" :key="customMenu.id">
           <div>
-            
+
             <h3>{{ customMenu.title }}</h3>
             <p>Frecuencia: {{ customMenu.frequency }}</p>
             <p>Descripción: {{ customMenu.description }}</p>
@@ -176,7 +183,6 @@
       </button>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -317,9 +323,6 @@ export default {
         };
       });
     },
-
-
-
 
     fetchUserData() {
       const dataToSend = {

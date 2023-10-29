@@ -128,11 +128,12 @@ export default {
 <style scoped>
 .orders {
   background-color: #243328;
-    border: 1px solid white;
-    border-radius: 15px;
-    height: 77.99vh;
-    color: white;
-
+  border: 1px solid white;
+  border-radius: 15px;
+  height: 77.99vh;
+  color: white;
+  overflow-y: scroll;
+  border-top-right-radius: 0;
 }
 
 .orders::-webkit-scrollbar {
@@ -180,12 +181,12 @@ export default {
   list-style-type: none;
 }
 
-.no-orders-message{
-padding: 3em;
-border: 1px solid white;
-width: 25vw;
-margin: 0 auto;
-border-radius: 15px;
-margin-top: 19vh;
+.no-orders-message {
+  padding: 3em;
+  border: 1px solid white;
+  width: 25vw;
+  margin: 0 auto;
+  border-radius: 15px;
+  margin-top: 19vh;
 }
 </style>

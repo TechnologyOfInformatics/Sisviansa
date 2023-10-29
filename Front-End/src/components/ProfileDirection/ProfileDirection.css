@@ -107,8 +107,8 @@ main {
 
 .fa-star {
     color: yellow;
-    transform: rotate(-16deg);
-    font-size: 1.5em;
+    transform: rotate(-26deg);
+    width: 2em;
 }
 
 .trash {

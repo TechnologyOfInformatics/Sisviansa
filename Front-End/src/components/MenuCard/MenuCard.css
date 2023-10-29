@@ -501,9 +501,7 @@ input:not(:placeholder-shown)~.reset {
   margin-top: 3px;
 }
 
-/* MenuCard.css */
 
-/* Styles for the entire modal */
 .modal {
   position: fixed;
   top: 0;
@@ -514,7 +512,6 @@ input:not(:placeholder-shown)~.reset {
   align-items: center;
 }
 
-/* Styles for the modal content */
 .modal-content {
   background-color: #fff;
   border-radius: 5px;
@@ -525,25 +522,21 @@ input:not(:placeholder-shown)~.reset {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Styles for the modal title */
 .modal-content h2 {
   font-size: 1.5em;
   margin-bottom: 10px;
 }
 
-/* Styles for the modal description */
 .modal-content p {
   font-size: 1em;
   margin-bottom: 10px;
 }
 
-/* Styles for buttons in the modal */
 .modal-content .buttons {
   display: flex;
   justify-content: space-between;
 }
 
-/* Style the "Add to Cart" button */
 .add-to-cart-btn {
   background-color: #007BFF;
   color: #fff;
@@ -553,21 +546,39 @@ input:not(:placeholder-shown)~.reset {
   cursor: pointer;
 }
 
-/* Style the "Close" button */
-.close-btn {
-  background-color: #ccc;
-  color: #000;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
-.modal-vianda{
+.modal-vianda {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Additional styles can be added as needed */
+
+.link {
+  color: white;
+  text-decoration: underline;
+}
+
+
+.empty-favorites {
+  padding: 3em;
+  border: 1px solid white;
+  margin: 0 auto;
+  border-radius: 15px;
+  width: 70vw;
+  height: 63vh;
+  background-color: #243328;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-favorites p {
+  width: 25vw;
+  text-align: center;
+  padding: 2em;
+  border-radius: 15px;
+  border: 1px solid white;
+  color: white;
+}
