@@ -3,7 +3,7 @@
   <div class="container">
     <div class="data">
 
-      <form @submit.prevent="checkout" v-if="cards.length == 0">
+      <form @submit.prevent="addCardUser" v-if="showAddCardModal || cards.length === 0">
         <div class="row">
           <div class="col">
 
@@ -92,26 +92,26 @@
           </div>
         </div>
 
-        <input type="submit" value="Completar compra" class="submit-btn">
+        <input type="submit" value="Add tarjeta" class="submit-btn">
 
       </form>
       <div v-else>
-        <div>
+        <div v-for="(card, index) in cards" :key="index">
           <div class="card">
             <div class="card__front card__part">
               <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
               <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
               <p class="card_numer">
-                <span> {{ formattedCardNumber }}</span>
+                <span> **** **** **** {{ card.digitos_verificadores }}</span>
               </p>
               <div class="card__space-75">
                 <span class="card__label">Nombre en Tarjeta</span>
-                <p class="card__info">{{ cardData.cardholderName || 'Jorge Rodriguez' }}</p>
+                <p class="card__info">{{ card.nombre_de_titular || 'Jorge Rodriguez' }}</p>
               </div>
               <div class="card__space-25">
                 <span class="card__label">Expiración</span>
                 <div class="card__info">
-                  <p>{{ cardData.expirationMonth || '03' }}{{ '/' }}{{ cardData.expirationYear || '2024' }}</p>
+                  <p>{{ card.fecha_de_vencimiento }}</p>
 
                 </div>
               </div>
@@ -121,7 +121,7 @@
               <div class="card__black-line"></div>
               <div class="card__back-content">
                 <div class="card__secret">
-                  <p class="card__secret--last">{{ cardData.cvv || '420' }}</p>
+                  <p class="card__secret--last">***</p>
                 </div>
 
                 <div class="card-back-tex">
@@ -138,6 +138,8 @@
 
           </div>
         </div>
+        <button @click="showAddCardModal = true">Add Tarjetas</button>
+
       </div>
     </div>
     <div class="cart">
@@ -177,6 +179,7 @@ export default {
       login: true,
       cart: [],
       cards: [],
+      showAddCardModal: false,
       cardData: {
         cardholderName: "",
         cardNumber: "",
@@ -189,7 +192,6 @@ export default {
         expirationYear: true,
         cardNumber: true,
         ccv: true,
-
       },
       currentDate: new Date(),
 
@@ -268,12 +270,34 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data)
+          this.cards = response.data
+
         })
         .catch((error) => {
           console.error(error);
         });
     },
+    addCardUser() {
+      const dataToSend = {
+        functionName: "options_create_credit_card",
+        token: sessionStorage.getItem('miToken') || 0,
+        card_code: this.cardData.cardNumber,
+        card_expire: this.cardData.expirationMonth + '/' +this.cardData.expirationYear,
+        card_name: this.cardData.cardholderName,
 
+      };
+        console.log(dataToSend)
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     checkout() {
       if (this.cart.length === 0) {
         return;
