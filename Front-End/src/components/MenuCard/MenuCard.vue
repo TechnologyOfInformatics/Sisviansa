@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    <div >
+    <div>
       <div v-if="favoriteMenus.length > 0 && custom" class="menu-list">
         <div v-for="menu in favoriteMenus" :key="menu.id" class="menu-card">
           <div class="menu-top">
@@ -108,7 +108,8 @@
       </div>
       <div v-else>
         <div class="empty-favorites">
-          <p>No tienes menus favoritos, si quieres puedes añadirlos en la <router-link to="/shop" class="link">Tienda</router-link>  </p>
+          <p>No tienes menus favoritos, si quieres puedes añadirlos en la <router-link to="/shop"
+              class="link">Tienda</router-link> </p>
         </div>
       </div>
     </div>
@@ -288,7 +289,24 @@ export default {
           console.error(error);
         });
     },
+    removeCustomMenu(data) {
 
+      const dataToSend = {
+        functionName: "remove-custom",
+        token: sessionStorage.getItem('miToken'),
+        id: data
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     transformMenusData(data) {
       return data.map((menuData) => {
         const viandas = [];
