@@ -19,7 +19,10 @@
                             <i class="fa-solid fa-trash"></i>
                         </div>
                         <div class="star">
-                            <i class="fa-solid fa-star" v-if="direction.predeterminado == '1'"></i>
+                            <i class="fa-solid" v-if="direction.predeterminado == '1'">
+                                <img src="../../assets/page-icons/star.png"
+                                    alt="Estrella ilustrativa para mostrar la dirección predeterminada."
+                                    class="fa-star"></i>
                         </div>
                     </div>
                 </li>
@@ -132,9 +135,9 @@ export default {
             const editedAddress = this.editingAddress;
 
             const dataToSend = {
-                functionName: "options_modify_address", 
+                functionName: "options_modify_address",
                 token: sessionStorage.getItem('miToken') || 0,
-                id: this.directions[this.editingIndex].id, 
+                id: this.directions[this.editingIndex].id,
                 ciudad: editedAddress.ciudad,
                 barrio: editedAddress.barrio,
                 calle: editedAddress.calle,
@@ -146,7 +149,7 @@ export default {
                 .then((response) => {
                     console.log(response.data);
                     this.directions[this.editingIndex] = { ...editedAddress };
-                    this.editModal = false; 
+                    this.editModal = false;
                 })
                 .catch((error) => {
                     console.error(error);

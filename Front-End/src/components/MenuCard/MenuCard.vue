@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!custom">
-    <div class="options-filter">
+  <div>
+    <div v-if="!custom" class="options-filter">
       <form class="form" @submit.prevent="searchMenu">
         <button>
           <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
@@ -16,11 +16,11 @@
           </svg>
         </button>
       </form>
-      <button class="button-top">
+      <button class="button-top" @click="openCustomModal">
         Menu Personalizado
       </button>
     </div>
-    <div class="menu-list">
+    <div class="menu-list" v-if="!custom">
       <div v-for="menu in menus" :key="menu.id" class="menu-card">
         <div class="menu-top">
           <div class="menu-top-text">
@@ -64,54 +64,56 @@
       </div>
     </div>
 
-
-  </div>
-  <div v-if="custom">
-    <div class="menu-list">
-
-      <div v-for="menu in transformMenusData(customMenus)" :key="menu.id" class="menu-card">
-        <div class="menu-top">
-          <div class="menu-top-text">
-            <div>
-              <p class="menu-top-text-description">{{ menu.title }}</p>
+    <div>
+      <div v-if="favoriteMenus.length > 0 && custom" class="menu-list">
+        <div v-for="menu in favoriteMenus" :key="menu.id" class="menu-card">
+          <div class="menu-top">
+            <div class="menu-top-text">
+              <div>
+                <p class="menu-top-text-description">{{ menu.title }}</p>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="menu-footer">
+            <div class="description">
+              <p>{{ truncatedDescription(menu.description) }}</p>
+            </div>
+            <div class="menu-footer-buttons">
+              <div class="footer-bottom-icons">
+                <button @click="openModal(menu)" class="viewMore button-bottom">
+                  <i class="fa-solid fa-circle-chevron-down"></i>
+                </button>
+                <button class="button-bottom" v-if="isAuthenticated">
+                  <i class="fa-solid fa-heart favorite"></i>
+                </button>
+                <button class="button-bottom" @click="selectMenu(menu)">
+                  <i class="fa-solid fa-cart-plus"></i>
+                </button>
+              </div>
+              <div class="footer-side-icons">
+                <button class="button-side" v-if="showSinGlutenButton">
+                  <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
+                </button>
+                <button class="button-side" v-if="showVeganoButton">
+                  <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
+                </button>
+                <button class="button-side" v-if="showVegetarianoButton">
+                  <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <hr />
-        <div class="menu-footer">
-          <div class="description">
-            <p>{{ menu.description }}</p>
-          </div>
-          <div class="menu-footer-buttons">
-            <div class="footer-bottom-icons">
-              <button @click="openModal(menu)" class="viewMore button-bottom">
-                <i class="fa-solid fa-circle-chevron-down"></i>
-              </button>
-              <button class="button-bottom" v-if="isAuthenticated">
-                <i class="fa-solid fa-heart" :class="{ favorite: isFavorite(menu.id) }"
-                  @click="toggleFavorite(menu.id)"></i>
-              </button>
-              <button class="button-bottom" @click="selectMenu(menu)">
-                <i class="fa-solid fa-cart-plus"></i>
-              </button>
-            </div>
-            <div class="footer-side-icons">
-              <button class="button-side" v-if="showSinGlutenButton">
-                <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
-              </button>
-              <button class="button-side" v-if="showVeganoButton">
-                <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
-              </button>
-              <button class="button-side" v-if="showVegetarianoButton">
-                <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
-              </button>
-            </div>
-
-          </div>
+      </div>
+      <div v-else>
+        <div class="empty-favorites">
+          <p>No tienes menus favoritos, si quieres puedes añadirlos en la <router-link to="/shop"
+              class="link">Tienda</router-link> </p>
         </div>
-
       </div>
     </div>
+
   </div>
   <transition name="fade" mode="out-in">
     <div v-if="addedToCart" class="added-to-cart-message">
@@ -153,6 +155,35 @@
       </div>
     </div>
   </div>
+  <div v-if="showCustomModal" class="modal" @click="closeCustomModal">
+    <div class="modal-content" @click.stop>
+      <ul>
+        <li v-for="customMenu in customMenus[0]" :key="customMenu.id">
+          <div>
+
+            <h3>{{ customMenu.title }}</h3>
+            <p>Frecuencia: {{ customMenu.frequency }}</p>
+            <p>Descripción: {{ customMenu.description }}</p>
+            <h4>Viandas:</h4>
+            <ul class="modal-vianda">
+              <li v-for="vianda in customMenu.viandas" :key="vianda.name">
+                <p>{{ vianda.name }}</p>
+
+                <div class="modal-vianda"></div>
+                <p>Calorías: {{ vianda.calories }}</p>
+                <p>Dietas: {{ vianda.diets ? vianda.diets.join(', ') : 'Ninguna' }}</p>
+              </li>
+            </ul>
+          </div>
+          <button @click="addToCart(customMenu)">Añadir al carrito</button>
+          <button @click="removeCustomMenu(customMenu.id)">Eliminar de personalizado</button>
+        </li>
+      </ul>
+      <button class="close-btn" @click="closeCustomModal">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -160,7 +191,6 @@ export default {
   name: "MenuCard",
   props: {
     custom: Boolean,
-    customMenus: Object,
   }, emits: ["updateCart"],
   data() {
     return {
@@ -173,14 +203,21 @@ export default {
       menus: [],
       isAuthenticated: false,
       textSearch: "",
+      showCustomModal: false,
+      customMenus: [],
     };
   },
 
 
   created() {
     this.fetchUserData();
+    this.fetchCustomMenus();
+    this.transformMenusData(this.customMenus)
   },
   computed: {
+    favoriteMenus() {
+      return this.menus.filter(menu => this.isFavorite(menu.id));
+    },
     showSinGlutenButton() {
       return this.menus.some((menu) =>
         menu.viandas && menu.viandas.some((vianda) =>
@@ -205,6 +242,12 @@ export default {
   },
 
   methods: {
+    openCustomModal() {
+      this.showCustomModal = true;
+    },
+    closeCustomModal() {
+      this.showCustomModal = false;
+    },
     searchMenu() {
       const dataToSend = {
         functionName: "shop_show_shop",
@@ -229,6 +272,40 @@ export default {
         total += parseFloat(vianda.precio);
       }
       return total.toFixed(2);
+    },
+    fetchCustomMenus() {
+      const dataToSend = {
+        functionName: "options_get_special_menus",
+        token: sessionStorage.getItem('miToken'),
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data[0])
+          this.customMenus = this.transformMenusData(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    removeCustomMenu(data) {
+
+      const dataToSend = {
+        functionName: "remove-custom",
+        token: sessionStorage.getItem('miToken'),
+        id: data
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
     transformMenusData(data) {
       return data.map((menuData) => {
@@ -264,9 +341,6 @@ export default {
         };
       });
     },
-
-
-
 
     fetchUserData() {
       const dataToSend = {

@@ -30,16 +30,14 @@
             <span v-if="isDesktop">Menus Favoritos</span>
             <i class="fa-solid fa-heart" v-else></i>
           </li>
-          <li @click="selectOption('Customs')"
-            :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Customs' }">
 
-            <span v-if="isDesktop">Tus menus</span>
-            <i class="fa-solid fa-sliders" v-else></i>
-          </li>
         </ul>
       </nav>
     </aside>
     <main class="profile-main">
+      <div v-if="isLoading">
+        <LoaderSpinner :isLoading="isLoading" />
+      </div>
       <div v-if="selectedOption === 'Account'">
         <ProfileForm :web=this.web />
       </div>
@@ -53,10 +51,7 @@
         <ProfileDirection />
       </div>
       <div v-if="selectedOption === 'Favorites'">
-        <h2>Favoritos</h2>
-      </div>
-      <div v-if="selectedOption === 'Customs'">
-        <CustomMenu />
+        <MenuCard :custom="true" />
       </div>
     </main>
   </div>
@@ -68,7 +63,9 @@ import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
 import OrderHistory from '@/components/OrderHistory/OrderHistory.vue';
-import CustomMenu from '@/components/CustomMenu/CustomMenu.vue'
+import MenuCard from '@/components/MenuCard/MenuCard.vue';
+import LoaderSpinner from "@/components/Loader/Loader.vue";
+
 
 
 export default {
@@ -78,19 +75,25 @@ export default {
     ProfileDirection,
     SecurityForm,
     OrderHistory,
-    CustomMenu,
+    MenuCard,
+    LoaderSpinner
   },
   data() {
     return {
       selectedOption: "Account",
       login: true,
       web: true,
-      isDesktop: window.innerWidth >= 1024
+      isDesktop: window.innerWidth >= 1024,
+      isLoading: false,
     };
   },
   methods: {
     selectOption(option) {
       this.selectedOption = option;
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 500);
     },
     validateUserData() {
       const token = sessionStorage.getItem("miToken") || "undefined";
@@ -180,6 +183,7 @@ export default {
   background-color: #ebeadf;
   flex: 1;
   padding: 20px;
+  overflow-y: hidden;
 }
 
 .profile-main h2 {
