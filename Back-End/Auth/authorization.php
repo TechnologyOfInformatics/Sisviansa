@@ -1076,7 +1076,7 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
                 }
             }
         }
-        return [$menus];
+        return $menus ? [$menus] : $menus;
     } else {
 
         return "ERROR 403, FORBIDDEN";
@@ -1156,7 +1156,7 @@ function get_personal_menus(TORM $tORM, String $token)
                 }
             }
         }
-        return [$menus];
+        return $menus ? [$menus] : $menus;
     } else {
 
         return "ERROR 403, FORBIDDEN";
