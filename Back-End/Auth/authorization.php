@@ -1082,7 +1082,86 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+function get_personal_menus(TORM $tORM, String $token)
+{
+    //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
+    $client_id = get_client_id($tORM, $token);
 
+    if ($client_id) {
+        $menus_array = [];
+        $menu_id = $tORM
+            ->from("pedido")
+            ->columns("None column")
+            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->join("compone", "pedido.id", "compone.pedido_id")
+            ->joined_columns("Compone.menu_id")
+            ->do("select");
+
+
+        foreach ($menu_id as $id) {
+            $menu = $tORM
+                ->from("menu")
+                ->where("menu.categoria", "eq", "Personalizado")
+                ->where("menu.id", "eq", $id["menu_id"])
+                ->do("select");
+            if ($menu) {
+                $menus_array[] = $menu[0];
+            }
+        }
+
+
+        $unique_menus = array();
+
+        foreach ($menus_array as $menu) {
+            $id = $menu['id'];
+            if (!isset($unique_menus[$id])) {
+                $unique_menus[$id] = $menu;
+            }
+        }
+
+        $menus = array_values($unique_menus);
+
+        $foods = $tORM
+            ->from("vianda")
+            ->do("select");
+
+        $relation = $tORM
+            ->from("conforma")
+            ->columns("conforma.vianda_id", "conforma.menu_id")
+            ->do("select");
+
+        $diets = $tORM
+            ->from("vianda_dieta")
+            ->do("select");
+
+        foreach ($diets as $diet) {
+            foreach ($foods as $key => $food) {
+                unset($foods[$key]['tiempo_de_coccion']);
+                unset($foods[$key]['productos']);
+                if ($food['id'] == $diet['vianda_id']) {
+                    $foods[$key]['dietas'][] = $diet['dieta'];
+                }
+            }
+        }
+        foreach ($foods as $food) {
+            foreach ($menus as &$menu) { // Use & para obtener una referencia al menu, no se que es pero es lo que me recomendaron usar
+                unset($menu['estado']);
+                unset($menu['calorias']);
+
+                if (in_array(['menu_id' => $menu['id'], 'vianda_id' => $food['id']], $relation)) {
+                    if (!isset($menu['viandas'])) {
+                        $menu['viandas'] = [];
+                    }
+                    $menu['viandas'][] = $food;
+                }
+            }
+        }
+        return [$menus];
+    } else {
+
+        return "ERROR 403, FORBIDDEN";
+    }
+}
 function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
@@ -1224,7 +1303,7 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
             ->from("pedido")
             ->where("pedido.id", "eq", $menu_existence[0]['id'])
             ->do("delete");
-        $response = ($response == $deletion_result_six ? $response : "ERROR 500, SERVER ERROR");
+        $response = ($response == $deletion_result_six ? get_personal_menus($tORM, $token) : "ERROR 500, SERVER ERROR");
 
         return $response;
     } else {
