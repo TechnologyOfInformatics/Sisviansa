@@ -1072,7 +1072,7 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
                     if (!isset($menu['viandas'])) {
                         $menu['viandas'] = [];
                     }
-                    $menu['viandas'][$food['nombre']] = $food;
+                    $menu['viandas'][$food['nombre']] = [$food];
                 }
             }
         }
