@@ -32,8 +32,6 @@ services:
       context: ./Data/BackEnd
       dockerfile: Dockerfile
     container_name: sisviansa_php
-    environment:
-      - "APACHE_LOG_DIR:/app"
     ports:
       - 9000:80
     volumes:
@@ -42,6 +40,7 @@ services:
       - sisviansa_mariadb
     networks:
       - app_network
+      - connection_network
   #
   #                                                                         VUE.JS
   #

@@ -317,7 +317,7 @@ export default {
       };
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://sisviansa_php:9000/server.php", dataToSend)
         .then((response) => {
           console.log(response.data[0]);
           this.menus = this.transformMenusData(response.data[0]);
