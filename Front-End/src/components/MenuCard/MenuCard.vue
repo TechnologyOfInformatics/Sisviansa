@@ -16,7 +16,7 @@
           </svg>
         </button>
       </form>
-      <button class="button-top" @click="openCustomModal">
+      <button class="button-top" @click="openCustomModal" v-if="isAuthenticated">
         Menu Personalizado
       </button>
     </div>
@@ -157,31 +157,34 @@
   </div>
   <div v-if="showCustomModal" class="modal" @click="closeCustomModal">
     <div class="modal-content" @click.stop>
-      <ul>
-        <li v-for="customMenu in customMenus[0]" :key="customMenu.id">
-          <div>
+      <div v-if="customMenus.length > 0">
+        <ul>
+          <li v-for="customMenu in customMenus[0]" :key="customMenu.id">
+            <div>
 
-            <h3>{{ customMenu.title }}</h3>
-            <p>Frecuencia: {{ customMenu.frequency }}</p>
-            <p>Descripción: {{ customMenu.description }}</p>
-            <h4>Viandas:</h4>
-            <ul class="modal-vianda">
-              <li v-for="vianda in customMenu.viandas" :key="vianda.name">
-                <p>{{ vianda.name }}</p>
+              <h3>{{ customMenu.nombre }}</h3>
+              <p>Descripción: {{ customMenu.descripcion }}</p>
+              <h4>Viandas:</h4>
+              <ul class="modal-vianda">
+                <li v-for="vianda in customMenu.viandas" :key="vianda.name">
+                  <p>{{ vianda.nombre }}</p>
 
-                <div class="modal-vianda"></div>
-                <p>Calorías: {{ vianda.calories }}</p>
-                <p>Dietas: {{ vianda.diets ? vianda.diets.join(', ') : 'Ninguna' }}</p>
-              </li>
-            </ul>
-          </div>
-          <button @click="addToCart(customMenu)">Añadir al carrito</button>
-          <button @click="removeCustomMenu(customMenu.id)">Eliminar de personalizado</button>
-        </li>
-      </ul>
-      <button class="close-btn" @click="closeCustomModal">
-        <i class="fa-solid fa-circle-xmark"></i>
-      </button>
+                  <div class="modal-vianda"></div>
+                  <p>Calorías: {{ vianda.calorias }}</p>
+                  <p>Dietas: {{ vianda.dietas ? vianda.dietas.join(', ') : 'Ninguna' }}</p>
+                </li>
+              </ul>
+            </div>
+            <button @click="addToCart(customMenu)">Añadir al carrito</button>
+            <button @click="removeCustomMenu(customMenu.id)">Eliminar de personalizado</button>
+          </li>
+        </ul>
+      </div>
+      <div v-else class="empty-custom">
+        <p>No tienes menues personalizados, puedes añadir uno con el botón.</p>
+      </div>
+      <button> Crea un menú personalizado</button>
+
     </div>
   </div>
 </template>
@@ -210,9 +213,7 @@ export default {
 
 
   created() {
-    this.fetchUserData();
-    this.fetchCustomMenus();
-    this.transformMenusData(this.customMenus)
+    this.fetchUserData()
   },
   computed: {
     favoriteMenus() {
@@ -275,16 +276,17 @@ export default {
     },
     fetchCustomMenus() {
       const dataToSend = {
-        functionName: "options_get_special_menus",
+        functionName: "options_get_personal_menus",
         token: sessionStorage.getItem('miToken'),
       };
-
+      console.log(dataToSend)
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data[0])
-          if (Array.isArray(response.data[0])) {
-            this.customMenus = this.transformMenusData(response.data);
+          if (Array.isArray(response.data)) {
+            if (response.data.length > 0) {
+              this.customMenus = response.data
+            }
           }
         })
         .catch((error) => {
@@ -294,51 +296,78 @@ export default {
     removeCustomMenu(data) {
 
       const dataToSend = {
-        functionName: "remove-custom",
+        functionName: "options_del_personal_menu",
         token: sessionStorage.getItem('miToken'),
         id: data
       };
+      console.log(dataToSend)
 
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
+          if(Array.isArray(response.data)){
+            this.customMenus = response.data
+          }
 
         })
         .catch((error) => {
           console.error(error);
         });
     },
+    createCustomMenu() {
+      const dataToSend = {
+        functionName: "options_add_personal_menu",
+        token: sessionStorage.getItem('miToken'),
+        //        todo el menu
+      };
+      console.log(dataToSend)
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
     transformMenusData(data) {
+
       return data.map((menuData) => {
         const viandas = [];
         let totalCalories = 0;
 
-        for (const viandaData of menuData.viandas) {
-          const vianda = {
-            id: viandaData.id,
-            name: viandaData.nombre,
-            calories: parseInt(viandaData.calorias),
-          };
+        if (Array.isArray(menuData.viandas)) {
+          for (const viandaData of menuData.viandas) {
+            const vianda = {
+              id: viandaData.id,
+              name: viandaData.nombre,
+              calories: parseInt(viandaData.calorias),
+            };
 
-          if (viandaData.precio) {
-            vianda.precio = parseFloat(viandaData.precio);
+            if (viandaData.precio) {
+              vianda.precio = parseFloat(viandaData.precio);
+            }
+
+            if (viandaData.dietas) {
+              vianda.diets = viandaData.dietas;
+            }
+
+            viandas.push(vianda);
+            totalCalories += parseInt(viandaData.calorias);
           }
-
-          if (viandaData.dietas) {
-            vianda.diets = viandaData.dietas;
-          }
-
-          viandas.push(vianda);
-          totalCalories += parseInt(viandaData.calorias);
         }
+
         return {
           id: parseInt(menuData.id),
           title: menuData.nombre,
           calories: totalCalories,
           frequency: parseInt(menuData.frecuencia),
           description: menuData.descripcion,
-          price: this.calculateTotalPrice(menuData.viandas),
+          price: this.calculateTotalPrice(viandas),
           viandas: viandas,
         };
       });
@@ -353,7 +382,6 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data[0])
           this.menus = this.transformMenusData(response.data[0]);
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
@@ -370,6 +398,10 @@ export default {
                 menu.isFavorite = true;
               }
             });
+            if (this.isAuthenticated) {
+              this.fetchCustomMenus();
+            }
+
           }
 
         })
@@ -386,7 +418,6 @@ export default {
       this.showModal = false;
     },
     addToCart(menu) {
-      console.log(menu)
       if (menu && menu.id) {
         const existingItem = this.cart.find((item) => item.id === menu.id);
         if (existingItem) {

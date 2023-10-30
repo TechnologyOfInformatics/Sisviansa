@@ -513,7 +513,7 @@ input:not(:placeholder-shown)~.reset {
 }
 
 .modal-content {
-  background-color: #fff;
+  background-color: #243328;
   border-radius: 5px;
   padding: 20px;
   width: 70vw;
@@ -575,6 +575,29 @@ input:not(:placeholder-shown)~.reset {
 }
 
 .empty-favorites p {
+  width: 25vw;
+  text-align: center;
+  padding: 2em;
+  border-radius: 15px;
+  border: 1px solid white;
+  color: white;
+}
+
+.empty-custom {
+  padding: 3em;
+  border: 1px solid white;
+  margin: 0 auto;
+  border-radius: 15px;
+  width: 60vw;
+  height: 63vh;
+  background-color: #243328;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+}
+
+.empty-custom p {
   width: 25vw;
   text-align: center;
   padding: 2em;
