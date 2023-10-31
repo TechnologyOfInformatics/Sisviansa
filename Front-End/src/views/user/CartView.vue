@@ -96,48 +96,56 @@
 
       </form>
       <div v-else>
-        <div v-for="(card, index) in cards" :key="index">
-          <div class="card">
-            <div class="card__front card__part">
-              <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
-              <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
-              <p class="card_numer">
-                <span> **** **** **** {{ card.digitos_verificadores }}</span>
-              </p>
-              <div class="card__space-75">
-                <span class="card__label">Nombre en Tarjeta</span>
-                <p class="card__info">{{ card.nombre_de_titular || 'Jorge Rodriguez' }}</p>
-              </div>
-              <div class="card__space-25">
-                <span class="card__label">Expiración</span>
-                <div class="card__info">
-                  <p>{{ card.fecha_de_vencimiento }}</p>
+        <div class="carousel-container">
+          <div class="carousel" :style="{ transform: `translateX(-${currentIndex * 30}%)` }">
+            <div v-for="(card, index) in cards" :key="index">
+              <div class="card">
 
-                </div>
-              </div>
-            </div>
-
-            <div class="card__back card__part">
-              <div class="card__black-line"></div>
-              <div class="card__back-content">
-                <div class="card__secret">
-                  <p class="card__secret--last">***</p>
-                </div>
-
-                <div class="card-back-tex">
-                  <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
-                    offense. If found, please
-                    return to the issuing institution or to the nearest bank that accepts cards with the same card
-                    network
-                    logo.</p>
-                  <p class="card-back-text"> Use of this card is subject to the credit card agreement
+                <div class="card__front card__part" :class="{ active: isActiveCard(index) }">
+                  <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
+                  <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
+                  <p class="card_numer">
+                    <span> **** **** **** {{ card.digitos_verificadores }}</span>
                   </p>
+                  <div class="card__space-75">
+                    <span class="card__label">Nombre en Tarjeta</span>
+                    <p class="card__info">{{ card.nombre_de_titular || 'Jorge Rodriguez' }}</p>
+                  </div>
+                  <div class="card__space-25">
+                    <span class="card__label">Expiración</span>
+                    <div class="card__info">
+                      <p>{{ card.fecha_de_vencimiento }}</p>
+
+                    </div>
+                  </div>
                 </div>
+
+                <div class="card__back card__part" @click="currentIndex = index"
+                  :class="{ active: currentIndex === index }">
+                  <div class="card__black-line"></div>
+                  <div class="card__back-content">
+                    <div class="card__secret">
+                      <p class="card__secret--last">***</p>
+                    </div>
+
+                    <div class="card-back-tex">
+                      <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
+                        offense. If found, please
+                        return to the issuing institution or to the nearest bank that accepts cards with the same card
+                        network
+                        logo.</p>
+                      <p class="card-back-text"> Use of this card is subject to the credit card agreement
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
-
           </div>
         </div>
+        <button @click="prevSlide">Anterior</button>
+        <button @click="nextSlide">Siguiente</button>
         <button @click="showAddCardModal = true">Add Tarjetas</button>
 
       </div>
@@ -195,6 +203,8 @@ export default {
         ccv: true,
       },
       currentDate: new Date(),
+      currentIndex: 0,
+
 
     };
   },
@@ -218,6 +228,20 @@ export default {
     }
   },
   methods: {
+    prevSlide() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      }
+    },
+
+    nextSlide() {
+      if (this.currentIndex < this.cards.length - 1) {
+        this.currentIndex++;
+      }
+    },
+      isActiveCard(index) {
+      return this.currentIndex === index;
+    },
     validateNumericInput(fieldName) {
       const value = this.cardData[fieldName];
       const isValid = /^[0-9]*$/.test(value);
@@ -283,11 +307,11 @@ export default {
         functionName: "options_create_credit_card",
         token: sessionStorage.getItem('miToken') || 0,
         card_code: this.cardData.cardNumber,
-        card_expire: this.cardData.expirationMonth + '/' +this.cardData.expirationYear,
+        card_expire: this.cardData.expirationMonth + '/' + this.cardData.expirationYear,
         card_name: this.cardData.cardholderName,
 
       };
-        console.log(dataToSend)
+      console.log(dataToSend)
 
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
@@ -371,6 +395,16 @@ export default {
 
 </script>
 <style scoped>
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.5s;
+}
+
 .error-message {
   color: red;
 }
@@ -659,5 +693,26 @@ form .submit-btn:hover {
 
 .card-back-text {
   font-size: 10px;
+}
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.5s;
+}
+
+.card__front,
+.card__back {
+  display: none;
+}
+
+.card__front.active,
+.card__back.active {
+  display: block;
 }
 </style>

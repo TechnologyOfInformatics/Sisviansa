@@ -33,10 +33,6 @@
               <span class="value">{{ menu.cantidad || 'N/A' }} </span>
             </div>
 
-            <div>
-              <span class="label">Frecuencia: </span>
-              <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
-            </div>
 
             <div>
               <span class="label">Categoría: </span>
@@ -153,7 +149,7 @@ export default {
 }
 
 .order-container {
-  height: 30vh;
+  height: 20vh;
   margin: 1em auto;
   width: 80%;
   border: 1px solid white;
