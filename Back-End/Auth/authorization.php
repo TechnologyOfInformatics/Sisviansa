@@ -748,7 +748,7 @@ function delete_address(TORM $tORM, String $token, Int $address_id)
 function show_shop(TORM $tORM, String $token = '', array $order = [])
 {
     //Aqui tome otro "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
-    if ($token && (strlen($token) < 15 && strval($token) >= 8)) {
+    if ($token && ((strlen($token) < 15) && (strlen($token) >= 8))) {
         $is_session = $tORM
             ->from("sesion")
             ->columns("sesion.token")
