@@ -17,40 +17,40 @@
           </div>
 
           <div>
-            <span class="label">Estado Actual:</span>
+            <span class="label">Estado Actual: </span>
             <span class="value">{{ pedido.estados[0] && pedido.estados[0].estado || 'N/A' }} </span>
           </div>
         </div>
+        <div class="menu-container">
+          <div v-for="(menu, menuId) in pedido.menus" :key="menuId" class="order-menu menu-data">
+            <div>
+              <span class="label">Menu: </span>
+              <span class="value">{{ menu.nombre || 'N/A' }} </span>
+            </div>
 
-        <div v-for="(menu, menuId) in pedido.menus" :key="menuId" class="order-menu menu-data">
-          <div>
-            <span class="label">Menus: </span>
-            <span class="value">{{ menu.nombre || 'N/A' }} </span>
+            <div>
+              <span class="label">Cantidad: </span>
+              <span class="value">{{ menu.cantidad || 'N/A' }} </span>
+            </div>
+
+            <div>
+              <span class="label">Frecuencia: </span>
+              <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
+            </div>
+
+            <div>
+              <span class="label">Categoría: </span>
+              <span class="value">{{ menu.categoria || 'N/A' }} </span>
+            </div>
+
+            <div>
+              <span class="label">Precio: </span>
+              <span class="value">{{ menu.precio * menu.cantidad || 'N/A' }} </span>
+            </div>
+
+
           </div>
-
-          <div>
-            <span class="label">Cantidad: </span>
-            <span class="value">{{ menu.cantidad || 'N/A' }} </span>
-          </div>
-
-          <div>
-            <span class="label">Frecuencia: </span>
-            <span class="value">{{ menu.frecuencia || 'N/A' }} </span>
-          </div>
-
-          <div>
-            <span class="label">Categoría: </span>
-            <span class="value">{{ menu.categoria || 'N/A' }} </span>
-          </div>
-
-          <div>
-            <span class="label">Precio: </span>
-            <span class="value">{{ menu.precio * menu.cantidad || 'N/A' }} </span>
-          </div>
-
-
         </div>
-
         <div class="menu-data">
           <div>
             <span class="label">Fecha del Pedido: </span>
@@ -61,16 +61,13 @@
             <span class="label">Dirección de Entrega: </span>
             <ul class="direction">
               <li>
-                <span>{{ pedido.direccion[3] || 'N/A' }}</span>
-              </li>
-              <li>
-                <span>{{ pedido.direccion[2] || 'N/A' }}</span>
-              </li>
-              <li>
-                <span>{{ pedido.direccion[1] || 'N/A' }}</span>
-              </li>
-              <li>
-                <span>{{ pedido.direccion[0] || 'N/A' }}</span>
+                <span> {{ pedido.direccion[3] + ' ' || 'N/A' }} </span>
+
+                <span> {{ pedido.direccion[2] + ' ' || 'N/A' }} </span>
+
+                <span> {{ pedido.direccion[1] + ' ' || 'N/A' }} </span>
+
+                <span>{{ pedido.direccion[0] + ' ' || 'N/A' }} </span>
               </li>
             </ul>
           </div>
@@ -134,6 +131,8 @@ export default {
   color: white;
   overflow-y: scroll;
   border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
 }
 
 .orders::-webkit-scrollbar {
@@ -161,11 +160,18 @@ export default {
   padding: 4em;
 }
 
+.menu-container{
+  height: 12vh;
+  overflow-y: scroll;
+  border: 1px solid white;
+
+}
 .order-menu {
   background-color: #ebeadf;
   padding: .8em;
   color: black;
   margin: 15px;
+  text-align: center;
 }
 
 .menu-data {

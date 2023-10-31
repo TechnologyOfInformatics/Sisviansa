@@ -5,8 +5,24 @@
         <div class="header__logo">
           <h2>Sisviansa</h2>
         </div>
+        <nav class="nav">
+          <li :class="{ selected: $route.path === '/admin/user' }">
+            <router-link to="/admin/user" class="link">Usuarios</router-link>
+          </li>
+          <li :class="{ selected: $route.path === '/admin/menu' }">
+            <router-link to="/admin/menu" class="link">Menu</router-link>
+          </li>
+          <li :class="{ selected: $route.path === '/admin/chef' }">
+            <router-link to="/admin/chef" class="link">Chef</router-link>
+          </li>
+        </nav>
         <div class="header__user-info">
-          <span>Welcome, {{ username }}</span>
+          <span>Bienvenido, {{ username }}</span>
+          <router-link v to="/admin/auth" class="link" @click="logout">
+            <div class="action__button">
+              <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+          </router-link>
         </div>
       </nav>
     </header>
@@ -14,9 +30,11 @@
       <aside class="sidebar">
         <nav class="sidebar__nav">
           <ul class="sidebar__list">
-            <li><a href="#" @click="showCategory('orders')">Orders</a></li>
-            <li><a href="#" @click="showCategory('users')">Users</a></li>
-            <li><a href="#" @click="showCategory('admin')">Admin</a></li>
+            <li><a @click="showCategory('users')" class="aside-link">Lista de Usuarios</a></li>
+            <li><a @click="showCategory('auth')" class="aside-link">Autorizar Usuarios</a></li>
+            <li><a @click="showCategory('mod')" class="aside-link">Modificar Usuarios</a></li>
+            <li><a @click="showCategory('orders')" class="aside-link">Pedidos</a></li>
+
           </ul>
         </nav>
         <footer class="sidebar__footer">Sisviansa</footer>
@@ -30,11 +48,11 @@
             <button @click="searchUsers">Buscar</button>
           </div>
 
-            <div v-if="filteredUsers.length === 0" class="no-results">
-              <p>No se encontraron resultados.</p>
-            </div>
-            <table class="user-table" v-else>
-              <div class="table-container">
+          <div v-if="filteredUsers.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
 
               <thead>
                 <tr>
@@ -68,12 +86,20 @@
                     </button>
                   </td>
                 </tr>
-              </tbody>        
+              </tbody>
             </div>
-            </table>
-          </div>
+          </table>
+        </div>
+        <div v-if="currentCategory === 'auth'" class="category-content">
+        </div>
+        <div v-if="currentCategory === 'mod'" class="category-content">
+        </div>
+        <div v-if="currentCategory === 'orders'" class="category-content">
+        </div>
       </section>
-      <!-- Modal para mostrar detalles del usuario -->
+
+
+      <!-- modals -->
       <div v-if="showModal" class="modal">
         <div class="modal-content">
           <h2>Detalles del Usuario</h2>
@@ -96,7 +122,6 @@
                   {{ selectedUser.Direccion.Ciudad }}
                 </td>
               </tr>
-              <!-- Agrega más detalles del usuario aquí -->
             </tbody>
           </table>
         </div>
@@ -317,6 +342,9 @@ export default {
       this.showModal = false;
 
     },
+    logout(){
+
+    },
     toggleUserDetails(user) {
       if (user.showDetails) {
         user.showDetails = false;
@@ -388,6 +416,29 @@ body {
 
 }
 
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.nav li {
+  text-decoration: none;
+  list-style: none;
+  padding-left: 10px;
+}
+
+.nav li .link {
+  color: white;
+  text-decoration: none;
+}
+
+.aside-link{
+  color: black;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -422,7 +473,21 @@ body {
 .header__user-info span {
   font-weight: bold;
 }
+.header__user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
+}
+.header__user-info div i{
+  margin-left: 10px;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  border: 1px solid white;
+  border-radius: 30px;
+}
 .modal {
   height: 60vh;
   background-color: #263f65;
@@ -530,10 +595,6 @@ body {
   margin-bottom: 10px;
 }
 
-.category-content__article {
-  font-size: 16px;
-  line-height: 1.5;
-}
 
 /* Estilos para la tabla de usuarios */
 .user-table {
@@ -543,7 +604,7 @@ body {
 
 .table-container {
   height: 60vh;
-    overflow-y: auto;
+  overflow-y: auto;
 
 }
 

@@ -163,6 +163,7 @@
         </div>
         <div class="cart-summary">
           <p>Total: ${{ calculateTotalPrice() }}</p>
+          <button class="button-checkout" @click="checkout">Completar Compra</button>
         </div>
       </div>
     </div>
@@ -302,10 +303,10 @@ export default {
       if (this.cart.length === 0) {
         return;
       }
-      if (!this.validateExpirationDate()) {
-        alert("La fecha de vencimiento no es válida.");
-        return;
-      }
+      // if (!this.validateExpirationDate()) {
+      //   alert("La fecha de vencimiento no es válida.");
+      //   return;
+      // }
       const dataToSend = {
         functionName: "shop_buy_menu",
         token: sessionStorage.getItem('miToken') || 0,
@@ -319,6 +320,7 @@ export default {
         .then((response) => {
           console.log(response.data)
           this.cart = [];
+          this.updateCart();
 
         })
         .catch((error) => {

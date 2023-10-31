@@ -30,7 +30,6 @@
             <span v-if="isDesktop">Menus Favoritos</span>
             <i class="fa-solid fa-heart" v-else></i>
           </li>
-
         </ul>
       </nav>
     </aside>

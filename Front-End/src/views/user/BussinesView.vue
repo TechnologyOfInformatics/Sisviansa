@@ -5,21 +5,32 @@
             <nav class="profile-sidebar__nav">
                 <ul>
                     <li @click="selectOption('Account')"
-                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Account' }">Datos de tu cuenta
+                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Account' }">
+                        <span v-if="isDesktop">Datos de tu cuenta</span>
+                        <i class="fa-solid fa-user" v-else></i>
                     </li>
                     <li @click="selectOption('Security')"
-                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Security' }">Seguridad</li>
+                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'Security' }">
+                        <span v-if="isDesktop">Seguridad</span>
+                        <i class="fas fa-shield-alt" v-else></i>
+                    </li>
                     <li @click="selectOption('OrderHistory')"
-                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">Historial de
-                        Pedidos</li>
+                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'OrderHistory' }">
+                        <span v-if="isDesktop"> Historial de Pedidos</span>
+                        <i class="fa-solid fa-timeline" v-else></i>
+                    </li>
                     <li @click="selectOption('ShippingAddress')"
-                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">Direcciones
-                        de envío
+                        :class="{ 'profile-sidebar__nav-item--active': selectedOption === 'ShippingAddress' }">
+                        <span v-if="isDesktop">Direcciones de envío</span>
+                        <i class="fa-solid fa-truck-fast" v-else></i>
                     </li>
                 </ul>
             </nav>
         </aside>
         <main class="profile-main">
+            <div v-if="isLoading">
+                <LoaderSpinner :isLoading="isLoading" />
+            </div>
             <div v-if="selectedOption === 'Account'">
                 <ProfileForm :web=this.web />
             </div>
@@ -27,11 +38,12 @@
                 <SecurityForm />
             </div>
             <div v-if="selectedOption === 'OrderHistory'">
-                <h2>Order History</h2>
+                <OrderHistory />
             </div>
             <div v-if="selectedOption === 'ShippingAddress'">
                 <ProfileDirection />
             </div>
+
         </main>
     </div>
 </template>
@@ -41,8 +53,8 @@ import MainHeader from "@/components/Header/Header.vue";
 import ProfileDirection from '@/components/ProfileDirection/ProfileDirection.vue'
 import SecurityForm from "@/components/SecurityForm/SecurityForm.vue";
 import ProfileForm from "@/components/ProfileForm/ProfileForm.vue";
-
-
+import LoaderSpinner from "@/components/Loader/Loader.vue";
+import OrderHistory from '@/components/OrderHistory/OrderHistory.vue';
 
 export default {
     components: {
@@ -50,17 +62,28 @@ export default {
         ProfileDirection,
         SecurityForm,
         ProfileForm,
+        LoaderSpinner,
+        OrderHistory
+
     },
     data() {
         return {
             selectedOption: "Account",
             login: true,
             web: false,
+            isLoading: false,
+            isDesktop: window.innerWidth >= 1024,
+
+
         };
     },
     methods: {
         selectOption(option) {
             this.selectedOption = option;
+            this.isLoading = true;
+            setTimeout(() => {
+                this.isLoading = false;
+            }, 500);
         },
         validateUserData() {
             const token = sessionStorage.getItem("miToken") || "undefined";

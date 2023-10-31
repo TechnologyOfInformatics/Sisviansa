@@ -39,7 +39,7 @@
               <button @click="openModal(menu)" class="viewMore button-bottom">
                 <i class="fa-solid fa-circle-chevron-down"></i>
               </button>
-              <button class="button-bottom" v-if="isAuthenticated">
+              <button class="button-bottom" v-if="isAuthenticated && web">
                 <i class="fa-solid fa-heart" :class="{ favorite: isFavorite(menu.id) }"
                   @click="toggleFavorite(menu.id)"></i>
               </button>
@@ -208,12 +208,14 @@ export default {
       textSearch: "",
       showCustomModal: false,
       customMenus: [],
+      web: false,
     };
   },
 
 
   created() {
     this.fetchUserData()
+    this.handleRouteLogic()
   },
   computed: {
     favoriteMenus() {
@@ -305,7 +307,7 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          if(Array.isArray(response.data)){
+          if (Array.isArray(response.data)) {
             this.customMenus = response.data
           }
 
@@ -500,7 +502,34 @@ export default {
         .catch((error) => {
           console.error(error);
         });
-    }
+    },
+    validateUserData() {
+      const token = sessionStorage.getItem("miToken") || "undefined";
+      const dataToSend = {
+        functionName: "base_session",
+        token: token,
+      };
+
+      return this.$http.post("http://localhost/Back-End/server.php", dataToSend);
+    },
+    handleRouteLogic() {
+
+      this.validateUserData()
+        .then((response) => {
+
+          console.log(response.data)
+          if (response.data[0] == false) {
+            this.web = true
+          } else {
+            this.web = false
+          }
+
+        })
+        .catch((error) => {
+          console.error(error);
+
+        });
+    },
 
   },
 };
