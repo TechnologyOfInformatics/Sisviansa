@@ -7,14 +7,14 @@
         <div class="row">
           <div class="col">
 
-            <h3 class="title">Forma de Pago</h3>
+            <h3 class="title">Agrega una tarjeta</h3>
             <div class="inputBox">
               <span>Nombre en Tarjeta</span>
               <input type="text" placeholder="Jorge Rodriguez" v-model="cardData.cardholderName">
             </div>
             <div class="inputBox">
               <span>Número de Tarjeta</span>
-              <input type="text" placeholder="2024" v-model="cardData.cardNumber" maxlength="16"
+              <input type="text" placeholder="1234 5678 9000 1234" v-model="cardData.cardNumber" maxlength="16"
                 @input="validateNumericInput('cardNumber')">
               <div v-if="!isNumericInputValid.cardNumber && cardData.cardNumber" class="error-message">
                 Ingresa solo números.
@@ -96,39 +96,37 @@
 
       </form>
       <div v-else>
-        <div class="carousel-container">
-          <div class="carousel" :style="{ transform: `translateX(-${currentIndex * 30}%)` }">
-            <div v-for="(card, index) in cards" :key="index">
-              <div class="card">
-
-                <div class="card__front card__part" :class="{ active: isActiveCard(index) }">
+        <div class="carousel">
+          <button @click="prevCard" v-if="cards.length > 1">Anterior</button>
+          <div class="cards">
+            <transition name="fade" mode="out-in">
+              <div :key="currentIndex" class="card">
+                <div class="card__front card__part">
                   <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
                   <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
                   <p class="card_numer">
-                    <span> **** **** **** {{ card.digitos_verificadores }}</span>
+                    <span> **** **** **** {{ cards[currentIndex].digitos_verificadores }}</span>
                   </p>
                   <div class="card__space-75">
                     <span class="card__label">Nombre en Tarjeta</span>
-                    <p class="card__info">{{ card.nombre_de_titular || 'Jorge Rodriguez' }}</p>
+                    <p class="card__info">{{ cards[currentIndex].nombre_de_titular || 'Jorge Rodriguez' }}</p>
                   </div>
                   <div class="card__space-25">
                     <span class="card__label">Expiración</span>
                     <div class="card__info">
-                      <p>{{ card.fecha_de_vencimiento }}</p>
-
+                      <p>{{ cards[currentIndex].fecha_de_vencimiento }}</p>
                     </div>
                   </div>
                 </div>
 
-                <div class="card__back card__part" @click="currentIndex = index"
-                  :class="{ active: currentIndex === index }">
+                <div class="card__back card__part">
                   <div class="card__black-line"></div>
                   <div class="card__back-content">
                     <div class="card__secret">
                       <p class="card__secret--last">***</p>
                     </div>
 
-                    <div class="card-back-tex">
+                    <div class="card-back-text">
                       <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
                         offense. If found, please
                         return to the issuing institution or to the nearest bank that accepts cards with the same card
@@ -139,13 +137,11 @@
                     </div>
                   </div>
                 </div>
-
               </div>
-            </div>
+            </transition>
           </div>
+          <button @click="nextCard" v-if="cards.length > 1">Siguiente</button>
         </div>
-        <button @click="prevSlide">Anterior</button>
-        <button @click="nextSlide">Siguiente</button>
         <button @click="showAddCardModal = true">Add Tarjetas</button>
 
       </div>
@@ -205,7 +201,6 @@ export default {
       currentDate: new Date(),
       currentIndex: 0,
 
-
     };
   },
   created() {
@@ -228,19 +223,19 @@ export default {
     }
   },
   methods: {
-    prevSlide() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-      }
-    },
-
-    nextSlide() {
+    nextCard() {
       if (this.currentIndex < this.cards.length - 1) {
         this.currentIndex++;
+      } else {
+        this.currentIndex = 0;
       }
     },
-      isActiveCard(index) {
-      return this.currentIndex === index;
+    prevCard() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      } else {
+        this.currentIndex = this.cards.length - 1;
+      }
     },
     validateNumericInput(fieldName) {
       const value = this.cardData[fieldName];
@@ -317,7 +312,8 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data)
-
+          this.showAddCardModal = false;
+          this.fetchCardUser();
         })
         .catch((error) => {
           console.error(error);
@@ -395,16 +391,6 @@ export default {
 
 </script>
 <style scoped>
-.carousel-container {
-  width: 100%;
-  overflow: hidden;
-}
-
-.carousel {
-  display: flex;
-  transition: transform 0.5s;
-}
-
 .error-message {
   color: red;
 }
@@ -695,24 +681,32 @@ form .submit-btn:hover {
   font-size: 10px;
 }
 
-.carousel-container {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .carousel {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cards {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.card__slide-enter-active, .card__slide-leave-active {
   transition: transform 0.5s;
 }
 
-.card__front,
-.card__back {
-  display: none;
-}
-
-.card__front.active,
-.card__back.active {
-  display: block;
+.card__slide-enter, .card__slide-leave-to {
+  transform: translateX(100%);
 }
 </style>
