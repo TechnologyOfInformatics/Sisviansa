@@ -1156,7 +1156,7 @@ function get_personal_menus(TORM $tORM, String $token)
                 }
             }
         }
-        return $menus ? [$menus] : $menus;
+        return $menus;
     } else {
 
         return "ERROR 403, FORBIDDEN";
@@ -1446,7 +1446,7 @@ function get_orders(TORM $tORM, $token)
                 $response[$key]['menus'][$menu['id']] = $menu;
             }
             $response[$key]['pedido_id'] = $order['id'];
-            $response[$key]['fecha_del_pedido'] = $order['fecha_del_pedido'];
+            $response[$key]['fecha_del_pedido'] = date_format(date_create($order['fecha_del_pedido']), "d/m/Y H:i");
             $response[$key]['direccion'] = array_values(array_slice($order, 2, 4));
             $response[$key]['estados'] = $states;
         }
