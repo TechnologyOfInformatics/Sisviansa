@@ -97,7 +97,9 @@
       </form>
       <div v-else>
         <div class="carousel">
-          <button @click="prevCard" v-if="cards.length > 1">Anterior</button>
+          <button class="next-button">
+            <i class="fas fa-chevron-left" @click="prevCard"></i>
+          </button>
           <div class="cards">
             <transition name="fade" mode="out-in">
               <div :key="currentIndex" class="card">
@@ -126,7 +128,7 @@
                       <p class="card__secret--last">***</p>
                     </div>
 
-                    <div class="card-back-text">
+                    <div class="card-back-text-cont">
                       <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
                         offense. If found, please
                         return to the issuing institution or to the nearest bank that accepts cards with the same card
@@ -140,7 +142,9 @@
               </div>
             </transition>
           </div>
-          <button @click="nextCard" v-if="cards.length > 1">Siguiente</button>
+          <button class="next-button">
+            <i class="fas fa-chevron-right" @click="nextCard"></i>
+          </button>
         </div>
         <button @click="showAddCardModal = true">Add Tarjetas</button>
 
@@ -470,6 +474,7 @@ form .submit-btn:hover {
   background-color: #ebeadf;
   width: 60vw;
   padding: 0 5vw;
+  height: 83.99vh;
 }
 
 .cart {
@@ -513,7 +518,7 @@ form .submit-btn:hover {
   -webkit-perspective: 600px;
   -moz-perspective: 600px;
   perspective: 600px;
-
+  transition: all 1s;
 }
 
 .card__part {
@@ -540,6 +545,8 @@ form .submit-btn:hover {
   transform-style: preserve-3d;
   backface-visibility: hidden;
   backface-visibility: hidden;
+  transition: all 1s;
+
 }
 
 .card__part img {
@@ -672,7 +679,7 @@ form .submit-btn:hover {
   transform: rotateY(0deg);
 }
 
-.card-back-tex {
+.card-back-text-cont {
   margin-top: 7vh;
 
 }
@@ -702,11 +709,28 @@ form .submit-btn:hover {
   display: flex;
   justify-content: center;
 }
-.card__slide-enter-active, .card__slide-leave-active {
+
+.card__slide-enter-active,
+.card__slide-leave-active {
   transition: transform 0.5s;
 }
 
-.card__slide-enter, .card__slide-leave-to {
-  transform: translateX(100%);
+.card__slide-enter,
+.card__slide-leave-to {
+  transform: translate(100%, 10%);
+}
+
+.next-button {
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20vh;
+}
+
+.next-button i {
+  font-size: 4em;
+  cursor: pointer;
 }
 </style>
