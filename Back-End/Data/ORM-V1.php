@@ -348,6 +348,8 @@ class TORM //Techin Object-Relation Model (Basic)
         //
         //
         $args = func_get_args();
+        unset($args[2]);
+        $args = array_values($args);
         if (in_array(null, $args) || in_array('', $args) || empty($args)) {
             $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
             return $this;
@@ -413,7 +415,7 @@ class TORM //Techin Object-Relation Model (Basic)
             $current_table_columns = $this->table_columns($this->current_table);
             $possible_order = ["ASC", "DESC"];
             $column_array = explode(".", $column);
-            if (in_array(strtolower($column_array[1]), array_keys($current_table_columns)) && in_array(strtoupper($order), $possible_order)) {
+            if (in_array(strtoupper($order), $possible_order)) {
                 $this->sentenced_data['order'] = " ORDER BY {$column} {$order}";
             } else {
                 $this->error .= strtoupper(__FUNCTION__) . " STEP: The column or order are not valid" . "</br>";

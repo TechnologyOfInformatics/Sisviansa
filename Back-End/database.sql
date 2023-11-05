@@ -78,7 +78,7 @@ CREATE TABLE Menu (
 CREATE TABLE Vianda (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único de la vianda que se crea automáticamente',
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre de la vianda, hace referencia a la comida que tiene dentro',
-  Tiempo_de_coccion INT(11) COMMENT 'Su tiempo de cocción estimado',
+  Tiempo_de_coccion INT(11) COMMENT 'Su tiempo de cocción estimado en minutos',
   Productos VARCHAR(150) NOT NULL COMMENT 'Productos que componen la vianda',
   Calorias INT(11) NOT NULL COMMENT 'Calorías totales correspondientes a la vianda',
   Precio DECIMAL(10, 2) NOT NULL COMMENT 'Precio propio de la vianda'
@@ -100,8 +100,7 @@ CREATE TABLE Pedido(
 -- Creación de la tabla Paquete
 CREATE TABLE Paquete (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
-  Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete',
-  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de la creacion del paquete en si'
+  Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete'
 );
 
 -- Creación de la tabla Vianda_Dieta
@@ -115,10 +114,11 @@ CREATE TABLE Vianda_Dieta (
 -- Creación de la tabla Stock
 CREATE TABLE Stock (
   Tipo VARCHAR(20) COMMENT 'ID del menu en stock',
-  ID INT(11) COMMENT 'ID del menu o vianda en stock',
+  Menu_ID INT(11) COMMENT 'ID del menu en stock',
   Minimo INT(11) COMMENT 'Stock mínimo de cajas',
   Maximo INT(11) COMMENT 'Stock máximo de cajas',
-  Actual INT(11) COMMENT 'Stock actual de cajas' -- AQUI
+  Actual INT(11) COMMENT 'Stock actual de cajas',
+  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID)
 );
 
 -- Creación de la tabla Inicia
@@ -178,37 +178,51 @@ CREATE TABLE Compone(
 
 CREATE TABLE Estado (
   ID INT(11) PRIMARY KEY AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente a un paquete o pedido',
-  Pedido_ID INT(11) NOT NULL COMMENT "ID del pedido",
-  Paquete_ID INT(11) NOT NULL COMMENT "ID del paquete",
   Estado ENUM(
     'Solicitado',
-    'En stock',
-    'En producción',
-    'Envasado',
     'Entregado',
+    'En stock',
+    'En produccion',
+    'Envasado',
     'Devuelto',
-    --
     'Desechado',
     'Confirmado',
-    'Enviado',
-    'Entregado',
+    'En camino',
     'Rechazado'
-  ) NOT NULL COMMENT "Estado en si del paquete o pedido",
-  -- Los estados de Paquete son desde En Stock hasta Desechado, y desde Confirmado hasta Rechazado es de Pedido, se comparte "Solicitado"
-  Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del pedido o paquete inicio",
-  Final_del_estado DATETIME COMMENT "Fecha en donde el estado del pedido o paquete finalizó" -- AQUI, NO SE QUE HACER CON EL ASUNTO DE LAS PK Y FOREIGN
+  ) NOT NULL COMMENT "Estado en si del paquete o pedido" -- Los estados de Paquete son desde En Stock hasta Desechado, y desde Confirmado hasta Rechazado es de Pedido, se comparte "Solicitado" y "Entregado"
+);
+
+CREATE TABLE Paquete_esta (
+  Estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al paquete ',
+  Paquete_ID INT(11) NOT NULL COMMENT "ID del paquete",
+  Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del paquete inicio",
+  Final_del_estado DATETIME COMMENT "Fecha en donde el estado del paquete finalizó",
+  PRIMARY KEY(Estado_ID, Paquete_ID),
+  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
+  FOREIGN KEY (Estado_ID) REFERENCES Estado(ID)
+);
+
+CREATE TABLE Pedido_esta (
+  Estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al pedido',
+  Pedido_ID INT(11) NOT NULL COMMENT "ID del pedido",
+  Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del pedido inicio",
+  Final_del_estado DATETIME COMMENT "Fecha en donde el estado del pedido finalizó",
+  PRIMARY KEY(Estado_ID, Pedido_ID),
+  FOREIGN KEY (Pedido_ID) REFERENCES Pedido(ID),
+  FOREIGN KEY (Estado_ID) REFERENCES Estado(ID)
 );
 
 CREATE TABLE Asigna(
   Paquete_ID INT(11) PRIMARY KEY COMMENT "ID correspondiente al paquete",
   Pedido_ID INT(11) NOT NULL COMMENT "ID correspondiente al pedido",
   FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Paquete_ID) REFERENCES Pedido(ID)
+  FOREIGN KEY (Pedido_ID) REFERENCES Pedido(ID)
 );
 
 CREATE TABLE Genera(
   Menu_ID INT(11) NOT NULL COMMENT 'Menu que representa el paquete',
   Paquete_ID INT(11) NOT NULL COMMENT 'Paquete que consta del menu',
+  Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de la creacion del paquete en si',
   PRIMARY KEY(Menu_ID, Paquete_ID),
   FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
   FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID)
@@ -296,7 +310,10 @@ INSERT INTO
 VALUES
   (1, '09123456'),
   (2, '09123456'),
-  (3, '09123456');
+  (3, '09123456'),
+  (4, '09123456'),
+  (5, '09123456'),
+  (6, '09123456');
 
 INSERT INTO
   Empresa (`Cliente_ID`, `RUT`, `Nombre`)
@@ -493,7 +510,7 @@ VALUES
   (6, 'Vegetariano');
 
 INSERT INTO
-  Stock (`ID`, `Minimo`, `Maximo`, `Actual`)
+  Stock (`Menu_ID`, `Minimo`, `Maximo`, `Actual`)
 VALUES
   (1, 5, 10, 8),
   (2, 5, 10, 10),
@@ -548,7 +565,7 @@ VALUES
     'calle17',
     'barrio17',
     'ciudad17',
-    NOW(),
+    DATE_ADD(NOW(), INTERVAL -1 MONTH),
     1
   ),
   (
@@ -568,27 +585,52 @@ VALUES
     'ciudad17',
     NOW(),
     3
-  );
-
-INSERT INTO
-  Paquete (
-    `ID`,
-    `Fecha_de_creacion`,
-    `Fecha_vencimiento`
-  )
-VALUES
-  (1, NOW(), DATE_ADD(NOW(), INTERVAL 41 DAY)),
-  (2, NOW(), DATE_ADD(NOW(), INTERVAL 41 DAY)),
-  (
-    3,
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 41 DAY)
   ),
   (
     4,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
     NOW(),
-    DATE_ADD(NOW(), INTERVAL 41 DAY)
+    4
+  ),
+  (
+    5,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    5
+  ),
+  (
+    6,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    1
+  ),
+  (
+    7,
+    '20',
+    'calle17',
+    'barrio17',
+    'ciudad17',
+    NOW(),
+    2
   );
+
+INSERT INTO
+  Paquete (`ID`, `Fecha_vencimiento`)
+VALUES
+  (1, DATE_ADD(NOW(), INTERVAL 41 DAY)),
+  (2, DATE_ADD(NOW(), INTERVAL 10 DAY)),
+  (3, DATE_ADD(NOW(), INTERVAL 41 DAY)),
+  (4, DATE_ADD(NOW(), INTERVAL 41 DAY)),
+  (5, DATE_ADD(NOW(), INTERVAL 41 DAY));
 
 INSERT INTO
   Recibe (`Paquete_ID`, `Cliente_ID`)
@@ -609,14 +651,16 @@ INSERT INTO
 VALUES
   (1, 1),
   (2, 2),
-  (3, 3);
+  (3, 3),
+  (3, 4);
 
 INSERT INTO
-  Genera (`Menu_ID`, `Paquete_ID`)
+  Genera (`Menu_ID`, `Paquete_ID`, `Fecha_de_creacion`)
 VALUES
-  (1, 1),
-  (2, 2),
-  (3, 3);
+  (1, 1, NOW()),
+  (2, 2, DATE_ADD(NOW(), INTERVAL 10 DAY)),
+  (3, 3, NOW()),
+  (3, 5, NOW());
 
 INSERT INTO
   Direccion (
@@ -703,79 +747,161 @@ VALUES
   );
 
 INSERT INTO
-  Estado (
-    `ID`,
-    `Estado`,
+  Estado (`Estado`)
+VALUES
+  ('Solicitado'),
+  ('Entregado'),
+  ('En stock'),
+  ('En produccion'),
+  ('Envasado'),
+  ('Devuelto'),
+  ('Desechado'),
+  ('Confirmado'),
+  ('En camino'),
+  ('Rechazado');
+
+INSERT INTO
+  Paquete_esta (
+    `Estado_ID`,
+    `Paquete_ID`,
     `Inicio_del_estado`,
-    `Final_del_estado`,
-    `Pedido_ID`,
-    `Paquete_ID`
+    `Final_del_estado`
   )
 VALUES
+  -- 1
+  (1, 1, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
   (
+    3,
     1,
-    'En stock',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    4,
-    NULL
-  ),
-  (
-    2,
-    'Confirmado',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    4,
-    NULL
-  ),
-  (
-    3,
-    'En produccion',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    3,
-    NULL
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
   ),
   (
     4,
-    'Enviado',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    NULL,
-    3
+    1,
+    DATE_ADD(NOW(), INTERVAL 4 DAY),
+    DATE_ADD(NOW(), INTERVAL 5 DAY)
   ),
   (
     5,
-    'Envasado',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
+    1,
+    DATE_ADD(NOW(), INTERVAL 6 DAY),
+    DATE_ADD(NOW(), INTERVAL 7 DAY)
+  ),
+  (
     2,
-    NULL
+    1,
+    DATE_ADD(NOW(), INTERVAL 6 DAY),
+    DATE_ADD(NOW(), INTERVAL 7 DAY)
+  ),
+  -- 2
+  (1, 2, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    4,
+    2,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
   ),
   (
     6,
-    'Rechazado',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    NULL,
-    2
+    2,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
   ),
   (
     7,
-    'Entregado',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    1,
-    NULL
+    2,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
+  ),
+  -- 3
+  (1, 3, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    3,
+    3,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
   ),
   (
-    8,
-    'Devuelto',
-    NOW(),
-    DATE_ADD(NOW(), INTERVAL 1 DAY),
-    NULL,
-    1
+    4,
+    3,
+    DATE_ADD(NOW(), INTERVAL 4 DAY),
+    DATE_ADD(NOW(), INTERVAL 5 DAY)
+  ),
+  (
+    6,
+    3,
+    DATE_ADD(NOW(), INTERVAL 6 DAY),
+    DATE_ADD(NOW(), INTERVAL 7 DAY)
+  ),
+  (
+    7,
+    3,
+    DATE_ADD(NOW(), INTERVAL 6 DAY),
+    DATE_ADD(NOW(), INTERVAL 7 DAY)
   );
+
+INSERT INTO
+  Pedido_esta (
+    `Estado_ID`,
+    `Pedido_ID`,
+    `Inicio_del_estado`,
+    `Final_del_estado`
+  )
+VALUES
+  -- 1
+  (1, 1, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    8,
+    1,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
+  ),
+  (
+    9,
+    1,
+    DATE_ADD(NOW(), INTERVAL 4 DAY),
+    DATE_ADD(NOW(), INTERVAL 5 DAY)
+  ),
+  (
+    2,
+    1,
+    DATE_ADD(NOW(), INTERVAL 6 DAY),
+    DATE_ADD(NOW(), INTERVAL 7 DAY)
+  ),
+  -- 2
+  (1, 2, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    10,
+    2,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
+  ),
+  -- 3
+  (1, 3, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    10,
+    3,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
+  ),
+  (1, 4, NOW(), NULL),
+  (1, 5, NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY)),
+  (
+    8,
+    5,
+    DATE_ADD(NOW(), INTERVAL 2 DAY),
+    DATE_ADD(NOW(), INTERVAL 3 DAY)
+  ),
+  (
+    9,
+    5,
+    DATE_ADD(NOW(), INTERVAL 4 DAY),
+    NULL
+  ),
+  (1, 6, NOW(), NULL),
+  (1, 7, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY)),
+  (8, 7, NOW(), NULL);
 
 -- Permisos de usuarios y roles
 -- Elimino las vistas

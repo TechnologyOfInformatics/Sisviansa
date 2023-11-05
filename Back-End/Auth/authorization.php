@@ -8,7 +8,6 @@ header("Access-Control-Allow-Credentials: true");
 
 $authorization = __FILE__;
 
-
 function order_diets($menus, $target_diet, $order = 'ASC')
 {
     //Ordena los menus segun una dieta dada, solo se me ocurrio como hacerla implementandola como una funcion
@@ -38,7 +37,7 @@ function order_diets($menus, $target_diet, $order = 'ASC')
 
 function token_generator()
 {
-    $allowedCharacters = '0123456789abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+    $allowedCharacters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $textLength = rand(8, 14);
     $randomText = '';
 
@@ -292,7 +291,8 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
         } else {
             return "403, FORBIDDEN: You are not allowed to enter the system";
         }
-    } else {
+    } else { //Empresa
+
         $query = "SELECT cliente.id, empresa.nombre, cliente.autorizacion
         FROM cliente 
         JOIN empresa  ON cliente.id = empresa.cliente_id
@@ -329,7 +329,7 @@ function login(QueryCall $ctl, $mail, $passwd, string $token = "")
     }
 }
 
-function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
+function register_web(QueryCall $ctl, $first_name, $first_surname, $doc_type, $doc, $mail, $password)
 {
     $values = func_get_args();
 
@@ -369,6 +369,8 @@ function register_web_first(QueryCall $ctl, $first_name, $first_surname, $doc_ty
         return "400, BAD REQUEST: Wrong data type";
     } elseif (!$length_verificator) {
         return "400, BAD REQUEST: Wrong data type";
+    } elseif (strpos($mail, "@") && strpos($mail, ".")) {
+        return "400, BAD REQUEST: Wrong data structure";
     }
 
     $existence_verificator_doc = empty($ctl->select("web", ["cliente_id"], [$doc_type, $doc], ["documento_tipo", "documento_numero"])->call());
@@ -405,7 +407,9 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
     foreach ($values as $index => $var) {
         $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
     }
-
+    if (strpos($mail, "@") && strpos($mail, ".")) {
+        return "400, BAD REQUEST: Wrong data structure";
+    }
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
@@ -470,17 +474,11 @@ function get_address(TORM $tORM, string $token)
     $client_id = get_client_id($tORM, $token);
 
     if ($client_id && $length_verificator) {
-        // Debo pedir los datos desde direccion y no desde cliente
         $address_values = $tORM
             ->from("direccion")
             ->columns('direccion.id', 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad', 'direccion.predeterminado')
             ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
             ->do('select');
-
-
-        //
-        //
-        //
         return $address_values;
     } else {
         return "ERROR 403, FORBIDDEN";
@@ -944,15 +942,15 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
                 ->do(query: "SELECT MAX(id) FROM pedido WHERE Cliente_ID = {$client_id[0]['cliente_id']}")[0][0];
         }
         $is_state = $tORM
-            ->from("estado")
-            ->where("estado.pedido_id", "eq", intval($order_id))
-            ->where("estado.estado", "eq", "Solicitado")
+            ->from("pedido_esta")
+            ->where("pedido_esta.pedido_id", "eq", intval($order_id))
+            ->where("pedido_esta.estado_id", "eq", 1) // estado_id = 1 == "Solicitado"
             ->do("select");
         if (empty($is_state) || !($is_state)) {
             $tORM
-                ->from("estado")
-                ->columns("estado.pedido_id", "estado.estado", "estado.inicio_del_estado")
-                ->values("estado", intval($order_id), "Solicitado", $actual_date)
+                ->from("pedido_esta")
+                ->columns("pedido_esta.estado_id", "estado.pedido_id",  "pedido_esta.inicio_del_estado")
+                ->values("pedido_esta", 1, intval($order_id), $actual_date)
                 ->do("insert");
         }
 
@@ -1082,6 +1080,7 @@ function get_fav_and_personal_menus(TORM $tORM, String $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function get_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
@@ -1162,6 +1161,7 @@ function get_personal_menus(TORM $tORM, String $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+
 function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
@@ -1353,7 +1353,7 @@ function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $freq
     }
 }
 
-function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd) //Debería funcionar para web y empresa
+function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd)
 {
 
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
@@ -1410,7 +1410,7 @@ function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actu
     }
 }
 
-function get_orders(TORM $tORM, $token)
+function get_client_orders(TORM $tORM, $token)
 {
 
     $client_id = get_client_id($tORM, $token);
@@ -1428,15 +1428,18 @@ function get_orders(TORM $tORM, $token)
         foreach ($orders as $key => $order) {
 
             $states = $tORM
-                ->from("estado")
-                ->columns("estado.id", "estado.estado", "estado.inicio_del_estado", "estado.final_del_estado")
-                ->where("estado.pedido_id", "eq", $order['id'])
+                ->from("pedido_esta")
+                ->where("pedido_esta.pedido_id", "eq", intval($order['id']))
+                ->join("estado", "estado.id", "pedido_esta.estado_id")
+                ->joined_columns("estado.estado")
+                ->order('pedido_esta.inicio_del_estado', 'DESC')
+                ->limit(1)
                 ->do("select");
 
             $requested_menus = $tORM
                 ->from("compone")
                 ->columns("compone.cantidad")
-                ->where("compone.pedido_id", "eq", $order['id'])
+                ->where("compone.pedido_id", "eq", intval($order['id']))
                 ->join("menu", "compone.menu_id", "menu.id")
                 ->joined_columns("menu.id", "menu.nombre", "menu.categoria", "menu.frecuencia")
                 ->do("select");
@@ -1448,7 +1451,7 @@ function get_orders(TORM $tORM, $token)
             $response[$key]['pedido_id'] = $order['id'];
             $response[$key]['fecha_del_pedido'] = date_format(date_create($order['fecha_del_pedido']), "d/m/Y H:i");
             $response[$key]['direccion'] = array_values(array_slice($order, 2, 4));
-            $response[$key]['estados'] = $states;
+            $response[$key]['estados'] = [$states[0]['estado_id'], $states[0]['estado'], $states[0]['inicio_del_estado'], $states[0]['final_del_estado']]; // SI SE QUIERE CAMBIAR LA CANTIDAD HAY QUE CAMBIAR LIMIT Y ÉSTO
         }
         return $response;
     } else {
@@ -1479,7 +1482,7 @@ function create_credit_card(TORM $tORM, String $token, String $card_code, String
     }
 }
 
-function get_credit_card(TORM $tORM, String $token) //debo decodificar la tarjeta y tomar los ultimos 4 valores para devolver
+function get_credit_card(TORM $tORM, String $token)
 {
 
     if (in_array('', func_get_args())) {
@@ -1525,7 +1528,14 @@ function delete_credit_card(TORM $tORM, String $token, String $verification_code
 }
 
 
-function get_menus(TORM $tORM)
+//
+//
+//
+//
+function administratio_login()
+{
+}
+function get_menus(TORM $tORM) //Funcion admin
 {
     //Funcion para recibir TODOS los menus, es una funcion para admin
 
@@ -1574,9 +1584,9 @@ function get_menus(TORM $tORM)
     return [$filtered_menus];
 }
 
-function get_foods(TORM $tORM) //
+function get_foods(TORM $tORM) //Funcion admin
 {
-    //Funcion para recibir TODOS los menus, es una funcion para admin
+    //Funcion para recibir TODOS las viandas, es una funcion para admin
 
     $foods = $tORM
         ->from("vianda")
@@ -1601,24 +1611,461 @@ function get_foods(TORM $tORM) //
     return [$filtered_menus];
 }
 
-function register_bussiness() //Funcion admin
+function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passwd = "") //Funcion admin
+{
+
+    $session = login($ctl, $mail, $mail);
+    if ((strtolower(gettype($session) == "string") || in_array("", func_get_args()))) {
+
+        $orders = $tORM
+            ->from("pedido")
+            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
+            ->do("select");
+    } else {
+
+        $client_id = get_client_id($tORM, $session[1]);
+
+        $orders = $tORM
+            ->from("pedido")
+            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
+            ->do("select");
+    }
+    $response = [];
+    if (empty($orders)) {
+        return "ERROR 404, NOT FOUND";
+    }
+    foreach ($orders as $key => $order) {
+
+        $states = $tORM
+            ->from("pedido_esta")
+            ->where("pedido_esta.pedido_id", "eq", intval($order['id']))
+            ->join("estado", "estado.id", "pedido_esta.estado_id")
+            ->joined_columns("estado.estado")
+            ->order('pedido_esta.inicio_del_estado', 'DESC')
+            ->do("select");
+
+        $requested_menus = $tORM
+            ->from("compone")
+            ->columns("compone.cantidad")
+            ->where("compone.pedido_id", "eq", intval($order['id']))
+            ->join("menu", "compone.menu_id", "menu.id")
+            ->joined_columns("menu.id", "menu.nombre", "menu.categoria", "menu.frecuencia")
+            ->do("select");
+
+        foreach ($requested_menus as $menu) {
+            $menu['precio'] = doubleval($tORM->do(query: "SELECT sum(vianda.precio) from vianda JOIN conforma on vianda.id = conforma.vianda_id JOIN menu on menu.id = conforma.menu_id where conforma.menu_id = {$menu['id']}")[0][0]);
+            $response[$key]['menus'][$menu['id']] = $menu;
+        }
+        $response[$key]['cliente_id'] = $order['cliente_id'];
+        $response[$key]['pedido_id'] = $order['id'];
+        $response[$key]['fecha_del_pedido'] = date_format(date_create($order['fecha_del_pedido']), "d/m/Y H:i");
+        $response[$key]['direccion'] = array_values(array_slice($order, 2, 4));
+        $response[$key]['estados'] = [$states[0]['estado_id'], $states[0]['estado'], $states[0]['inicio_del_estado'], $states[0]['final_del_estado']];
+    }
+    return $response;
+}
+
+function change_order_state(TORM $tORM, $order_id, $new_state) //Funcion admin
+{
+    $new_state = strval(ucfirst($new_state));
+
+    if (!in_array($new_state, ['Solicitado', 'Entregado', 'Confirmado', 'Rechazado', 'En camino'])) {
+        return "ERROR 400, BAD REQUEST";
+    } else {
+        $state = $tORM
+            ->from("estado")
+            ->columns("estado.estado")
+            ->join("pedido_esta", "pedido_esta.estado_id", "estado.id")
+            ->where("pedido_esta.pedido_id", "eq", intval($order_id))
+            ->where("pedido_esta.final_del_estado", "null", "")
+            ->do("select");
+        $new_state_id = $tORM
+            ->from("estado")
+            ->columns("estado.id")
+            ->where("estado.estado", "eq", $new_state)
+            ->do("select")[0];
+        if ($state) {
+            $progressions = [
+                'Solicitado' => ['Confirmado', 'Rechazado'],
+                'Confirmado' => ['En camino'],
+                'En camino' => ['Entregado', 'Rechazado']
+            ];
+
+            if (!in_array($new_state, $progressions[$state[0]['estado']] ?? [], true)) {
+                return "ERROR 400, BAD REQUEST";
+            }
+        } else {
+            return "ERROR 404, NOT FOUND";
+        }
+    }
+
+
+    $change_prev = $tORM
+        ->from("pedido_esta")
+        ->columns("pedido_esta.final_del_estado")
+        ->values("pedido_esta", date("Y-m-d H:i:s"))
+        ->do("update");
+    $set_actual = $tORM
+        ->from("pedido_esta")
+        ->columns("pedido_esta.estado_id", "pedido_esta.pedido_id", "pedido_esta.inicio_del_estado")
+        ->values("pedido_esta", intval($new_state_id['id']), intval($order_id), date("Y-m-d H:i:s"))
+        ->do("insert");
+    print_r($set_actual);
+}
+
+function register_bussiness(QueryCall $ctl, String $rut, String $name, String $mail, String $password) //Funcion admin
+{
+    $values = func_get_args();
+
+    unset($values[0]);
+    unset($values[1]);
+
+    $length_verificator = True;
+
+    $maximum = [12, 30, 50, 30];
+    $values = array_values($values);
+
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    $regex = '/\b' . preg_quote(strtolower($name), '/') . '\b/';
+
+
+    $name_match = preg_match($regex, strtolower($password)) || (strtolower(strval($password)) == strtolower(strval($name)));
+
+    $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $password); //True si no hay ni caracteres especiales ni letras ni numeros
+
+
+    if ($name_match || $passwd_verificator) {
+        return 'ERROR 400, BAD REQUEST: Password error';
+    }
+
+    $length_verificator = strlen($password) > 6 && strlen($mail) > 6 && $length_verificator;
+
+    $type_verificator = True;
+
+    foreach ($values as $var) {
+        $type_verificator = $type_verificator && is_string($var);
+    }
+
+    if (!isset($name, $rut, $mail, $password)) {
+        return "400, BAD REQUEST: Missing data";
+    } elseif (!$type_verificator) {
+        return "400, BAD REQUEST: Wrong data type";
+    } elseif (!$length_verificator) {
+        return "400, BAD REQUEST: Wrong data type";
+    } elseif (!strpos($mail, "@") || !strpos($mail, ".")) {
+        return "400, BAD REQUEST: Wrong data structure";
+    }
+
+    $existence_verificator_mail = empty($ctl->select("cliente", ["email"], [$mail], ["email"])->call());
+
+    if (!$existence_verificator_mail) {
+        return "409, CONFLICT: This Email is already in use";
+    }
+
+    if ($ctl->insert("cliente", [$mail, md5($password), "Autorizado"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
+        $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
+        $ctl->insert("empresa", [$rut, $name, $id[0]], ["rut", "nombre", "cliente_id"])->call();
+        $response = login($ctl, $mail, $password, "");
+        return $response;
+    }
+}
+
+function modify_bussiness(TORM $tORM, QueryCall $ctl, String $rut = "", String $name = "",  String $new_mail = "",  String $mail, String $password) //Funcion admin
+{
+    $session = login($ctl, $mail, $password);
+    if ((gettype($session) == "string")) {
+        return "ERROR 404, NOT FOUND";
+    }
+
+    $values = func_get_args();
+
+    unset($values[0]);
+    unset($values[1]);
+    $values = array_values($values);
+    $maximum = [12, 30, 50, 50, 30];
+
+    $length_verificator = true;
+    foreach ($values as $index => $var) {
+        $length_verificator = $length_verificator && (strlen(strval($var)) <= $maximum[$index]);
+    }
+
+    if (!(strpos($mail, "@") && strpos($mail, ".") && ((strpos($new_mail, "@") && strpos($new_mail, ".")) || empty($new_mail)))) {
+        return "ERROR 400, BAD REQUEST";
+    } elseif (!$length_verificator) {
+        return "ERROR 400, BAD REQUEST";
+    }
+
+    $client_id = get_client_id($tORM, $session[1]);
+    if ($client_id) {
+        $bussiness_values = $tORM
+            ->from("empresa")
+            ->columns("empresa.nombre", "empresa.rut")
+            ->where("empresa.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->do("select");
+        if (!$bussiness_values) {
+            return "ERROR 404, NOT FOUND";
+        }
+
+        $bussiness_values = $bussiness_values[0];
+
+        $client_values = $tORM
+            ->from("cliente")
+            ->columns("cliente.contrasenia",  "cliente.email")
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("select")[0];
+
+        $received_data = array_merge($bussiness_values, $client_values);
+
+        $result_1 = $tORM
+            ->from("cliente")
+            ->columns('cliente.email')
+            ->values('cliente', $new_mail ? $new_mail : $received_data["email"])
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+        //
+        //
+        //
+        $new_bussiness_data = [
+            'empresa.rut' => $rut ? $rut : $received_data["rut"],
+            'empresa.nombre' => $name ? $name : $received_data["nombre"]
+        ];
+
+        $new_bussiness_values = array_merge(["empresa"], array_values($new_bussiness_data));
+
+        $object = $tORM
+            ->from("empresa");
+
+        $object =  call_user_func_array(array($object, "columns"), array_keys($new_bussiness_data));
+        $object =  call_user_func_array(array($object, "values"), $new_bussiness_values);
+
+        $result_2 = $object
+            ->where("empresa.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+
+        if ($result_1 == $result_2 && $result_1 == "OK, 200") {
+            return "OK, 200";
+        }
+        return "ERROR 500, SERVER ERROR";
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function show_user_list(TORM $tORM, String $type = "", String $id = "", String $id_type = "") //Funcion admin
+{
+
+    switch (strtolower($type)) {
+        case "empresa":
+            $result = $tORM
+                ->from("empresa")
+                ->where("empresa.rut", "eq", $id)
+                ->do("select");
+            $result = $result ? $result[0] : $result;
+            break;
+        case "web":
+            if (!$id_type) {
+                return "ERROR 400, bad request";
+            }
+            $result = $tORM
+                ->from("web")
+                ->where("web.documento_tipo", "eq", $id_type)
+                ->where("web.documento_numero", "eq", $id)
+                ->do("select");
+            $result = $result ? $result[0] : $result;
+            break;
+        default:
+            if (!($type == "" && $id == "")) {
+                return "ERROR 400, bad request";
+            }
+            $result = $tORM
+                ->do(query: "
+                            SELECT 
+                            cliente.id,
+                            personas.Tipo,
+                            personas.Primer_nombre AS Nombre,
+                            personas.Identificador,
+                            cliente.Email
+                            FROM cliente
+                            INNER JOIN (
+                            SELECT 'Web' AS Tipo, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero) as Identificador, cliente_ID
+                            FROM web
+                            UNION ALL
+                            SELECT 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente_ID
+                            FROM empresa
+                            ) personas ON personas.cliente_id = cliente.id;
+                            ");
+            break;
+    }
+
+
+
+
+    return [$result];
+}
+function change_bussiness_password(TORM $tORM, QueryCall $ctl, String $mail, String $actual_passwd, String $passwd, String $confirm_passwd) //Funcion admin
+{
+
+    $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
+
+    $session = login($ctl, $mail, $passwd);
+    if ((gettype($session) == "string")) {
+        return "ERROR 404, NOT FOUND";
+    }
+
+    $client_id = get_client_id($tORM, $session);
+
+
+    if ($client_id && $length_verificator) {
+        //Verificacion de contrasenia
+        $client_name = $tORM
+            ->from('empresa')
+            ->columns('empresa.nombre')
+            ->where('empresa.cliente_id', 'eq', $client_id[0]['cliente_id'])
+            ->do('select');
+
+        $name_match = True;
+        if ($client_name) {
+            $regex = '/\b' . preg_quote(strtolower($client_name[0]['nombre']), '/') . '\b/';
+            $name_match = preg_match($regex, strtolower($passwd)) || (strtolower(strval($passwd)) == strtolower(strval($client_name[0]['nombre'])));
+        }
+        $passwd_verificator = !preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).+$/', $passwd); //True si no hay ni caracteres especiales ni letras ni numeros
+        $client_actual_email = $tORM
+            ->from('cliente')
+            ->columns('cliente.email')
+            ->where('cliente.id', 'eq', $client_id[0]['cliente_id'])
+            ->do('select');
+
+
+        if ($name_match || $passwd_verificator) {
+            return 'ERROR 400, BAD REQUEST';
+        } elseif ($passwd && ($passwd == $confirm_passwd)) {
+            $passwd = md5($passwd);
+        } elseif (!($passwd == "" && ($passwd == $confirm_passwd))) {
+            return "ERROR 400, BAD REQUEST";
+        }
+
+        //Cambio de contrasenia
+        $result = $tORM
+            ->from("cliente")
+            ->columns('cliente.contrasenia')
+            ->values('cliente', $passwd)
+            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->do("update");
+        //
+        //
+        //
+
+        return $result;
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
+}
+
+function create_food(TORM $tORM, String $name, String  $time, String $products, Int $calories, Int  $price) //Funcion admin
+{
+
+    $values = func_get_args();
+    unset($values[0]);
+    $values = array_values($values);
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $calories = doubleval($calories);
+    $price = doubleval($price);
+
+    $response = $tORM
+        ->from("vianda")
+        ->columns("vianda.nombre", "vianda.tiempo_de_coccion", "vianda.productos", "vianda.calorias", "vianda.precio")
+        ->values("vianda",  $name,  $time,  $products, $calories,  $price)
+        ->do("insert");
+
+    return ($response = "OK, 200" ? $response : "ERROR 409, CONFLICT"); //CAMBIE ACA ÉSTO PARA QUE RESPONSE SEA IGUAL A ESO Y NO UN BOOLEANO, NO SE SI ESTA BIEN
+}
+
+function delete_food(TORM $tORM, Int $food_id) //Funcion admin
+{
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+
+    $response = $tORM
+        ->from("vianda")
+        ->where("vianda.id", "eq", $food_id)
+        ->do("delete");
+
+    return ($response = $tORM->from("vianda")->where("vianda.id", "eq", $food_id)->do("select") ? $response : "ERROR 400, BAD REQUEST");
+}
+
+function modify_food($tORM, Int $food_id, String $name = "", String  $time = "", String $products = "", Int $calories = 0, Int  $price = 0) //Funcion admin
+{
+    //Se parte de la suposicion que nada puede tener 0 calrias
+    $food_existence = $tORM
+        ->from("vianda")
+        ->where("vianda.id", "eq", intval($food_id)) //DEBO CAMBIAR SI TENGO QUE CAMBIAR DE ID A OTRA COSA
+        ->do("select");
+
+    if ($food_existence) {
+        $calories = doubleval($calories);
+        $price = doubleval($price);
+        $result_one = delete_food($tORM, $food_id);
+        $result_two = create_food(
+            $tORM,
+            $name ? $name : $food_existence[0]['nombre'],
+            $time ? $time : $food_existence[0]['tiempo_de_coccion'],
+            $products ? $products : $food_existence[0]['productos'],
+            $calories ? $calories : $food_existence[0]['calorias'],
+            $price ? $price : $food_existence[0]['precio']
+        );
+        if ($result_one == $result_two) {
+            return "OK, 200";
+        } else {
+            return "ERROR 500, SERVER ERROR";
+        }
+    } else {
+        return "ERROR 404, NOT FOUND";
+    }
+}
+
+function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Funcion admin
+{
+    switch ($state) { //true = agregar, false = quitar
+        case true:
+            $result = $tORM
+                ->from("vianda_dieta")
+                ->values("vianda_dieta", intval($food_id), $diet)
+                ->do("insert");
+            return $result;
+            break;
+        case false:
+            $result = $tORM
+                ->from("vianda_dieta")
+                ->where("vianda_dieta.vianda_id", intval($food_id))
+                ->where("vianda_dieta.dieta", "eq", $diet)
+                ->do("delete");
+            return $result;
+            break;
+        default:
+            return "ERROR 400, BAD REQUEST";
+            break;
+    }
+}
+
+function create_menu() //Funcion admin
 {
 }
 
-function modify_bussiness() //Funcion admin
+function modify_menu() //Funcion admin
 {
 }
 
-function show_food_list() //Funcion admin
+function delete_menu() //Funcion admin
 {
 }
 
-
-
-
-function modify_order()
-{
-}
 function recover_password() //a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
 {
 }

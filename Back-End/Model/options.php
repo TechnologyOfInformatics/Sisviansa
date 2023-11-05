@@ -90,7 +90,7 @@ function options_change_password(String $token, String $actual_passwd, String $p
 function options_get_orders(String $token)
 {
     global $tORM;
-    return get_orders($tORM, $token);
+    return get_client_orders($tORM, $token);
 }
 
 function options_create_credit_card(String $token, String $card_code, String $expire_date, String $name)
