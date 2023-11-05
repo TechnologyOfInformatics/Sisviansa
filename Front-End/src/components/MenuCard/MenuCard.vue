@@ -159,19 +159,16 @@
     <div class="modal-content" @click.stop>
       <div v-if="customMenus.length > 0">
         <ul>
-          <li v-for="customMenu in customMenus[0]" :key="customMenu.id">
+          <li v-for="customMenu in customMenus" :key="customMenu.id">
             <div>
-
-              <h3>{{ customMenu.nombre }}</h3>
-              <p>Descripción: {{ customMenu.descripcion }}</p>
+              <h3>{{ customMenu.title }}</h3>
+              <p>Descripción: {{ customMenu.description }}</p>
               <h4>Viandas:</h4>
               <ul class="modal-vianda">
-                <li v-for="vianda in customMenu.viandas" :key="vianda.name">
-                  <p>{{ vianda.nombre }}</p>
-
-                  <div class="modal-vianda"></div>
-                  <p>Calorías: {{ vianda.calorias }}</p>
-                  <p>Dietas: {{ vianda.dietas ? vianda.dietas.join(', ') : 'Ninguna' }}</p>
+                <li v-for="vianda in customMenu.viandas" :key="vianda.id">
+                  <p>{{ vianda.name }}</p>
+                  <p>Calorías: {{ vianda.calories }}</p>
+                  <p>Dietas: {{ vianda.diets ? vianda.diets.join(', ') : 'Ninguna' }}</p>
                 </li>
               </ul>
             </div>
@@ -287,7 +284,8 @@ export default {
         .then((response) => {
           if (Array.isArray(response.data)) {
             if (response.data.length > 0) {
-              this.customMenus = response.data
+              this.customMenus = this.transformMenusData(response.data)
+
             }
           }
         })
@@ -302,7 +300,6 @@ export default {
         token: sessionStorage.getItem('miToken'),
         id: data
       };
-      console.log(dataToSend)
 
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
@@ -384,6 +381,7 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
+          console.log(response.data)
           this.menus = this.transformMenusData(response.data[0]);
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
