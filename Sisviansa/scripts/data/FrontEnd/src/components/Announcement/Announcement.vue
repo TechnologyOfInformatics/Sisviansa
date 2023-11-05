@@ -12,12 +12,14 @@ export default {
 
 <style scoped>
 .announcement {
-  background-color: rgb(56, 56, 56);
+  background-color: #243328;
   height: 4vh;
   text-align: center;
 }
 
 .announcement p {
+  font-size: 14px;
+  padding-top: 5px;
   color: white;
 }
 </style>

@@ -1,5 +1,9 @@
 <template>
     <div>
-        <p>h</p>
+        <p>Auth</p>
     </div>
 </template>
+
+<script>
+
+</script>

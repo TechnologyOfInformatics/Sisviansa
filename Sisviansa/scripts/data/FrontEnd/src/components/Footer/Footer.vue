@@ -4,8 +4,8 @@
       <div class="footer-item">
         <h1 class="footer-title">Sisviansa</h1>
         <p class="footer-description">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Comprometidos con calidad, nutrición y sabor en cada plato. Ofrecemos opciones sin gluten, veganas y menús
+          personalizables para un estilo de vida saludable.
         </p>
       </div>
 
@@ -29,15 +29,14 @@
           </li>
           <li><i class="fa fa-phone" aria-hidden="true"></i>1234567890</li>
           <li>
-            <i class="fa fa-envelope" aria-hidden="true"></i
-            >contacto@sisviansa.com
+            <i class="fa fa-envelope" aria-hidden="true"></i>contacto@sisviansa.com
           </li>
         </ul>
         <div class="footer-social-media">
-          <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa-solid fa-envelope"></i></a>
+          <a href="https://www.facebook.com/sisviansa" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+          <a href="https://twitter.com/sisviansa" target="_blank"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/sisviansa" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+          <a href="mailto:sisviansa@gmail.com" target="_blank"><i class="fa-solid fa-envelope"></i></a>
         </div>
       </div>
     </div>
@@ -55,4 +54,4 @@ export default {
   name: "MainFooter",
 };
 </script>
-<style lang="css" src="./Footer.css"></style>
+<style lang="css" src="./Footer.css" scoped></style>

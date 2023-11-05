@@ -4,8 +4,14 @@ import FaqView from '@/views/user/FaqView.vue'
 import AuthView from '@/views/user/AuthView.vue'
 import ShopView from '@/views/user/ShopView.vue'
 import CartView from '@/views/user/CartView.vue'
+import ProfileView from '@/views/user/ProfileView.vue'
+import BussinesView from '@/views/user/BussinesView.vue'
+
 
 import AdminAuthView from '@/views/admin/AuthView.vue'
+import AdminUserView from '@/views/admin/UserView.vue'
+
+import TestView from '@/views/TestView.vue'
 const routes = [
   {
     path: '/',
@@ -27,15 +33,39 @@ const routes = [
     name: 'shop',
     component: ShopView
   },
-  {
-    path: '/admin/login',
-    name: 'adminlogin',
-    component: AdminAuthView
-  },
+
   {
     path: '/cart',
     name: 'cart',
     component: CartView
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView
+  },
+  {
+    path: '/bussines',
+    name: 'bussines',
+    component: BussinesView
+  },
+
+  {
+    path: '/admin/auth',
+    name: 'adminAuth',
+    component: AdminAuthView
+  },
+  {
+    path: '/admin/user',
+    name: 'adminUser',
+    component: AdminUserView
+  },
+
+
+  {
+    path: '/test',
+    name: 'test',
+    component: TestView
   },
 ]
 

@@ -1,16 +1,20 @@
 
 FROM node:20-alpine
 
-# set working directory
+#WORKDIR /app
+
+#ENV PATH /node_modules/.bin:$PATH
+
+#COPY package.json /app/package.json
+#RUN npm install @vue/cli -g
+#RUN npm install @vue/cli-service -g
+#RUN npm install
+
+#CMD ["npm", "run", "serve"]
 WORKDIR /app
-
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /node_modules/.bin:$PATH
-
-# install and cache app dependencies
-COPY package.json /app/package.json
+RUN apk update && apk upgrade && apk add curl py-pip make g++
+COPY package*.json ./
+COPY . .
+EXPOSE 8080
 RUN npm install
-RUN npm install @vue/cli -g
-
-# start app
-CMD ["npm", "run", "serve"]
+CMD npm run serve

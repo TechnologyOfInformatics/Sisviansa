@@ -2,7 +2,7 @@
 include_once "Data/database_model.php";
 header("Access-Control-Allow-Origin: http://localhost:8080");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Origin, Authorization, X-Requested-With, Content-Type, Accept");
 header("Access-Control-Allow-Credentials: true");
 
 $authorization = __FILE__;
@@ -280,7 +280,6 @@ function show_shop(QueryCall $ctl, string $token)
     }
     foreach ($menus as $menu) {
         if (!is_array($menu) || count($menu) !== 6) {
-            print_r($menu);
             return "400 Bad Request: El formato del menú no es válido";
         }
 

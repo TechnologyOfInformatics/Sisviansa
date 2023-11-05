@@ -1,18 +1,35 @@
+body {
+    color: #fcfcfc;
+}
+
 header {
     z-index: 99;
     width: 100%;
     top: 0;
     position: sticky;
-    border-radius: 8px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: #243328;
 }
 
+header .nav__welcome {
+    color: white;
+    text-decoration: none;
+
+}
+
+header .nav__welcome span {
+    color: white;
+    text-decoration: underline;
+
+}
+
+
 header nav {
-    background-color: rgba(241, 241, 241, 0.95);
     padding: 0em 3em 0 3em;
 }
 
 header .nav__top {
+    color: #fcfcfc;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -21,16 +38,22 @@ header .nav__top {
 
 header .nav__top .action__button {
     background-color: #fcfcfc;
-    border: 1px solid var(--misc-gray);
+    border: 1px solid #243328;
     padding: 6px 15px;
     border-radius: 5px;
     cursor: pointer;
+    color: black;
+    transition: all .2s;
+
 }
 
-header .nav__top .action__button i {
-    text-decoration: none;
-    color: #333333;
+header .nav__top .action__button:hover {
+    background-color: #243328;
+    color: white;
+    border: 1px solid white;
 }
+
+
 
 header .nav__logo {
     display: flex;
@@ -41,8 +64,8 @@ header .nav__logo {
 header .nav__logo p {
     font-size: 2.6em;
     font-family: 'Pacifico', cursive;
-    background: #000000;
-    background: linear-gradient(to top, #000000 30%, #979996 100%);
+    background: #fcfcfc;
+    background: linear-gradient(to top, #fcfcfc 30%, #979996 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -72,6 +95,7 @@ header .nav__bottom ul {
 
 header .nav__bottom ul li {
     margin: 0 10px;
+
 }
 
 header .nav__bottom ul li .selected {
@@ -80,27 +104,30 @@ header .nav__bottom ul li .selected {
 
 header .nav__bottom ul li .link {
     text-decoration: none;
-    color: #333;
+    color: #fcfcfc;
 }
 
-header .nav__bottom .nav__bottom__address img {
+header .nav__bottom .nav__bottom__address i {
     cursor: pointer;
-    width: 4vw;
+    font-size: 2.2vw;
+    color: white;
 }
 
-header .nav__bottom .nav__bottom__cart img {
+header .nav__bottom .nav__bottom__cart i {
     cursor: pointer;
-    width: 2.5vw;
+    font-size: 2vw;
+    color: white;
 }
 
 header .nav__bottom .nav__bottom__cart .cart-count {
     display: inline-block;
     padding: 2px 6px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: bold;
-    color: black;
-    background-color: #ccc;
+    color: #fcfcfc;
+    background-color: #243328;
     border-radius: 50%;
+    text-decoration: underline;
 }
 
 @media (max-width: 768px) {
@@ -110,8 +137,8 @@ header .nav__bottom .nav__bottom__cart .cart-count {
         position: absolute;
         top: 100%;
         left: 0;
-        width: 100%;
-        background-color: rgba(241, 241, 241, 0.95);
+        width: 100vw;
+        background-color: #243328;
         padding: 1em;
         transition: opacity 0.5s, visibility 0s linear 0.5s;
         opacity: 0;
@@ -134,10 +161,11 @@ header .nav__bottom .nav__bottom__cart .cart-count {
 
     .nav__hamburger i {
         font-size: 20px;
+        color: white;
     }
 
     header .nav__bottom ul {
-        width: 90vw;
+        width: 91%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -182,17 +210,26 @@ header .nav__bottom .nav__bottom__cart .cart-count {
         border-top: 1px solid #ccc;
     }
 
-    header .nav__bottom .nav__bottom__address img {
+    header .nav__bottom .nav__bottom__address i {
         cursor: pointer;
-        width: 8vw;
+        font-size: 6vw;
     }
 
-    header .nav__bottom .nav__bottom__cart img {
+    header .nav__bottom .nav__bottom__cart i {
         cursor: pointer;
-        width: 6vw;
+        font-size: 6vw;
+    }
+
+    header .nav__logo {
+        display: none;
+    }
+
+    header .nav__top .action__button i {
+        text-decoration: none;
+        color: black;
+
     }
 }
-
 
 .selected {
     border-bottom: 1px solid #ccc;

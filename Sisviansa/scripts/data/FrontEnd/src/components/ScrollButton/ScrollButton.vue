@@ -35,7 +35,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .scroll-button {
   position: fixed;
   bottom: 20px;
@@ -46,14 +46,15 @@ export default {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #243328;
   color: #fff;
   border: none;
   outline: none;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.3s ease;
   font-size: 2em;
+  box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.4);
 }
 
 .scroll-button:hover {

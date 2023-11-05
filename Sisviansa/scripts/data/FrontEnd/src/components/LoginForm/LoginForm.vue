@@ -3,11 +3,30 @@
     <form @submit.prevent="login">
       <h1>Inicia sesión</h1>
       <p>Coloca los datos de tu cuenta</p>
-      <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
-      <input v-model="passwd" type="password" name="pswd" placeholder="Password" required autocomplete="current-password"
-        id="passwd" />
+      <input
+        v-model="mail"
+        type="email"
+        name="mail"
+        placeholder="Email"
+        required
+        autocomplete="email"
+        id="email"
+      />
+      <input
+        v-model="password"
+        type="password"
+        name="pswd"
+        placeholder="Password"
+        required
+        autocomplete="current-password"
+        id="password"
+        @input="clearErrorMessage"
+      />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     </form>
   </div>
 </template>
@@ -17,40 +36,73 @@ export default {
   data() {
     return {
       mail: "",
-      passwd: "",
+      password: "",
+      token: sessionStorage.getItem("miToken") || 0,
+      errorMessage: "",
     };
   },
 
   methods: {
     login() {
-      let dataToSend = {
-        functionName: "login_login",
-        mail: this.mail,
-        passwd: this.passwd,
+      const maxAttempts = 10;
+      let attempts = 0;
+
+      const attemptLogin = () => {
+        let dataToSend = {
+          functionName: "login_login",
+          mail: this.mail,
+          passwd: this.password,
+          token: this.token,
+        };
+
+        this.$http
+          .post("http://sisviansa_php/server.php", dataToSend)
+          .then((response) => {
+            console.log(response);
+
+            if (Array.isArray(response.data)) {
+              let token = response.data[1];
+              if (token) {
+                sessionStorage.setItem("miToken", token);
+                window.history.back();
+              } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                  attemptLogin();
+                }
+              }
+            } else {
+              attempts++;
+              if (attempts < maxAttempts) {
+                attemptLogin();
+              } else {
+                this.errorMessage = "Credenciales inválidas.";
+                this.password = "";
+              }
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.errorMessage = "Error al conectar con el servidor.";
+          });
       };
 
-      this.$http
-        .post("http://localhost/Back-End/server.php", dataToSend)
-        .then((response) => {
-          let token = response.data[1];
-          console.log(token);
-          sessionStorage.setItem('miToken', token);
-          this.$router.push("/");
-
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      attemptLogin();
+    },
+    clearErrorMessage() {
+      if (this.password.length >= 4) {
+        this.errorMessage = "";
+      }
     },
   },
-
-  // mounted: {
-  //   //si esta iniciado sesion no permite acceder
-  // }
 };
 </script>
 
 <style scoped>
+.error-message {
+  color: red;
+}
+
 .sign-in {
   position: absolute;
   top: 0;
@@ -62,7 +114,7 @@ export default {
 }
 
 form {
-  background: #fff;
+  background: #ebeadf;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,6 +122,7 @@ form {
   padding: 0 50px;
   height: 100%;
   text-align: center;
+  border-right: 1px solid #243328;
 }
 
 h1 {
@@ -86,7 +139,7 @@ p {
 }
 
 input {
-  background: #eee;
+  background: white;
   padding: 12px 15px;
   margin: 8px 15px;
   width: 100%;
@@ -103,9 +156,9 @@ a {
 }
 
 button {
-  border: 1px solid #a2d9ff;
+  border: 1px solid #ebeadf;
   color: white;
-  background: #a2d9ff;
+  background: #243328;
   font-size: 12px;
   font-weight: bold;
   padding: 12px 55px;

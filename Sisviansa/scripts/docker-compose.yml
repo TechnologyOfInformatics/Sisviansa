@@ -1,63 +1,79 @@
 version: '3'
 
+# Red interna del servidor para bloquear el acceso externo y red externa para nginx para hacer proxy a la pagina
 networks:
-  webapp:
-
+  app_network:
+    driver: bridge
+    internal: true
+  connection_network:
+    driver: bridge
 
 services:
-
-  nginx:
-    image: nginx:stable-alpine
-    container_name: sisviansa_nginx
-    ports:
-      - "8001:80"
-    links:
-      - php
-    volumes:
-      - ./data/:/var/www/html
-      - ./data/docker/nginx/site.conf:/etc/nginx/conf.d/default.conf:rw
-      - ./data/docker/logs/nginx:/var/logs/nginx:rw
-    depends_on:
-      - php
-      - mariadb
-      - vue
-    networks:
-      - webapp
-
-  php:
-    build:
-      context: ./data/BackEnd
-      dockerfile: Dockerfile
-    container_name: sisviansa_php
-    volumes:
-      - ./data/BackEnd/:/var/www/html/BackEnd/
-    ports:
-      - "9000:9000"
-    networks:
-      - webapp
-
-  mariadb:
+  #
+  #                                                                         MARIADB
+  #
+  sisviansa_mariadb:
     image: mariadb
     container_name: sisviansa_mariadb
     environment:
       MYSQL_ROOT_PASSWORD: "12345"
       MYSQL_DATABASE: "prueba"
-      MYSQL_USER: "root"
+      MYSQL_USER: "maxi"
       MYSQL_PASSWORD: "12345"
     volumes:
       - ./data/mariadb/:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
-      - webapp
-
-  vue:
+      - app_network
+  #
+  #                                                                         PHP
+  #
+  sisviansa_php:
+    build:
+      context: ./data/BackEnd
+      dockerfile: Dockerfile
+    container_name: sisviansa_php
+    volumes:
+      - ./data/BackEnd/:/var/www/html/
+    ports:
+      - "9000:9000"
+    depends_on:
+      - sisviansa_mariadb
+    networks:
+      - app_network
+      - connection_network
+  #
+  #                                                                         VUE.JS
+  #
+  sisviansa_vue:
     container_name: sisviansa_vue
     build:
       context: ./data/FrontEnd
       dockerfile: Dockerfile
     volumes:
       - './data/FrontEnd:/app'
-      - '/app/node_modules'
+      - '/app/node_modules' # Hotfix para que se detecte el vue-cli
     ports:
-      - '8081:8080'
+      - "8080:8080"
+    depends_on:
+      - sisviansa_php
+    networks:
+      - app_network
+  #
+  #                                                                         NGINX
+  #
+  sisviansa_nginx:
+    image: nginx:stable-alpine
+    container_name: sisviansa_nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ./data/:/var/www/html
+      - ./data/docker/nginx/site.conf:/etc/nginx/conf.d/default.conf:rw
+      - ./data/docker/logs/nginx:/var/logs/nginx:rw
+    depends_on:
+      - sisviansa_vue
+    networks:
+      - app_network
+      - connection_network
