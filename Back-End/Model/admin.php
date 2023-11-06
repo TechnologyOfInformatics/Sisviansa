@@ -98,3 +98,28 @@ function admin_toggle_food_diet($state, $food_id, $diet)
     global $tORM;
     return toggle_food_diet($tORM, $state, $food_id, $diet); //State es para determinar si se quiere agregar (true) o quitar (false)
 }
+
+function admin_create_menu($name,  $frequency,  $description,  $foods)
+{
+
+    global $tORM;
+    create_menu($tORM,  $name,  $frequency,  $description,  $foods);
+}
+function  admin_delete_menu($menu_id)
+{
+
+    global $tORM;
+    delete_menu($tORM,  $menu_id);
+}
+function  admin_modify_menu($menu_id,  $name,  $frequency,  $description)
+{
+
+    global $tORM;
+    modify_menu($tORM,  $menu_id,  $name,  $frequency,  $description);
+}
+function  admin_change_menu_stock($menu_id,  $change)
+{
+
+    global $tORM;
+    change_menu_stock($tORM,  $menu_id,  $change);
+}
