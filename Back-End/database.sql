@@ -71,7 +71,7 @@ CREATE TABLE Menu (
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre del menú que hace referencia a las viandas que lo contienen',
   Frecuencia INT(11) COMMENT 'Frecuencia con la que el menu se entregue el menú',
   Descripcion TEXT COMMENT 'La descripcion del menu',
-  Categoria ENUM('Estandar', 'Personalizado') NOT NULL COMMENT 'La categoria a la que pertenece el menu, donde puede ser creado por un cliente o por el sistema'
+  Categoria ENUM('Estandar', 'Personalizado', 'Descartado') NOT NULL COMMENT 'La categoria a la que pertenece el menu, donde puede ser creado por un cliente, el sistema o ser un menu descartado'
 );
 
 -- Creación de la tabla Vianda
@@ -113,7 +113,6 @@ CREATE TABLE Vianda_Dieta (
 
 -- Creación de la tabla Stock
 CREATE TABLE Stock (
-  Tipo VARCHAR(20) COMMENT 'ID del menu en stock',
   Menu_ID INT(11) COMMENT 'ID del menu en stock',
   Minimo INT(11) COMMENT 'Stock mínimo de cajas',
   Maximo INT(11) COMMENT 'Stock máximo de cajas',

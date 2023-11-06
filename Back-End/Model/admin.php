@@ -26,7 +26,7 @@ function admin_get_foods()
 }
 
 
-function get_orders($mail, $passwd)
+function admin_get_orders($mail, $passwd)
 {
 
     global $tORM;
@@ -44,17 +44,16 @@ function admin_change_order_state($order_id, $new_state)
 function admin_register_bussiness($rut, $name, $mail, $password)
 {
 
-    global $tORM;
     global $ctl;
     return register_bussiness($ctl, $rut, $name, $mail, $password);
 }
 
-function admin_modify_bussiness($rut, $name, $new_mail, $mail, $password)
+function admin_change_bussiness_mail($rut, $name, $new_mail, $mail, $password)
 {
 
     global $tORM;
     global $ctl;
-    return modify_bussiness($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
+    return change_bussiness_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
 }
 
 function admin_show_user_list($type, $id, $id_type)
