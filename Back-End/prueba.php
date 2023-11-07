@@ -35,10 +35,9 @@ echo "<pre>";
 //print_r(set_address($tORM, 'x2312x23d2d2', 'Chicago', '', 'Bella visasdasdasdta', '12345'));
 //print_r(modify_address($tORM, 'x2312x23d2d2', 2, 'asd', 'algass', '', ''));
 
-print_r(change_order_state(
+print_r(get_orders(
     $tORM,
-    4,
-    "Confirmado"
+    $ctl
 ));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 

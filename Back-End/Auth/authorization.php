@@ -1632,7 +1632,6 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
 
         $orders = $tORM
             ->from("pedido")
-            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
             ->do("select");
     } else {
 
