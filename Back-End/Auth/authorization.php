@@ -417,13 +417,13 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
         $web_values = $tORM
             ->from("web")
             ->columns("web.primer_nombre", "web.primer_apellido", "web.segundo_nombre", "web.segundo_apellido")
-            ->where("web.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->where("web.cliente_id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("select")[0];
 
         $client_values = $tORM
             ->from("cliente")
             ->columns("cliente.contrasenia",  "cliente.email")
-            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->where("cliente.id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("select")[0];
         $received_data = array_merge($web_values, $client_values);
 
@@ -438,7 +438,7 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
             ->from("cliente")
             ->columns('cliente.email')
             ->values('cliente', $mail ? $mail : $received_data["email"])
-            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->where("cliente.id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("update");
         //
         //
@@ -477,7 +477,7 @@ function get_address(TORM $tORM, string $token)
         $address_values = $tORM
             ->from("direccion")
             ->columns('direccion.id', 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad', 'direccion.predeterminado')
-            ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->where("direccion.cliente_id", "eq", intval($client_id[0]['cliente_id']))
             ->do('select');
         return $address_values;
     } else {
@@ -571,7 +571,7 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
             $response = $tORM
                 ->from("direccion")
                 ->columns("direccion.id", 'direccion.cliente_id', 'direccion.direccion', 'direccion.calle',  'direccion.ciudad')
-                ->values('direccion', $address_id, intval($client_id[0]['cliente_id']), $address, $street, $city)
+                ->values('direccion', intval($address_id), intval($client_id[0]['cliente_id']), $address, $street, $city)
                 ->do('insert');
 
             if ($neighborhood && $response == "OK, 200") {
@@ -579,7 +579,7 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
                     ->from("direccion")
                     ->columns('direccion.barrio')
                     ->values('direccion', $neighborhood)
-                    ->where("direccion.id", "eq",  $address_id)
+                    ->where("direccion.id", "eq",  intval($address_id))
                     ->do('update');
             }
             return $response;
@@ -2263,11 +2263,18 @@ function change_menu_stock(TORM $tORM, Int $menu_id, Int $change) //Funcion admi
     return $result;
 }
 
-function recover_password(TORM $tORM,)  //Funcion admin
-//a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
+function get_phone()
 {
 }
-
+function create_phone()
+{
+}
+function delete_phone()
+{
+}
+function toggle_client_state()
+{
+}
 function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora por si me es útil
 {
     $token = '12312334f234';
