@@ -83,11 +83,15 @@ export default {
 
   methods: {
     calcularPrecioTotal(menus) {
+      if (!menus) {
+        return 0;
+      }
+
       let totalPrecio = 0;
       const menuKeys = Object.keys(menus);
       for (const menuKey of menuKeys) {
         totalPrecio += menus[menuKey].precio * menus[menuKey].cantidad || 0;
-        console.log(totalPrecio)
+        console.log(totalPrecio);
       }
       return totalPrecio;
     },
@@ -100,9 +104,9 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data);
           if (Array.isArray(response.data)) {
             this.pedidos = response.data;
+            console.log(this.pedidos)
           }
         })
         .catch((error) => {
@@ -158,6 +162,7 @@ export default {
   overflow-y: auto;
   border: 1px solid white;
 }
+
 .order-menu {
   background-color: #ebeadf;
   padding: .8em;
@@ -193,8 +198,8 @@ export default {
   border-radius: 15px;
   margin-top: 19vh;
 }
-.container{
+
+.container {
   width: 60vw;
 }
-
 </style>

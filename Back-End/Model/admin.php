@@ -56,7 +56,7 @@ function admin_change_bussiness_mail($rut, $name, $new_mail, $mail, $password)
     return change_bussiness_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
 }
 
-function admin_show_user_list($type, $id, $id_type)
+function admin_show_user_list($type, $id = '', $id_type = '')
 {
 
     global $tORM;

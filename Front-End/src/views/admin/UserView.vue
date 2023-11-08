@@ -57,9 +57,11 @@
               <thead>
                 <tr>
                   <th>Cliente ID</th>
-                  <th>Teléfono</th>
+                  <th>Cliente tipo</th>
+                  <th>Documento</th>
                   <th>Documento Tipo</th>
-                  <th>Documento Número</th>
+                  <th>Teléfono</th>
+                  <th>Correo</th>
                   <th>Primer Nombre</th>
                   <th>Segundo Nombre</th>
                   <th>Primer Apellido</th>
@@ -71,9 +73,11 @@
               <tbody>
                 <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
                   <td>{{ user.Cliente_ID }}</td>
-                  <td>{{ user.Telefono }}</td>
+                  <td> {{ user.type }}</td>
                   <td>{{ user.Documento_tipo }}</td>
                   <td>{{ user.Documento_numero }}</td>
+                  <td>{{ user.Telefono }}</td>
+                  <td>{{ user.Correo }}</td>
                   <td>{{ user.Primer_nombre }}</td>
                   <td>{{ user.Segundo_nombre }}</td>
                   <td>{{ user.Primer_apellido }}</td>
@@ -105,36 +109,93 @@
               <thead>
                 <tr>
                   <th>Cliente ID</th>
-                  <th>Teléfono</th>
+                  <th>Documento</th>
                   <th>Documento Tipo</th>
-                  <th>Documento Número</th>
+                  <th>Teléfono</th>
+                  <th>Correo</th>
                   <th>Primer Nombre</th>
                   <th>Segundo Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
-                  <th>Autorización</th>
+                  <th>Autorizacion</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
                   <td>{{ user.Cliente_ID }}</td>
-                  <td>{{ user.Telefono }}</td>
-                  <td>{{ user.Documento_tipo }}</td>
                   <td>{{ user.Documento_numero }}</td>
+                  <td>{{ user.Documento_tipo }}</td>
+                  <td v-if="user.Telefono.length === 1">{{ user.Telefono }}</td>
+                  <td v-else> <button @click="toggleUserDetails(user)">
+                      {{ user.showDetails ? '-' : '+' }} </button></td>
+                  <td>{{ user.Correo }}</td>
                   <td>{{ user.Primer_nombre }}</td>
                   <td>{{ user.Segundo_nombre }}</td>
                   <td>{{ user.Primer_apellido }}</td>
                   <td>{{ user.Segundo_apellido }}</td>
-                  <td>{{ user.Autorizacion }}</td>
-
+                  <select v-model="user.Autorizacion">
+                    <option value="Si">Si</option>
+                    <option value="No">No</option>
+                    <option value="Denegado">Denegado</option>
+                  </select>
                 </tr>
               </tbody>
             </div>
           </table>
         </div>
         <div v-if="currentCategory === 'mod'" class="category-content">
+          <h1 class="category-content__title">User Information</h1>
+
+          <div class="search-bar">
+            <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
+            <button @click="searchUsers">Buscar</button>
+          </div>
+
+          <div v-if="filteredUsers.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
+
+              <thead>
+                <tr>
+                  <th>Cliente ID</th>
+                  <th>Cliente tipo</th>
+                  <th>Documento</th>
+                  <th>Documento Tipo</th>
+                  <th>Telefono</th>
+                  <th>Correo</th>
+                  <th>Primer Nombre</th>
+                  <th>Segundo Nombre</th>
+                  <th>Primer Apellido</th>
+                  <th>Segundo Apellido</th>
+                  <th>Dirección</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
+                  <td>{{ user.Cliente_ID }}</td>
+                  <td>{{ user.Cliente_tipo }}</td>
+                  <td>{{ user.Documento_numero }}</td>
+                  <td>{{ user.Telefono }}</td>
+                  <td>{{ user.Documento_tipo }}</td>
+                  <td @click="changeUserDetails(user, 'Correo')" class="modify">{{ user.Correo }}</td>
+
+                  <td @click="changeUserDetails(user, 'Primer_nombre')" class="modify">{{ user.Primer_nombre }}</td>
+                  <td @click="changeUserDetails(user, 'Segundo_nombre')" class="modify">{{ user.Segundo_nombre }}</td>
+                  <td @click="changeUserDetails(user, 'Primer_apellido')" class="modify">{{ user.Primer_apellido }}</td>
+                  <td @click="changeUserDetails(user, 'Segundo_apellido')" class="modify">{{ user.Segundo_apellido }}</td>
+                  <td> <button @click="toggleUserDetails(user)">
+                      {{ user.showDetails ? '-' : '+' }} </button>
+                  </td>
+                </tr>
+              </tbody>
+            </div>
+          </table>
         </div>
+
         <div v-if="currentCategory === 'orders'" class="category-content">
         </div>
       </section>
@@ -154,7 +215,7 @@
                 <td>Documento Número:</td>
                 <td>{{ selectedUser.Documento_numero }}</td>
               </tr>
-              <tr>
+              <tr @click="changeUserDetails(selectedUser, 'Direccion')">
                 <td>Dirección:</td>
                 <td>
                   {{ selectedUser.Direccion.Numero }},
@@ -165,8 +226,79 @@
               </tr>
             </tbody>
           </table>
+          <button @click="showModal = false; showModalUser = false">Cerrar</button>
+
         </div>
       </div>
+      <div v-if="showModalUser" class="modal">
+        <div class="modal-content">
+          <h2>Modificar {{ editingField }}</h2>
+          <form @submit.prevent="saveUserChanges">
+            <table class="user-details-table">
+              <tr v-if="editingField === 'Cedula'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Cedula" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Telefono'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Telefono" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Documento_tipo'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Documento_tipo" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Documento_numero'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Documento_numero" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Primer_nombre'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Primer_nombre" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Segundo_nombre'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Segundo_nombre" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Primer_apellido'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Primer_apellido" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Segundo_apellido'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Segundo_apellido" type="text">
+                </td>
+              </tr>
+              <tr v-if="editingField === 'Direccion'">
+                <td>{{ editingField }}:</td>
+                <td>
+                  <input v-model="modifyingUser.Direccion.Numero" type="text">
+                  <input v-model="modifyingUser.Direccion.Calle" type="text">
+                  <input v-model="modifyingUser.Direccion.Barrio" type="text">
+                  <input v-model="modifyingUser.Direccion.Ciudad" type="text">
+                </td>
+              </tr>
+            </table>
+            <button @click="this.showModalUser = false">Cerrar</button>
+            <button type="submit">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+
     </main>
   </div>
 </template>
@@ -366,16 +498,23 @@ export default {
       selectedUser: null, // Para almacenar el usuario seleccionado para mostrar en el modal
       showModal: false, // Para controlar la visibilidad del modal
       filteredUsers: [],
-      searchTerm: ""
+      searchTerm: "",
+      modifyingUser: null,
+      editingField: null,
+      showModalUser: false,
 
     };
   },
   mounted() {
-    // Llamar a searchUsers para mostrar todos los usuarios por defecto
     this.searchUsers();
   },
   methods: {
-
+    changeUserDetails(user, field) {
+      this.modifyingUser = user;
+      this.editingField = field;
+      this.showModalUser = true
+      console.log(this.showModalUser)
+    },
     showCategory(category) {
       this.currentCategory = category;
     },
@@ -383,7 +522,7 @@ export default {
       this.showModal = false;
 
     },
-    logout(){
+    logout() {
 
     },
     toggleUserDetails(user) {
@@ -396,19 +535,49 @@ export default {
         this.showModal = true;
       }
     },
+
+    saveUserChanges() {
+      // Aquí debes realizar la lógica para guardar los cambios en el usuario en tu base de datos (usando PHP y MariaDB).
+      // Puedes enviar una solicitud al servidor PHP para realizar la actualización de los datos.
+
+      // Una vez que los cambios se hayan guardado exitosamente, cierra el modal y actualiza la lista de usuarios si es necesario.
+      this.showModal = false;
+
+      // Llamar a una función para actualizar la lista de usuarios si es necesario.
+      this.updateUserList();
+    },
+    fetchUsers() {
+      const dataToSend = {
+        functionName: "admin_show_user_list",
+        a: "",
+        b: ''
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          if (Array.isArray(response.data)) {
+            this.users = response.data[0]
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     searchUsers() {
       this.closeModal();
+
+      this.fetchUsers();
 
       const query = this.searchQuery.toLowerCase().trim();
 
       if (query === "") {
-        // Si la consulta está vacía, mostrar todos los usuarios
         this.filteredUsers = this.users;
         this.filteredUsers = this.users.map((user) => {
           return { ...user, showDetails: false };
         })
       } else {
-        // Filtrar usuarios que coincidan con la consulta
         this.filteredUsers = this.users.filter((user) => {
           const idMatch = user.Cliente_ID.toString().includes(query);
           const telefonoMatch = user.Telefono.toString().includes(query);
@@ -419,7 +588,6 @@ export default {
           const primerApellidoMatch = user.Primer_apellido.toLowerCase().includes(query);
           const segundoApellidoMatch = user.Segundo_apellido.toLowerCase().includes(query);
 
-          // Verificar si hay alguna coincidencia en cualquiera de los campos
           return (
             idMatch ||
             telefonoMatch ||
@@ -431,9 +599,8 @@ export default {
             segundoApellidoMatch
           );
         });
-        // Verificar si no se encontraron resultados
         if (this.filteredUsers.length === 0) {
-          this.filteredUsers = []; // Vaciar la lista de resultados
+          this.filteredUsers = [];
         }
       }
     },
@@ -454,7 +621,23 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: 'Arial', sans-serif;
+}
 
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #999999;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #888888;
 }
 
 .nav {
@@ -476,7 +659,7 @@ body {
   text-decoration: none;
 }
 
-.aside-link{
+.aside-link {
   color: black;
 }
 
@@ -514,6 +697,7 @@ body {
 .header__user-info span {
   font-weight: bold;
 }
+
 .header__user-info {
   display: flex;
   flex-direction: row;
@@ -521,7 +705,8 @@ body {
   justify-content: space-between;
 
 }
-.header__user-info div i{
+
+.header__user-info div i {
   margin-left: 10px;
   padding: 10px;
   color: white;
@@ -529,6 +714,7 @@ body {
   border: 1px solid white;
   border-radius: 30px;
 }
+
 .modal {
   height: 60vh;
   background-color: #263f65;
@@ -656,6 +842,11 @@ body {
   border: 1px solid #ddd;
 }
 
+.user-table .modify:hover {
+  background-color: #999999;
+  cursor: pointer;
+}
+
 .user-table th {
   background-color: #333;
   color: #fff;
@@ -670,6 +861,17 @@ body {
   border-collapse: collapse;
   background-color: #fff;
 }
+
+.user-table tbody select {
+  width: 100%;
+  cursor: pointer;
+  height: 6vh;
+  background-color: transparent;
+  outline: none;
+  border: 1px solid #ddd;
+
+}
+
 
 .user-details-table td {
   padding: 10px;
