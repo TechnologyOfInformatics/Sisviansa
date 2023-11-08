@@ -1639,7 +1639,7 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
 
         $orders = $tORM
             ->from("pedido")
-            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->where("pedido.cliente_id", "eq", intval($client_id[0]['cliente_id']))
             ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
             ->do("select");
     }
@@ -1835,12 +1835,12 @@ function change_bussiness_mail(TORM $tORM, QueryCall $ctl,  String $new_mail,  S
     }
 }
 
-function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") //Funcion admin
+function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "", String $state = "") //Funcion admin
 {
 
     switch (strtolower($type)) {
         case "empresa":
-            if ($identificator) {
+            if ($identificator && !$id_type) {
                 $result = $tORM
                     ->do(query: "
                     SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
@@ -2263,16 +2263,92 @@ function change_menu_stock(TORM $tORM, Int $menu_id, Int $change) //Funcion admi
     return $result;
 }
 
-function get_phone()
+function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "")
 {
+    //Funcion para recibir TODOS los telefonos, es una funcion para admin
+
+
+    switch (strtolower($type)) {
+        case "empresa":
+            if ($identificator && !$id_type) {
+                $result = $tORM
+                    ->do(query: "
+                    SELECT cliente_telefono.telefono
+                    FROM empresa JOIN cliente_telefono ON cliente_telefono.cliente_id = empresa.cliente_id WHERE empresa.rut = '$identificator'");
+                $result = $result ? $result[0] : [];
+            } else {
+
+                $result = $tORM
+                    ->do(query: "
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id");
+                $result = $result ? $result[0] : [];
+            }
+            break;
+        case "web":
+            if ($id_type && $identificator) {
+                $result = $tORM
+                    ->do(query: "
+                    SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id WHERE documento_tipo='$id_type' AND documento_numero=$identificator");
+
+                $result = $result ? $result[0] : [];
+            } else {
+                $result = $tORM
+                    ->do(query: "SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id");
+                $result = $result ? $result[0] : [];
+            }
+            break;
+        default:
+            return "ERROR 400, bad request";
+            break;
+    }
+
+
+
+
+    return [$result];
 }
-function create_phone()
+function create_phone(TORM $tORM, Int $client_id, String $phone_number)
 {
+    $values = func_get_args();
+    unset($values[0]);
+    $values = array_values($values);
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+
+    $response = $tORM
+        ->from("cliente_telefono")
+        ->values("cliente_telefono",  intval($client_id),  $phone_number)
+        ->do("insert");
+
+    return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
 }
-function delete_phone()
+function delete_phone(TORM $tORM, String $doc_type,  String $doc_number, String $phone_number) // Funcion admin INCOMPLETA
 {
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $bussiness_p_existence = $tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("select");
+    if (!($tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("select"))) {
+        return "ERROR 404, NOT FOUND";
+    }
+    $response = $tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("delete");
+
+    return ($response = !($tORM->from("vianda")->where("vianda.id", "eq", $phone_number)->do("select")) ? $response : "ERROR 500, SERVER ERROR");
 }
-function toggle_client_state()
+function toggle_client_state(TORM $tORM) // Funcion admin INCOMPLETA
 {
 }
 function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora por si me es útil
