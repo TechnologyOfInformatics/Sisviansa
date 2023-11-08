@@ -1,8 +1,7 @@
 <template>
   <div class="sign-up" v-if="web">
     <div class="toggle-btn">
-      <label for="toggle">Eres una empresa?</label>
-      <input type="checkbox" @click="toggleOption" id="toggle">
+      <label for="toggle" @click="toggleOption">¿Eres una empresa?</label>
     </div>
     <form @submit.prevent="registerWeb">
 
