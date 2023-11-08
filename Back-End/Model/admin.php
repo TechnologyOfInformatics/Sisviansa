@@ -123,3 +123,19 @@ function  admin_change_menu_stock($menu_id,  $change)
     global $tORM;
     change_menu_stock($tORM,  $menu_id,  $change);
 }
+
+function admin_create_phone($client_id, $phone_number)
+{
+
+    global $tORM;
+    create_phone($tORM,  $client_id, $phone_number);
+
+}
+
+function admin_delete_phone($client_id, $phone_number)
+{
+
+    global $tORM;
+    delete_phone($tORM,  $client_id, $phone_number);
+
+}

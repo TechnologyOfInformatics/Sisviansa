@@ -2319,6 +2319,13 @@ function create_phone(TORM $tORM, Int $client_id, String $phone_number)
         return "ERROR 400, BAD REQUEST";
     }
 
+    $phone_counter = $tORM
+    ->do(query:"select count(telefono) from cliente_telefono where cliente_id = {$client_id}");
+
+    if(($phone_counter[0][0])>=3){
+    return "422, UNPROCESSABLE ENTITY";
+}
+
     $response = $tORM
         ->from("cliente_telefono")
         ->values("cliente_telefono",  intval($client_id),  $phone_number)
@@ -2326,27 +2333,42 @@ function create_phone(TORM $tORM, Int $client_id, String $phone_number)
 
     return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
 }
-function delete_phone(TORM $tORM, String $doc_type,  String $doc_number, String $phone_number) // Funcion admin INCOMPLETA
+function delete_phone(TORM $tORM, Int $client_id, String $phone_number) // Funcion admin
 {
     if (in_array('', func_get_args())) {
         return "ERROR 400, BAD REQUEST";
     }
     $bussiness_p_existence = $tORM
         ->from("cliente_telefono")
-        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->where("cliente_telefono.cliente_id", "eq", $client_id)
+        ->where("cliente_telefono.telefono", "eq", $phone_number)
         ->do("select");
-    if (!($tORM
-        ->from("cliente_telefono")
-        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
-        ->do("select"))) {
+$web_p_existence = $tORM
+->from("cliente_telefono")
+->where("cliente_telefono.cliente_id", "eq", $client_id)
+->where("cliente_telefono.telefono", "eq", $phone_number)
+->do("select");
+
+    if (!($web_p_existence&&$bussiness_p_existence)) {
         return "ERROR 404, NOT FOUND";
     }
     $response = $tORM
         ->from("cliente_telefono")
-        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->where("cliente_telefono.cliente_id", "eq", $client_id)
+        ->where("cliente_telefono.telefono", "eq", $phone_number)
         ->do("delete");
+        $bussiness_p_existence = $tORM
+            ->from("cliente_telefono")
+            ->where("cliente_telefono.cliente_id", "eq", $client_id)
+            ->where("cliente_telefono.telefono", "eq", $phone_number)
+            ->do("select");
+    $web_p_existence = $tORM
+    ->from("cliente_telefono")
+    ->where("cliente_telefono.cliente_id", "eq", $client_id)
+    ->where("cliente_telefono.telefono", "eq", $phone_number)
+    ->do("select");
 
-    return ($response = !($tORM->from("vianda")->where("vianda.id", "eq", $phone_number)->do("select")) ? $response : "ERROR 500, SERVER ERROR");
+    return ($response = !($web_p_existence&&$bussiness_p_existence) ? $response : "ERROR 500, SERVER ERROR");
 }
 function toggle_client_state(TORM $tORM) // Funcion admin INCOMPLETA
 {
