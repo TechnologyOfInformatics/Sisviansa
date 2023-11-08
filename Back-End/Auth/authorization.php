@@ -417,13 +417,13 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
         $web_values = $tORM
             ->from("web")
             ->columns("web.primer_nombre", "web.primer_apellido", "web.segundo_nombre", "web.segundo_apellido")
-            ->where("web.cliente_id", "eq", $client_id[0]["cliente_id"])
+            ->where("web.cliente_id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("select")[0];
 
         $client_values = $tORM
             ->from("cliente")
             ->columns("cliente.contrasenia",  "cliente.email")
-            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->where("cliente.id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("select")[0];
         $received_data = array_merge($web_values, $client_values);
 
@@ -438,7 +438,7 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
             ->from("cliente")
             ->columns('cliente.email')
             ->values('cliente', $mail ? $mail : $received_data["email"])
-            ->where("cliente.id", "eq", $client_id[0]["cliente_id"])
+            ->where("cliente.id", "eq", intval($client_id[0]["cliente_id"]))
             ->do("update");
         //
         //
@@ -477,7 +477,7 @@ function get_address(TORM $tORM, string $token)
         $address_values = $tORM
             ->from("direccion")
             ->columns('direccion.id', 'direccion.direccion', 'direccion.calle', 'direccion.barrio', 'direccion.ciudad', 'direccion.predeterminado')
-            ->where("direccion.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->where("direccion.cliente_id", "eq", intval($client_id[0]['cliente_id']))
             ->do('select');
         return $address_values;
     } else {
@@ -571,7 +571,7 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
             $response = $tORM
                 ->from("direccion")
                 ->columns("direccion.id", 'direccion.cliente_id', 'direccion.direccion', 'direccion.calle',  'direccion.ciudad')
-                ->values('direccion', $address_id, intval($client_id[0]['cliente_id']), $address, $street, $city)
+                ->values('direccion', intval($address_id), intval($client_id[0]['cliente_id']), $address, $street, $city)
                 ->do('insert');
 
             if ($neighborhood && $response == "OK, 200") {
@@ -579,7 +579,7 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
                     ->from("direccion")
                     ->columns('direccion.barrio')
                     ->values('direccion', $neighborhood)
-                    ->where("direccion.id", "eq",  $address_id)
+                    ->where("direccion.id", "eq",  intval($address_id))
                     ->do('update');
             }
             return $response;
@@ -1632,7 +1632,6 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
 
         $orders = $tORM
             ->from("pedido")
-            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
             ->do("select");
     } else {
 
@@ -1640,7 +1639,7 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
 
         $orders = $tORM
             ->from("pedido")
-            ->where("pedido.cliente_id", "eq", $client_id[0]['cliente_id'])
+            ->where("pedido.cliente_id", "eq", intval($client_id[0]['cliente_id']))
             ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
             ->do("select");
     }
@@ -1836,12 +1835,12 @@ function change_bussiness_mail(TORM $tORM, QueryCall $ctl,  String $new_mail,  S
     }
 }
 
-function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") //Funcion admin
+function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "", String $state = "") //Funcion admin
 {
 
     switch (strtolower($type)) {
         case "empresa":
-            if ($identificator) {
+            if ($identificator && !$id_type) {
                 $result = $tORM
                     ->do(query: "
                     SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
@@ -2264,11 +2263,94 @@ function change_menu_stock(TORM $tORM, Int $menu_id, Int $change) //Funcion admi
     return $result;
 }
 
-function recover_password(TORM $tORM,)  //Funcion admin
-//a travez de correo electronico se enviara un codigo que debe usar en vez de contrasenia
+function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "")
+{
+    //Funcion para recibir TODOS los telefonos, es una funcion para admin
+
+
+    switch (strtolower($type)) {
+        case "empresa":
+            if ($identificator && !$id_type) {
+                $result = $tORM
+                    ->do(query: "
+                    SELECT cliente_telefono.telefono
+                    FROM empresa JOIN cliente_telefono ON cliente_telefono.cliente_id = empresa.cliente_id WHERE empresa.rut = '$identificator'");
+                $result = $result ? $result[0] : [];
+            } else {
+
+                $result = $tORM
+                    ->do(query: "
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id");
+                $result = $result ? $result[0] : [];
+            }
+            break;
+        case "web":
+            if ($id_type && $identificator) {
+                $result = $tORM
+                    ->do(query: "
+                    SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id WHERE documento_tipo='$id_type' AND documento_numero=$identificator");
+
+                $result = $result ? $result[0] : [];
+            } else {
+                $result = $tORM
+                    ->do(query: "SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id");
+                $result = $result ? $result[0] : [];
+            }
+            break;
+        default:
+            return "ERROR 400, bad request";
+            break;
+    }
+
+
+
+
+    return [$result];
+}
+function create_phone(TORM $tORM, Int $client_id, String $phone_number)
+{
+    $values = func_get_args();
+    unset($values[0]);
+    $values = array_values($values);
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+
+    $response = $tORM
+        ->from("cliente_telefono")
+        ->values("cliente_telefono",  intval($client_id),  $phone_number)
+        ->do("insert");
+
+    return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
+}
+function delete_phone(TORM $tORM, String $doc_type,  String $doc_number, String $phone_number) // Funcion admin INCOMPLETA
+{
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+    $bussiness_p_existence = $tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("select");
+    if (!($tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("select"))) {
+        return "ERROR 404, NOT FOUND";
+    }
+    $response = $tORM
+        ->from("cliente_telefono")
+        ->where("cliente_telefono.cliente_id", "eq", $phone_number)
+        ->do("delete");
+
+    return ($response = !($tORM->from("vianda")->where("vianda.id", "eq", $phone_number)->do("select")) ? $response : "ERROR 500, SERVER ERROR");
+}
+function toggle_client_state(TORM $tORM) // Funcion admin INCOMPLETA
 {
 }
-
 function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora por si me es útil
 {
     $token = '12312334f234';

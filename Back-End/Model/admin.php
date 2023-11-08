@@ -56,11 +56,11 @@ function admin_change_bussiness_mail($rut, $name, $new_mail, $mail, $password)
     return change_bussiness_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
 }
 
-function admin_show_user_list($type, $id, $id_type)
+function admin_show_user_list($type = "", $id = "", $id_type = "", $state = "")
 {
 
     global $tORM;
-    return show_user_list($tORM, $type, $id, $id_type);
+    return show_user_list($tORM, $type, $id, $id_type, $state);
 }
 
 function admin_change_buss_passwd($mail, $actual_passwd, $passwd, $confirm_passwd)
@@ -85,7 +85,7 @@ function admin_delete_food($food_id)
     return delete_food($tORM, $food_id);
 }
 
-function admin_modify_food($food_id, $name, $time, $products, $calories, $price)
+function admin_modify_food($food_id, $name = "", $time = 0, $products = "", $calories = 0, $price = 0)
 {
 
     global $tORM;
@@ -111,7 +111,7 @@ function  admin_delete_menu($menu_id)
     global $tORM;
     delete_menu($tORM,  $menu_id);
 }
-function  admin_modify_menu($menu_id,  $name,  $frequency,  $description)
+function  admin_modify_menu($menu_id,  $name = "",  $frequency = 0,  $description = "")
 {
 
     global $tORM;
