@@ -3,20 +3,14 @@
         <form class="user-form" @submit.prevent="updateUserInfo">
             <h1>Cambia tu contraseña</h1>
             <div>
-                <label for="current_password">Contraseña Actual:</label>
-                <input type="password" id="current_password" v-model="current_password" />
+                <input type="password" id="current_password" v-model="current_password" placeholder="Contraseña Actual"/>
             </div>
-
             <div>
-                <label for="new_password">Nueva Contraseña:</label>
-                <input type="password" id="new_password" v-model="new_password" @input="validatePassword" />
+                <input type="password" id="new_password" v-model="new_password" @input="validatePassword" placeholder="Nueva Contraseña"/>
             </div>
-
             <div>
-                <label for="confirm_password">Confirmar Nueva Contraseña:</label>
-                <input type="password" id="confirm_password" v-model="confirm_password" @input="validatePassword" />
+                <input type="password" id="confirm_password" v-model="confirm_password" @input="validatePassword" placeholder="Confirmar Nueva Contraseña"/>
             </div>
-
             <div class="button-form">
                 <button type="submit">Guardar Cambios</button>
             </div>
@@ -154,7 +148,7 @@ export default {
 }
 
 .user-form div {
-    margin-bottom: 10px;
+    margin-top: 20px;
 
 }
 
@@ -175,7 +169,7 @@ export default {
 .user-form button {
     width: 27vw;
     padding: 10px;
-    margin-top: 15px;
+    margin-top: 45px;
     border: 1px solid #ccc;
     border-radius: 3px;
     margin: 0 auto;
