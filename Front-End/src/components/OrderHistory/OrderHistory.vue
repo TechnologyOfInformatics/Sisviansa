@@ -104,6 +104,7 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
+          console.log(response.data)
           if (Array.isArray(response.data)) {
             this.pedidos = response.data;
             console.log(this.pedidos)

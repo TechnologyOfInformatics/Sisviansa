@@ -156,7 +156,7 @@
     </div>
   </div>
   <div v-if="showCustomModal" class="modal" @click="closeCustomModal">
-    <div class="modal-content" @click.stop>
+    <div class="modal-content modal-custom" @click.stop>
       <div v-if="customMenus.length > 0">
         <ul>
           <li v-for="customMenu in customMenus" :key="customMenu.id">
@@ -172,8 +172,8 @@
                 </li>
               </ul>
             </div>
-            <button @click="addToCart(customMenu)">Añadir al carrito</button>
-            <button @click="removeCustomMenu(customMenu.id)">Eliminar de personalizado</button>
+            <button @click="addToCart(customMenu)" class="customButton">Añadir al carrito</button>
+            <button @click="removeCustomMenu(customMenu.id)" class="customButton">Eliminar de personalizado</button>
           </li>
         </ul>
       </div>

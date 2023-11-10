@@ -57,9 +57,7 @@
 
                 </div>
             </div>
-            <div class="button-form">
-                <button type="submit">Guardar Cambios</button>
-            </div>
+
         </form>
     </div>
 </template>
@@ -146,7 +144,7 @@ export default {
                         this.name = response.data.nombre;
                         this.rut = response.data.rut;
                         this.mailb = response.data.correo;
-
+                        
                     })
                     .catch((error) => {
                         console.error(error);
