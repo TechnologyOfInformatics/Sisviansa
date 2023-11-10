@@ -22,8 +22,8 @@ CREATE TABLE Tarjeta (
   PRIMARY KEY(Cliente_ID, Numero),
   FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
 );
--- Creación de la tabla Cliente_Telefono
-CREATE TABLE Cliente_Telefono (
+-- Creación de la tabla Cliente_telefono
+CREATE TABLE Cliente_telefono (
   Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente dueño poseedor de teléfono',
   Telefono VARCHAR(15) NOT NULL COMMENT 'Teléfono correspondiente al cliente',
   PRIMARY KEY(Cliente_ID, Telefono),
@@ -242,8 +242,8 @@ VALUES (
     'Carlos Rodríguez',
     3
   );
--- Inserciones para la tabla Cliente_Telefono
-INSERT INTO Cliente_Telefono (`Cliente_ID`, `Telefono`)
+-- Inserciones para la tabla Cliente_telefono
+INSERT INTO Cliente_telefono (`Cliente_ID`, `Telefono`)
 VALUES (1, '+54123456789'),
   (2, '+54987654321'),
   (3, '+55011223344');
@@ -545,8 +545,8 @@ VALUES ('pass123', 'Autorizado', 'cliente4@example.com'),
     'En espera',
     'cliente20@example.com'
   );
--- Inserciones adicionales para la tabla Cliente_Telefono
-INSERT INTO Cliente_Telefono (`Cliente_ID`, `Telefono`)
+-- Inserciones adicionales para la tabla Cliente_telefono
+INSERT INTO Cliente_telefono (`Cliente_ID`, `Telefono`)
 VALUES (4, '+554433221100'),
   (5, '+554433221122'),
   (6, '+554433221133'),
@@ -1405,8 +1405,8 @@ VALUES (1, 1, '2023-09-30'),
  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
  );
  
- -- Creación de la tabla Cliente_Telefono
- CREATE TABLE Cliente_Telefono (
+ -- Creación de la tabla Cliente_telefono
+ CREATE TABLE Cliente_telefono (
  Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente dueño poseedor de teléfono',
  Telefono VARCHAR(15) NOT NULL COMMENT 'Teléfono correspondiente al cliente',
  PRIMARY KEY(Cliente_ID, Telefono),
@@ -1682,7 +1682,7 @@ VALUES (1, 1, '2023-09-30'),
  );
  
  INSERT INTO
- Cliente_Telefono (`Cliente_ID`, `Telefono`)
+ Cliente_telefono (`Cliente_ID`, `Telefono`)
  VALUES
  (1, '09123456'),
  (2, '09123456'),

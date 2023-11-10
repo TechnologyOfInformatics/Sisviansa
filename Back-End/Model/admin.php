@@ -41,19 +41,19 @@ function admin_change_order_state($order_id, $new_state)
     return change_order_state($tORM, $order_id, $new_state);
 }
 
-function admin_register_bussiness($rut, $name, $mail, $password)
+function admin_register_business($rut, $name, $mail, $password)
 {
 
     global $ctl;
-    return register_bussiness($ctl, $rut, $name, $mail, $password);
+    return register_business($ctl, $rut, $name, $mail, $password);
 }
 
-function admin_change_bussiness_mail($rut, $name, $new_mail, $mail, $password)
+function admin_change_business_mail($rut, $name, $new_mail, $mail, $password)
 {
 
     global $tORM;
     global $ctl;
-    return change_bussiness_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
+    return change_business_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
 }
 
 function admin_show_user_list($type = "", $id = "", $id_type = "", $state = "")
@@ -68,7 +68,7 @@ function admin_change_buss_passwd($mail, $actual_passwd, $passwd, $confirm_passw
 
     global $tORM;
     global $ctl;
-    return change_bussiness_password($tORM, $ctl, $mail, $actual_passwd, $passwd, $confirm_passwd);
+    return change_business_password($tORM, $ctl, $mail, $actual_passwd, $passwd, $confirm_passwd);
 }
 
 function admin_create_food($name, $time, $products, $calories, $price)
@@ -129,7 +129,6 @@ function admin_create_phone($client_id, $phone_number)
 
     global $tORM;
     create_phone($tORM,  $client_id, $phone_number);
-
 }
 
 function admin_delete_phone($client_id, $phone_number)
@@ -137,5 +136,4 @@ function admin_delete_phone($client_id, $phone_number)
 
     global $tORM;
     delete_phone($tORM,  $client_id, $phone_number);
-
 }
