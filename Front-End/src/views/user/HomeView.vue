@@ -45,7 +45,7 @@
           </div>
         </div>
         <article class="home__card">
-          <img src="@/assets/imgs/business-banner.png" alt="Imagen ilustrativa para empresas" />
+          <img src="@/assets/imgs/bussiness-banner.png" alt="Imagen ilustrativa para empresas" />
           <div>
             <h2>Empresas</h2>
             <p>

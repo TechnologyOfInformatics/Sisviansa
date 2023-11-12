@@ -107,7 +107,6 @@ export default {
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
-          console.log(typeof (response.data))
           if (response.data == '403, FORBIDDEN: You are not allowed to enter the system') {
             this.succesMessage = 'Se ha registrado, aguarde a ser autorizado.'
           } else if (typeof (response.data) == 'string') {

@@ -180,8 +180,14 @@
       <div v-else class="empty-custom">
         <p>No tienes menues personalizados, puedes añadir uno con el botón.</p>
       </div>
-      <button> Crea un menú personalizado</button>
+      <button @click="modalCreateCustomMenu"> Crea un menú personalizado</button>
 
+    </div>
+  </div>
+  <div v-if="modalCreateCustom" class="modal" @click="modalCreateCustomMenu">
+    <div class="modal-content modal-custom" @click.stop>
+      
+  aaaw
     </div>
   </div>
 </template>
@@ -206,6 +212,7 @@ export default {
       showCustomModal: false,
       customMenus: [],
       web: false,
+      modalCreateCustom: false,
     };
   },
 
@@ -242,6 +249,11 @@ export default {
   },
 
   methods: {
+
+    modalCreateCustomMenu() {
+      this.modalCreateCustom = !this.modalCreateCustom
+    },
+
     openCustomModal() {
       this.showCustomModal = true;
     },
