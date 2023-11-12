@@ -2359,13 +2359,25 @@ GRANT SELECT,
   UPDATE ON SISVIANSA_TECHIN_V1.Pedido TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.Estado TO 'pagina' @'localhost';
+  UPDATE ON SISVIANSA_TECHIN_V1.Pedido_esta TO 'pagina' @'localhost';
+GRANT SELECT,
+  INSERT,
+  UPDATE,
+  DELETE ON SISVIANSA_TECHIN_V1.Cliente_telefono TO 'pagina' @'localhost';
+GRANT SELECT,
+  INSERT,
+  UPDATE,
+  DELETE ON SISVIANSA_TECHIN_V1.Inicia TO 'pagina' @'localhost';
+GRANT SELECT,
+  INSERT,
+  UPDATE ON SISVIANSA_TECHIN_V1.Tarjeta TO 'pagina' @'localhost';
+GRANT SELECT,
+  INSERT,
+  UPDATE ON SISVIANSA_TECHIN_V1.Pedido_esta TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Menu TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO 'pagina' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda_dieta TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Conforma TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Paquete TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Recibe TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Cliente_simplificado TO 'pagina' @'localhost';
 -- Creo usuarios de prueba
 CREATE USER 'gerente_1' @'localhost' IDENTIFIED BY '12345';
 GRANT Gerente TO 'gerente_1' @'localhost';
