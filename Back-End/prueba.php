@@ -66,7 +66,14 @@ $pedido = array(
         ),
     ),
 );*/
-print_r(administration_login());
+print_r(set_address(
+    $tORM,
+    'def456uvw789012',
+    'Montevideo',
+    'Carrasco',
+    'Ellauri',
+    123
+));
 
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 

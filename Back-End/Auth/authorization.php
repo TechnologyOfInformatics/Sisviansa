@@ -574,14 +574,16 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
                 ->values('direccion', intval($address_id), intval($client_id[0]['cliente_id']), $address, $street, $city)
                 ->do('insert');
 
-            if ($neighborhood && $response == "OK, 200") {
+            if ($neighborhood && ($response == "OK, 200")) {
                 $tORM
                     ->from("direccion")
                     ->columns('direccion.barrio')
                     ->values('direccion', $neighborhood)
                     ->where("direccion.id", "eq",  intval($address_id))
+                    ->where("direccion.cliente_id", "eq", intval($client_id[0]['cliente_id']))
                     ->do('update');
             }
+            toggle_default($tORM, $token, intval($address_id));
             return $response;
         } else {
             return "ERROR 429, TOO MANY REQUESTS";
@@ -929,6 +931,8 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
             for ($i = 0; $i < count($addresses); $i++) {
                 if ($addresses[$i]['predeterminado']) {
                     $address = $addresses[$i];
+                } else {
+                    return 'ERROR 400, BAD REQUEST';
                 }
             }
         } else {
@@ -1292,18 +1296,13 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         $response = ($response == $deletion_result_two ? $response : "ERROR 500, SERVER ERROR");
 
         $tORM
-            ->from("genera")
-            ->where("genera.menu_id", "eq", $menu_id)
-            ->where("genera.paquete_id", "eq", $menu_existence[0]['id'])
-            ->do("delete");
-        $tORM
             ->from("stock")
-            ->where("stock.menu_id", "eq", intval($menu_id),)
+            ->where("stock.menu_id", "eq", intval($menu_id))
             ->do("delete");
 
         $deletion_result_four = $tORM
             ->from("menu")
-            ->where("menu.id", "eq", $menu_id)
+            ->where("menu.id", "eq", intval($menu_id))
             ->do("delete");
         $response = ($response == $deletion_result_four ? $response : "ERROR 500, SERVER ERROR");
 
@@ -1311,6 +1310,11 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         $tORM
             ->from("asigna")
             ->where("asigna.pedido_id", "eq", $menu_existence[0]['id'])
+            ->do("delete");
+
+        $deletion_result_six = $tORM
+            ->from("pedido_esta")
+            ->where("pedido_esta.pedido_id", "eq", $menu_existence[0]['id'])
             ->do("delete");
 
         $deletion_result_six = $tORM
@@ -1345,7 +1349,7 @@ function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $freq
     $menu_existence = $tORM
         ->from("menu")
         ->columns("menu.nombre")
-        ->where("menu.id", "eq", $menu_id)
+        ->where("menu.id", "eq", intval($menu_id))
         ->join("compone", "compone.menu_id", "menu.id")
         ->joined_columns("None column")
         ->join("pedido", "compone.pedido_id", "pedido.id")
@@ -2157,7 +2161,6 @@ function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Func
                     ->values("vianda_dieta", intval($food_id), $diet)
                     ->do("insert");
                 return $result;
-                break;
             case false:
                 if (!($tORM
                     ->from("vianda_dieta")
@@ -2173,7 +2176,6 @@ function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Func
                     ->where("vianda_dieta.dieta", "eq", $diet)
                     ->do("delete");
                 return $result;
-                break;
         }
     } else {
         return "ERROR 400, BAD REQUEST";
@@ -2398,7 +2400,6 @@ function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, Strin
             break;
         default:
             return "ERROR 400, bad request";
-            break;
     }
 
 
