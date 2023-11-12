@@ -574,14 +574,16 @@ function set_address(TORM $tORM, String $token, String $city, String $neighborho
                 ->values('direccion', intval($address_id), intval($client_id[0]['cliente_id']), $address, $street, $city)
                 ->do('insert');
 
-            if ($neighborhood && $response == "OK, 200") {
+            if ($neighborhood && ($response == "OK, 200")) {
                 $tORM
                     ->from("direccion")
                     ->columns('direccion.barrio')
                     ->values('direccion', $neighborhood)
                     ->where("direccion.id", "eq",  intval($address_id))
+                    ->where("direccion.cliente_id", "eq", intval($client_id[0]['cliente_id']))
                     ->do('update');
             }
+            toggle_default($tORM, $token, intval($address_id));
             return $response;
         } else {
             return "ERROR 429, TOO MANY REQUESTS";
@@ -925,10 +927,16 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
         $addresses = get_address($tORM, $token);
         $actual_date = date('Y-m-d H:i:s');
         $address = [];
-        for ($i = 0; $i < count($addresses); $i++) {
-            if ($addresses[$i]['predeterminado']) {
-                $address = $addresses[$i];
+        if ($addresses) {
+            for ($i = 0; $i < count($addresses); $i++) {
+                if ($addresses[$i]['predeterminado']) {
+                    $address = $addresses[$i];
+                } else {
+                    return 'ERROR 400, BAD REQUEST';
+                }
             }
+        } else {
+            return 'ERROR 404, NOT FOUND';
         }
 
         if (strtolower($order_id) == "start") {
@@ -944,7 +952,7 @@ function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_i
         $is_state = $tORM
             ->from("pedido_esta")
             ->where("pedido_esta.pedido_id", "eq", intval($order_id))
-            ->where("pedido_esta.estado_id", "eq", 1) // estado_id = 1 == "Solicitado"
+            ->where("pedido_esta.estado_id", "eq", 1) // estado_id = 1 => "Solicitado"
             ->do("select");
         if (empty($is_state) || !($is_state)) {
             $tORM
@@ -1288,18 +1296,13 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         $response = ($response == $deletion_result_two ? $response : "ERROR 500, SERVER ERROR");
 
         $tORM
-            ->from("genera")
-            ->where("genera.menu_id", "eq", $menu_id)
-            ->where("genera.paquete_id", "eq", $menu_existence[0]['id'])
-            ->do("delete");
-        $tORM
             ->from("stock")
-            ->where("stock.menu_id", "eq", intval($menu_id),)
+            ->where("stock.menu_id", "eq", intval($menu_id))
             ->do("delete");
 
         $deletion_result_four = $tORM
             ->from("menu")
-            ->where("menu.id", "eq", $menu_id)
+            ->where("menu.id", "eq", intval($menu_id))
             ->do("delete");
         $response = ($response == $deletion_result_four ? $response : "ERROR 500, SERVER ERROR");
 
@@ -1307,6 +1310,11 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
         $tORM
             ->from("asigna")
             ->where("asigna.pedido_id", "eq", $menu_existence[0]['id'])
+            ->do("delete");
+
+        $deletion_result_six = $tORM
+            ->from("pedido_esta")
+            ->where("pedido_esta.pedido_id", "eq", $menu_existence[0]['id'])
             ->do("delete");
 
         $deletion_result_six = $tORM
@@ -1341,7 +1349,7 @@ function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $freq
     $menu_existence = $tORM
         ->from("menu")
         ->columns("menu.nombre")
-        ->where("menu.id", "eq", $menu_id)
+        ->where("menu.id", "eq", intval($menu_id))
         ->join("compone", "compone.menu_id", "menu.id")
         ->joined_columns("None column")
         ->join("pedido", "compone.pedido_id", "pedido.id")
@@ -1550,6 +1558,8 @@ function delete_credit_card(TORM $tORM, String $token, String $verification_code
 
 function administration_login() //Funcion admin INCOMPLETA
 {
+    $tORM = new TORM("localhost", "pagina", "12345", "sisviansa_techin_v1", 3306);
+    return $tORM->from('cliente')->do('select');
 }
 function get_menus(TORM $tORM) //Funcion admin 1
 {
@@ -1571,6 +1581,7 @@ function get_menus(TORM $tORM) //Funcion admin 1
     $diets = $tORM
         ->from("vianda_dieta")
         ->do("select");
+    print_r($diets);
 
     foreach ($diets as $diet) {
         foreach ($foods as $key => $food) {
@@ -1588,7 +1599,7 @@ function get_menus(TORM $tORM) //Funcion admin 1
                 if (!isset($menus[$key]['viandas'])) {
                     $menus[$key]['viandas'] = [];
                 }
-                $menus[$key]['viandas'][$food['nombre']] = $food;
+                $menus[$key]['viandas'][$food['id']] = $food;
             }
         }
     }
@@ -1597,7 +1608,7 @@ function get_menus(TORM $tORM) //Funcion admin 1
     $filtered_menus = array_values($menus);
 
 
-    return [$filtered_menus];
+    return $filtered_menus;
 }
 
 function get_foods(TORM $tORM) //Funcion admin 1
@@ -2150,7 +2161,6 @@ function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Func
                     ->values("vianda_dieta", intval($food_id), $diet)
                     ->do("insert");
                 return $result;
-                break;
             case false:
                 if (!($tORM
                     ->from("vianda_dieta")
@@ -2166,7 +2176,6 @@ function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Func
                     ->where("vianda_dieta.dieta", "eq", $diet)
                     ->do("delete");
                 return $result;
-                break;
         }
     } else {
         return "ERROR 400, BAD REQUEST";
@@ -2352,7 +2361,7 @@ function change_menu_stock(TORM $tORM, Int $menu_id, Int $change) //Funcion admi
     return $result;
 }
 
-function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "")
+function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") // Funcion admin
 {
     //Funcion para recibir TODOS los telefonos, es una funcion para admin
 
@@ -2391,7 +2400,6 @@ function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, Strin
             break;
         default:
             return "ERROR 400, bad request";
-            break;
     }
 
 
@@ -2399,7 +2407,7 @@ function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, Strin
 
     return [$result];
 }
-function create_phone(TORM $tORM, Int $client_id, String $phone_number)
+function create_phone(TORM $tORM, Int $client_id, String $phone_number) // Funcion admin
 {
     $values = func_get_args();
     unset($values[0]);
@@ -2459,9 +2467,83 @@ function delete_phone(TORM $tORM, Int $client_id, String $phone_number) // Funci
 
     return ($response = !($web_p_existence && $business_p_existence) ? $response : "ERROR 500, SERVER ERROR");
 }
-function toggle_client_state(TORM $tORM) // Funcion admin INCOMPLETA
+function toggle_client_state(TORM $tORM,  Int $client_id, String $state) // Funcion admin
 {
+
+    $values = func_get_args();
+    unset($values[0]);
+    $state = ucfirst($state);
+    if (!in_array($state, ['En espera', 'Autorizado', 'No autorizado'])) {
+        return 'ERROR 422, UNPROCESSABLE ENTITY';
+    }
+
+
+    if (!(strlen(strval($client_id)) <= 11)) {
+        return "ERROR 413, REQUEST ENTITY TOO LARGE";
+    }
+    $client_existence = $tORM
+        ->from("cliente")
+        ->columns("cliente.autorizacion")
+        ->where("cliente.id", "eq", intval($client_id))
+        ->where("cliente.autorizacion", "neq", $state)
+        ->do("select");
+    if ($client_existence) {
+        if ($client_existence[0]['autorizacion'] == $state) {
+            return 'OK, 200';
+        }
+        $client_response = $tORM
+            ->from("cliente")
+            ->columns("cliente.autorizacion")
+            ->values("cliente", $state)
+            ->where("cliente.id", "eq", intval($client_id))
+            ->do("update");
+
+        return $client_response;
+    } else {
+        return "ERROR 403, FORBIDDEN";
+    }
 }
+
+function proto_set_package($tORM) // El seeder que uso para generar entradas para paquetes, podria modificarlo para hacerlo del sistema, no se
+{
+
+    $pedidos = $tORM->from('pedido')->do('select');
+    $correspondencias = $tORM->from('compone')->do('select');
+    $ids = 1;
+    foreach ($correspondencias as $correspondencia) {
+        // Genero entradas en paquete, genera y asigna
+        for ($i = 1; $i <= intval($correspondencia['cantidad']); $i++, $ids++) {
+            $result = $tORM->from('paquete')
+                ->values('paquete', $ids, date('Y-m-d'))
+                ->do('insert');
+
+
+            $result = $tORM->from('genera')
+                ->values('genera', intval($correspondencia['menu_id']), $ids, Date('y:m:d', strtotime('+40 days')))
+                ->do('insert');
+
+
+            $result = $tORM->from('asigna')
+                ->values('asigna', $ids, intval($correspondencia['pedido_id']))
+                ->do('insert');
+
+
+            $result = $tORM->from('paquete_esta')
+                ->columns('paquete_esta.estado_id', 'paquete_esta.paquete_id', 'paquete_esta.inicio_del_estado')
+                ->values('paquete_esta', 1, $ids, date('Y-m-d'))
+                ->do('insert');
+            print_r($result);
+
+            foreach ($pedidos as $pedido) {
+                if ($correspondencia['pedido_id'] == $pedido['id'])
+                    $result = $tORM->from('recibe')
+                        ->values('recibe', $ids, intval($pedido['cliente_id']))
+                        ->do('insert');
+            }
+        }
+    }
+}
+
 function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora por si me es útil
 {
     $token = '12312334f234';
@@ -2492,7 +2574,6 @@ function proto_session(TORM $tORM) //Funcion descartada, pero la dejo por ahora 
     }
     return False;
 }
-
 
 /*
 Metodo que forme para encontrar entre 2 valores de forma facil:

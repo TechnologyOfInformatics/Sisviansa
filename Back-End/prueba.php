@@ -66,9 +66,15 @@ $pedido = array(
         ),
     ),
 );*/
+print_r(set_address(
+    $tORM,
+    'def456uvw789012',
+    'Montevideo',
+    'Carrasco',
+    'Ellauri',
+    123
+));
 
-
-print_r(get_address($tORM, 'ghi789rst012345'));
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
 # redireccionará a la data, creando las llamadas o enviará un error si la autenticacion no fue correcta, entonces tendrémos 3 tipos de errores: error de escritura, error de contingencia y error de no encontrado

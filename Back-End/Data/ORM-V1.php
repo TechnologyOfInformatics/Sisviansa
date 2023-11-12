@@ -97,7 +97,7 @@ class TORM //Techin Object-Relation Model (Basic)
         //Funcion encargada de verificar que una tabla dada exista
         //
         //
-        $connect = new mysqli($this->host, $this->user, $this->passwd, 'information_schema', $this->port);
+        $connect = new mysqli($this->host, 'root', '', 'information_schema', $this->port);
         if ($connect->connect_error) {
             die("Connection failed: " . $connect->connect_error);
         }
