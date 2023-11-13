@@ -56,11 +56,11 @@ function admin_change_business_mail($rut, $name, $new_mail, $mail, $password)
     return change_business_mail($tORM, $ctl, $rut, $name, $new_mail, $mail, $password);
 }
 
-function admin_show_user_list($type = "", $id = "", $id_type = "", $state = "")
+function admin_show_user_list($type = "", $id = "", $id_type = "")
 {
 
     global $tORM;
-    return show_user_list($tORM, $type, $id, $id_type, $state);
+    return show_user_list($tORM, $type, $id, $id_type);
 }
 
 function admin_change_buss_passwd($mail, $actual_passwd, $passwd, $confirm_passwd)
@@ -136,4 +136,9 @@ function admin_delete_phone($client_id, $phone_number)
 
     global $tORM;
     delete_phone($tORM,  $client_id, $phone_number);
+}
+
+function admin_administration_login($name, $passwd)
+{
+    return administration_login($name, $passwd);
 }

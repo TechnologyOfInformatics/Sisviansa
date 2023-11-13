@@ -200,6 +200,11 @@ CREATE TABLE Genera(
   FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
   FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID)
 );
+CREATE TABLE SISVIANSA_USER(
+  ID INT(11) PRIMARY KEY AUTO_INCREMENT COMMENT "ID del usuario del sistema",
+  NOMBRE VARCHAR(30) NOT NULL COMMENT 'Nombre del usuario del sistema',
+  ROL ENUM('Atencion', 'Jefe_de_cocina', 'Gerente') NOT NULL COMMENT 'Rol del usuario correspondiente'
+);
 -- Insersiones
 INSERT INTO `cliente` (`ID`, `Contrasenia`, `Autorizacion`, `Email`)
 VALUES (
@@ -1553,92 +1558,94 @@ DROP ROLE IF EXISTS Jefe_de_cocina;
 -- Creo el usuario único para la página web
 CREATE USER 'pagina' @'localhost' IDENTIFIED BY '12345';
 -- Creo los roles
-CREATE ROLE Gerente;
-CREATE ROLE Administracion;
-CREATE ROLE Atencion;
-CREATE ROLE Jefe_de_cocina;
+CREATE USER 'gerente_1' @'localhost' IDENTIFIED BY '12345';
+CREATE USER 'atencion_1' @'localhost' IDENTIFIED BY '12345';
+CREATE USER 'admin_1' @'localhost' IDENTIFIED BY '12345';
+CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 -- Asignación de permisos a los roles (grupos)
 -- Gerente
-GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.* TO Gerente;
+GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.* TO 'gerente_1';
 -- Administración
-GRANT ALL PRIVILEGES ON *.* TO Administracion;
+GRANT ALL PRIVILEGES ON *.* TO 'admin_1' @'localhost';
 -- Cocina (Jefe de cocina, ya que es el que 'Orquesta' el mambo)
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.vianda TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.vianda TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.conforma TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.conforma TO 'jefe_de_cocina_1''jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.vianda_dieta TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.vianda_dieta TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.menu TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.menu TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.compone TO Jefe_de_cocina;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.pedido TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.compone TO 'jefe_de_cocina_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.pedido TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.stock TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.stock TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.genera TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.genera TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.asigna TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.asigna TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.paquete TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete_esta TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.paquete_esta TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.recibe TO Jefe_de_cocina;
+  DELETE ON SISVIANSA_TECHIN_V1.recibe TO 'jefe_de_cocina_1' @'localhost';
+GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'jefe_de_cocina_1' @'localhost';
 -- Atención al publico
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Paquete TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Paquete TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Pedido TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Pedido TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Recibe TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Recibe TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Cliente TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Cliente TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Empresa TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Empresa TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Web TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Stock TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Menu TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Conforma TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Cliente_simplificado TO Atencion;
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Estado TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.Web TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Stock TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Menu TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Conforma TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Cliente_simplificado TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.Estado TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'atencion_1' @'localhost';
 -- Página 
 GRANT SELECT,
   INSERT,
@@ -1704,12 +1711,9 @@ GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda_dieta TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Estado TO 'pagina' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.Paquete TO 'pagina' @'localhost';
--- Creo usuarios de prueba
-CREATE USER 'gerente_1' @'localhost' IDENTIFIED BY '12345';
-GRANT Gerente TO 'gerente_1' @'localhost';
-CREATE USER 'atencion_1' @'localhost' IDENTIFIED BY '12345';
-GRANT Atencion TO 'atencion_1' @'localhost';
-CREATE USER 'admin_1' @'localhost' IDENTIFIED BY '12345';
-GRANT Administracion TO 'admin_1' @'localhost';
-CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
-GRANT Jefe_de_cocina TO 'jefe_de_cocina_1' @'localhost';
+FLUSH PRIVILEGES;
+-- Ingreso los usuarios a la tabla para hacerles seguimiento
+INSERT INTO `SISVIANSA_USER` (`NOMBRE`, `ROL`)
+VALUES ('gerente_1', 'Gerente'),
+  ('atencion_1', 'Atencion'),
+  ('jefe_de_cocina_1', 'Jefe_de_cocina');

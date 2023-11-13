@@ -1329,7 +1329,7 @@ function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
     }
 }
 
-function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description) //
+function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description)
 {
     $client_id = get_client_id($tORM, $token);
     $maximum = [15, 11, 11, 120];
@@ -1485,7 +1485,7 @@ function get_client_orders(TORM $tORM, $token)
     }
 }
 
-function create_credit_card(TORM $tORM, String $token, String $card_code, String $expire_date, String $name) //
+function create_credit_card(TORM $tORM, String $token, String $card_code, String $expire_date, String $name)
 {
 
     if (in_array('', func_get_args()) || !in_array(strlen(strval($card_code)), range(5, 30)) || count(explode(" ", $name)) < 2) {
@@ -1529,7 +1529,7 @@ function get_credit_card(TORM $tORM, String $token)
     }
 }
 
-function delete_credit_card(TORM $tORM, String $token, String $verification_code, String $expire_date, String $name) //
+function delete_credit_card(TORM $tORM, String $token, String $verification_code, String $expire_date, String $name)
 {
 
     if (in_array('', func_get_args())) {
@@ -1556,10 +1556,11 @@ function delete_credit_card(TORM $tORM, String $token, String $verification_code
 //
 //
 
-function administration_login() //Funcion admin INCOMPLETA
+function administration_login(String $name, String $passwd) //Funcion admin INCOMPLETA
 {
-    $tORM = new TORM("localhost", "pagina", "12345", "sisviansa_techin_v1", 3306);
-    return $tORM->from('cliente')->do('select');
+    $tORM = new TORM("localhost", $name, $passwd, "sisviansa_techin_v1", 3306);
+    $result = $tORM->from('SISVIANSA_USER')->columns('SISVIANSA_USER.rol')->where('SISVIANSA_USER.nombre', 'eq', $name)->do('select');
+    return (isset($result->error) ? $result->error : $tORM);
 }
 function get_menus(TORM $tORM) //Funcion admin 1
 {
@@ -1581,7 +1582,6 @@ function get_menus(TORM $tORM) //Funcion admin 1
     $diets = $tORM
         ->from("vianda_dieta")
         ->do("select");
-    print_r($diets);
 
     foreach ($diets as $diet) {
         foreach ($foods as $key => $food) {
@@ -1762,6 +1762,7 @@ function get_orders_old(TORM $tORM, $token)
         return "ERROR 403, FORBIDDEN";
     }
 }
+*/
 function change_order_state(TORM $tORM, $order_id, $new_state) //Funcion admin
 {
     $new_state = strval(ucfirst($new_state));
@@ -1809,7 +1810,6 @@ function change_order_state(TORM $tORM, $order_id, $new_state) //Funcion admin
         ->do("insert");
     return ($change_prev == $set_actual ? "OK, 200" : "ERROR 500, SERVER ERROR");
 }
-*/
 
 function register_business(QueryCall $ctl, String $rut, String $name, String $mail, String $password) //Funcion admin
 {
@@ -1925,7 +1925,6 @@ function get_business(TORM $tORM, Int $client_id) //Funcion admin
 
     //Devuelve un array 
     $result = $tORM->from("empresa")->where("empresa.cliente_id", "eq", intval($client_id))->join('cliente', 'cliente.id', 'empresa.cliente_id')->do('select');
-    print_r($result);
     if ($result) {
         $response = [$result[0]['id'], 'Empresa', $result[0]['nombre'], 'RUT', $result[0]['rut'], $result[0]['cliente_id']];
         return [[$response]];
@@ -1934,7 +1933,7 @@ function get_business(TORM $tORM, Int $client_id) //Funcion admin
     }
 }
 
-function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "", String $state = "") //Funcion admin
+function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") //Funcion admin
 {
 
     switch (strtolower($type)) {
@@ -1942,13 +1941,19 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
             if ($identificator && !$id_type) {
                 $result = $tORM
                     ->do(query: "
-                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id WHERE empresa.rut = '$identificator'");
             } else {
 
                 $result = $tORM
                     ->do(query: "
-                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id");
             }
             break;
@@ -1956,11 +1961,31 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
             if ($id_type && $identificator) {
                 $result = $tORM
                     ->do(query: "
-                    SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
-                    FROM web JOIN cliente ON cliente.id = web.cliente_id WHERE documento_tipo='$id_type' AND documento_numero=$identificator");
+                    SELECT 
+                    cliente_ID,
+                    'Web' AS Tipo,
+                     CONCAT(primer_nombre, ' ', primer_apellido),
+                     documento_tipo,
+                     documento_numero,
+                     (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                     FROM cliente_telefono
+                     WHERE cliente_telefono.cliente_id = cliente.id),
+                     cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id 
+                    WHERE documento_tipo='$id_type' 
+                    AND documento_numero=$identificator");
             } else {
                 $result = $tORM
-                    ->do(query: "SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    ->do(query: "SELECT 
+                    cliente_ID, 
+                    'Web' AS Tipo, 
+                    CONCAT(primer_nombre, ' ', primer_apellido), 
+                    documento_tipo,  
+                    documento_numero,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id),
+                    cliente.email
                     FROM web JOIN cliente ON cliente.id = web.cliente_id");
             }
             break;
@@ -1973,17 +1998,23 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                             SELECT 
                             cliente.id,
                             personas.Tipo,
-                            personas.Primer_nombre AS Nombre,
-                            personas.Identificador,
+                            personas.Nombre,
+                            personas.Numero_tipo,
+                            personas.Numero,
+                            (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                                FROM cliente_telefono
+                                WHERE cliente_telefono.cliente_id = cliente.id),
                             cliente.Email
                             FROM cliente
                             INNER JOIN (
-                            SELECT 'Web' AS Tipo, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero) as Identificador, cliente_ID
+                            SELECT 'Web' AS Tipo, CONCAT(primer_nombre, ' ', primer_apellido) as Nombre, documento_tipo as Numero_tipo,  documento_numero as Numero, cliente_ID
                             FROM web
                             UNION ALL
-                            SELECT 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente_ID
+                            SELECT 'Empresa' AS Tipo, nombre, 'RUT' as Numero_tipo, rut as Numero, cliente_ID
                             FROM empresa
-                            ) personas ON personas.cliente_id = cliente.id;
+                            ) personas ON personas.cliente_id = cliente.id
+                            JOIN cliente_telefono on cliente_telefono.cliente_id = cliente.id
+                            GROUP BY cliente.id;
                             ");
             break;
     }
@@ -1991,7 +2022,7 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
 
 
 
-    return [$result];
+    return $result;
 }
 
 function change_business_password(TORM $tORM, QueryCall $ctl, String $mail, String $actual_passwd, String $passwd, String $confirm_passwd) //Funcion admin
@@ -2532,7 +2563,6 @@ function proto_set_package($tORM) // El seeder que uso para generar entradas par
                 ->columns('paquete_esta.estado_id', 'paquete_esta.paquete_id', 'paquete_esta.inicio_del_estado')
                 ->values('paquete_esta', 1, $ids, date('Y-m-d'))
                 ->do('insert');
-            print_r($result);
 
             foreach ($pedidos as $pedido) {
                 if ($correspondencia['pedido_id'] == $pedido['id'])

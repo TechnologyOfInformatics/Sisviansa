@@ -113,7 +113,12 @@ class TORM //Techin Object-Relation Model (Basic)
         //
         //
         $column_info = array();
-        $result = mysqli_query(new mysqli($this->host, $this->user, $this->passwd, $this->database, $this->port), "DESCRIBE {$table}");
+        $result = array();
+        try {
+            $result = mysqli_query(new mysqli($this->host, $this->user, $this->passwd, $this->database, $this->port), "DESCRIBE {$table}");
+        } catch (Exception $e) {
+            $this->error = $e->getMessage();
+        }
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $column_name = $row['Field'];
