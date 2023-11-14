@@ -26,7 +26,7 @@ function admin_get_foods()
 }
 
 
-function admin_get_orders($mail, $passwd)
+function admin_get_orders($mail = '', $passwd = '')
 {
 
     global $tORM;
