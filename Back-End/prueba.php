@@ -66,7 +66,7 @@ $pedido = array(
         ),
     ),
 );*/
-print_r(get_orders($tORM, $ctl));
+print_r(proto_set_package($tORM));
 
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 
