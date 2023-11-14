@@ -32,16 +32,15 @@
           <ul class="sidebar__list">
             <li><a @click="showCategory('users')" class="aside-link">Lista de Usuarios</a></li>
             <li><a @click="showCategory('auth')" class="aside-link">Autorizar Usuarios</a></li>
-            <li><a @click="showCategory('mod')" class="aside-link">Modificar Usuarios</a></li>
+            <li><a @click="showCategory('createB')" class="aside-link">Crear empresa</a></li>
             <li><a @click="showCategory('orders')" class="aside-link">Pedidos</a></li>
-
           </ul>
         </nav>
         <footer class="sidebar__footer">Sisviansa</footer>
       </aside>
       <section class="main__section">
         <div v-if="currentCategory === 'users'" class="category-content">
-          <h1 class="category-content__title">User Information</h1>
+          <h1 class="category-content__title">Información de Usuarios</h1>
 
           <div class="search-bar">
             <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
@@ -58,94 +57,34 @@
                 <tr>
                   <th>Cliente ID</th>
                   <th>Cliente tipo</th>
-                  <th>Documento</th>
+                  <th>Nombre</th>
                   <th>Documento Tipo</th>
+                  <th>Documento</th>
                   <th>Teléfono</th>
                   <th>Correo</th>
-                  <th>Primer Nombre</th>
-                  <th>Segundo Nombre</th>
-                  <th>Primer Apellido</th>
-                  <th>Segundo Apellido</th>
-                  <th>Dirección</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
-                  <td>{{ user.Cliente_ID }}</td>
-                  <td> {{ user.type }}</td>
-                  <td>{{ user.Documento_tipo }}</td>
-                  <td>{{ user.Documento_numero }}</td>
-                  <td>{{ user.Telefono }}</td>
-                  <td>{{ user.Correo }}</td>
-                  <td>{{ user.Primer_nombre }}</td>
-                  <td>{{ user.Segundo_nombre }}</td>
-                  <td>{{ user.Primer_apellido }}</td>
-                  <td>{{ user.Segundo_apellido }}</td>
-                  <td>
-                    <button @click="toggleUserDetails(user)">
-                      {{ user.showDetails ? '-' : '+' }}
-                    </button>
-                  </td>
+                  <td>{{ user[0] }}</td>
+                  <td>{{ user[1] }}</td>
+                  <td>{{ user[2] }}</td>
+                  <td>{{ user[3] }}</td>
+                  <td>{{ user[4] }}</td>
+                  <td v-if="user[5].length === 1">{{ user[5] }}</td>
+                  <td v-else> <button @click="toggleUserDetails(user)">
+                      {{ user.showDetails ? '-' : '+' }} </button></td>
+                  <td>{{ user[6] }}</td>
+
+
                 </tr>
               </tbody>
             </div>
           </table>
         </div>
         <div v-if="currentCategory === 'auth'" class="category-content">
-          <h1 class="category-content__title">User Information</h1>
-
-          <div class="search-bar">
-            <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
-            <button @click="searchUsers">Buscar</button>
-          </div>
-
-          <div v-if="filteredUsers.length === 0" class="no-results">
-            <p>No se encontraron resultados.</p>
-          </div>
-          <table class="user-table" v-else>
-            <div class="table-container">
-
-              <thead>
-                <tr>
-                  <th>Cliente ID</th>
-                  <th>Documento</th>
-                  <th>Documento Tipo</th>
-                  <th>Teléfono</th>
-                  <th>Correo</th>
-                  <th>Primer Nombre</th>
-                  <th>Segundo Nombre</th>
-                  <th>Primer Apellido</th>
-                  <th>Segundo Apellido</th>
-                  <th>Autorizacion</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
-                  <td>{{ user.Cliente_ID }}</td>
-                  <td>{{ user.Documento_numero }}</td>
-                  <td>{{ user.Documento_tipo }}</td>
-                  <td v-if="user.Telefono.length === 1">{{ user.Telefono }}</td>
-                  <td v-else> <button @click="toggleUserDetails(user)">
-                      {{ user.showDetails ? '-' : '+' }} </button></td>
-                  <td>{{ user.Correo }}</td>
-                  <td>{{ user.Primer_nombre }}</td>
-                  <td>{{ user.Segundo_nombre }}</td>
-                  <td>{{ user.Primer_apellido }}</td>
-                  <td>{{ user.Segundo_apellido }}</td>
-                  <select v-model="user.Autorizacion">
-                    <option value="Si">Si</option>
-                    <option value="No">No</option>
-                    <option value="Denegado">Denegado</option>
-                  </select>
-                </tr>
-              </tbody>
-            </div>
-          </table>
-        </div>
-        <div v-if="currentCategory === 'mod'" class="category-content">
-          <h1 class="category-content__title">User Information</h1>
+          <h1 class="category-content__title">Autorización de Usuarios</h1>
 
           <div class="search-bar">
             <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
@@ -162,41 +101,112 @@
                 <tr>
                   <th>Cliente ID</th>
                   <th>Cliente tipo</th>
-                  <th>Documento</th>
+                  <th>Nombre</th>
                   <th>Documento Tipo</th>
-                  <th>Telefono</th>
+                  <th>Documento</th>
                   <th>Correo</th>
-                  <th>Primer Nombre</th>
-                  <th>Segundo Nombre</th>
-                  <th>Primer Apellido</th>
-                  <th>Segundo Apellido</th>
-                  <th>Dirección</th>
+                  <th>Autorizacion</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
-                  <td>{{ user.Cliente_ID }}</td>
-                  <td>{{ user.Cliente_tipo }}</td>
-                  <td>{{ user.Documento_numero }}</td>
-                  <td>{{ user.Telefono }}</td>
-                  <td>{{ user.Documento_tipo }}</td>
-                  <td @click="changeUserDetails(user, 'Correo')" class="modify">{{ user.Correo }}</td>
+                  <td>{{ user[0] }}</td>
+                  <td>{{ user[1] }}</td>
+                  <td>{{ user[2] }}</td>
+                  <td>{{ user[3] }}</td>
+                  <td>{{ user[4] }}</td>
 
-                  <td @click="changeUserDetails(user, 'Primer_nombre')" class="modify">{{ user.Primer_nombre }}</td>
-                  <td @click="changeUserDetails(user, 'Segundo_nombre')" class="modify">{{ user.Segundo_nombre }}</td>
-                  <td @click="changeUserDetails(user, 'Primer_apellido')" class="modify">{{ user.Primer_apellido }}</td>
-                  <td @click="changeUserDetails(user, 'Segundo_apellido')" class="modify">{{ user.Segundo_apellido }}</td>
-                  <td> <button @click="toggleUserDetails(user)">
-                      {{ user.showDetails ? '-' : '+' }} </button>
-                  </td>
+                  <td>{{ user[6] }}</td>
+                  <select v-model="user[7]" @change="handleAutorizacionChange(user[7], user[0])">
+                    <option value="Autorizado">Autorizado</option>
+                    <option value="En espera">En espera</option>
+                    <option value="No autorizado">No autorizado</option>
+                  </select>
+
                 </tr>
               </tbody>
             </div>
           </table>
         </div>
+        <div v-if="currentCategory === 'createB'" class="category-content">
+          <form @submit.prevent="registerBussines">
+
+            <h1>Crear cuenta de Empresa</h1>
+            <input v-model="nameb" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="nameb" />
+            <input v-model="rut" type="text" name="txt" placeholder="Rut" required id="rut" />
+            <input v-model="mailb" type="email" name="email" placeholder="Correo electrónico" required
+              autocomplete="email" id="mailb" />
+            <input v-model="passwdb" type="password" name="passwdb" placeholder="Contraseña" required
+              autocomplete="new-password" id="passwdb" />
+            <input v-model="confirmPasswdb" type="password" name="confirmPasswdb" placeholder="Confirma la contraseña"
+              required autocomplete="new-password" id="confirmPasswdb" />
+            <div v-if="errorMessage" class="error-message">
+              {{ errorMessage }}
+            </div>
+            <div v-if="succesMessage" class="succes-message">
+              {{ succesMessage }}
+            </div>
+
+            <button type="submit">Registrate</button>
+
+          </form>
+
+        </div>
 
         <div v-if="currentCategory === 'orders'" class="category-content">
+          <h1 class="category-content__title">Pedidos de los clientes</h1>
+
+          <div class="search-bar">
+            <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
+            <button @click="searchOrders">Buscar</button>
+          </div>
+
+          <div v-if="filteredOrders.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
+
+              <thead>
+                <tr>
+                  <th>Pedido ID</th>
+                  <th>Pedido Fecha</th>
+                  <th>Menus</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Nombre Comprador</th>
+                  <th>Documento Comprador</th>
+                  <th>Precio del Pedido</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="order in filteredOrders" :key="order.pedido_id">
+                  <td>{{ order.pedido_id }}</td>
+                  <td>{{ order.fecha_del_pedido }}</td>
+                  <td>
+                    <span v-for="(menu, index) in order.menus" :key="index">
+                      {{ menu.nombre }}
+                      <span v-if="index < order.menus.length - 1"> <br> </span>
+                    </span>
+                  </td>
+                  <td> <span v-for="(menu, index) in order.menus" :key="index">
+                      {{ menu.cantidad }}
+                      <span v-if="index < order.menus.length - 1"><br> </span>
+                    </span></td>
+                  <td>{{ order.estados[0].estado }}</td>
+                  <td>{{ order.nombre }}</td>
+                  <td>{{ order.documento }}</td>
+                  <td>
+                    {{ order.menus ? Object.values(order.menus).reduce((total, menu) => total + (menu.precio ?
+                      parseFloat(menu.precio) : 0), 0).toFixed(2) : 0 }}
+                  </td>
+
+                </tr>
+              </tbody>
+            </div>
+          </table>
         </div>
       </section>
 
@@ -209,93 +219,24 @@
             <tbody>
               <tr>
                 <td>Cliente ID:</td>
-                <td>{{ selectedUser.Cliente_ID }}</td>
+                <td>{{ selectedUser[0] }}</td>
               </tr>
               <tr>
                 <td>Documento Número:</td>
-                <td>{{ selectedUser.Documento_numero }}</td>
+                <td>{{ selectedUser[4] }}</td>
               </tr>
-              <tr @click="changeUserDetails(selectedUser, 'Direccion')">
-                <td>Dirección:</td>
+              <tr>
+                <td>Telefonos:</td>
+              </tr>
+              <tr>
                 <td>
-                  {{ selectedUser.Direccion.Numero }},
-                  {{ selectedUser.Direccion.Calle }},
-                  {{ selectedUser.Direccion.Barrio }},
-                  {{ selectedUser.Direccion.Ciudad }}
+                  <p v-for="(telefono, index) in selectedUser[5]" :key="index"> {{ telefono }}</p>
                 </td>
               </tr>
             </tbody>
           </table>
           <button @click="showModal = false; showModalUser = false">Cerrar</button>
 
-        </div>
-      </div>
-      <div v-if="showModalUser" class="modal">
-        <div class="modal-content">
-          <h2>Modificar {{ editingField }}</h2>
-          <form @submit.prevent="saveUserChanges">
-            <table class="user-details-table">
-              <tr v-if="editingField === 'Cedula'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Cedula" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Telefono'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Telefono" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Documento_tipo'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Documento_tipo" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Documento_numero'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Documento_numero" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Primer_nombre'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Primer_nombre" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Segundo_nombre'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Segundo_nombre" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Primer_apellido'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Primer_apellido" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Segundo_apellido'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Segundo_apellido" type="text">
-                </td>
-              </tr>
-              <tr v-if="editingField === 'Direccion'">
-                <td>{{ editingField }}:</td>
-                <td>
-                  <input v-model="modifyingUser.Direccion.Numero" type="text">
-                  <input v-model="modifyingUser.Direccion.Calle" type="text">
-                  <input v-model="modifyingUser.Direccion.Barrio" type="text">
-                  <input v-model="modifyingUser.Direccion.Ciudad" type="text">
-                </td>
-              </tr>
-            </table>
-            <button @click="this.showModalUser = false">Cerrar</button>
-            <button type="submit">Guardar Cambios</button>
-          </form>
         </div>
       </div>
 
@@ -310,210 +251,37 @@ export default {
     return {
       currentCategory: null,
       username: "Nombre de Usuario",
-      users: [
-        {
-          Cliente_ID: 1,
-          Telefono: "1234567890",
-          Documento_tipo: "Cédula",
-          Documento_numero: "123456789",
-          Primer_nombre: "John",
-          Segundo_nombre: "Doe",
-          Primer_apellido: "Smith",
-          Segundo_apellido: "Johnson",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "123",
-            Calle: "Main St",
-            Barrio: "Barrio Ejemplo",
-            Ciudad: "Ciudad Ejemplo"
-          },
-        },
-        {
-
-          Cliente_ID: 2,
-          Telefono: "9876543210",
-          Documento_tipo: "Cédula",
-          Documento_numero: "987654321",
-          Primer_nombre: "Alice",
-          Segundo_nombre: "Jane",
-          Primer_apellido: "Brown",
-          Segundo_apellido: "Davis",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "456",
-            Calle: "Oak St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 3,
-          Telefono: "5555555555",
-          Documento_tipo: "Pasaporte",
-          Documento_numero: "555555555",
-          Primer_nombre: "Eduardo",
-          Segundo_nombre: "Pablo",
-          Primer_apellido: "López",
-          Segundo_apellido: "González",
-          Contrasenia: "********",
-          Autorizacion: "No",
-          Direccion: {
-            Numero: "789",
-            Calle: "Maple St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 4,
-          Telefono: "1111111111",
-          Documento_tipo: "Cédula",
-          Documento_numero: "111111111",
-          Primer_nombre: "Maria",
-          Segundo_nombre: "Isabel",
-          Primer_apellido: "Martínez",
-          Segundo_apellido: "López",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "567",
-            Calle: "Pine St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 5,
-          Telefono: "2222222222",
-          Documento_tipo: "Cédula",
-          Documento_numero: "222222222",
-          Primer_nombre: "Carlos",
-          Segundo_nombre: "Andrés",
-          Primer_apellido: "Ramirez",
-          Segundo_apellido: "Gómez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "101",
-            Calle: "Cedar St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 6,
-          Telefono: "3333333333",
-          Documento_tipo: "Cédula",
-          Documento_numero: "333333333",
-          Primer_nombre: "Laura",
-          Segundo_nombre: "Isabel",
-          Primer_apellido: "Perez",
-          Segundo_apellido: "González",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "222",
-            Calle: "Elm St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 7,
-          Telefono: "4444444444",
-          Documento_tipo: "Pasaporte",
-          Documento_numero: "444444444",
-          Primer_nombre: "Javier",
-          Segundo_nombre: "Andrés",
-          Primer_apellido: "Hernandez",
-          Segundo_apellido: "López",
-          Contrasenia: "********",
-          Autorizacion: "No",
-          Direccion: {
-            Numero: "333",
-            Calle: "Sycamore St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 8,
-          Telefono: "5555555555",
-          Documento_tipo: "Cédula",
-          Documento_numero: "555555555",
-          Primer_nombre: "Sofia",
-          Segundo_nombre: "Valentina",
-          Primer_apellido: "García",
-          Segundo_apellido: "Ramirez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "444",
-            Calle: "Birch St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 9,
-          Telefono: "6666666666",
-          Documento_tipo: "Cédula",
-          Documento_numero: "666666666",
-          Primer_nombre: "Luis",
-          Segundo_nombre: "Fernando",
-          Primer_apellido: "Perez",
-          Segundo_apellido: "Hernandez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "555",
-            Calle: "Aspen St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 10,
-          Telefono: "7777777777",
-          Documento_tipo: "Cédula",
-          Documento_numero: "777777777",
-          Primer_nombre: "Ana",
-          Segundo_nombre: "Maria",
-          Primer_apellido: "Gómez",
-          Segundo_apellido: "Ramirez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "666",
-            Calle: "Chestnut St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        // Puedes agregar más usuarios aquí
-      ],
-
+      users: [],
+      orders: [],
       searchQuery: "",
       selectedUser: null, // Para almacenar el usuario seleccionado para mostrar en el modal
       showModal: false, // Para controlar la visibilidad del modal
       filteredUsers: [],
+      filteredOrders: [],
       searchTerm: "",
       modifyingUser: null,
       editingField: null,
       showModalUser: false,
+      errorMessage: '',
+      succesMessage: '',
+      nameb: "",
+      rut: "",
+      mailb: "",
+      passwdb: "",
+      confirmPasswdb: "",
 
     };
   },
   mounted() {
-    this.searchUsers();
+    this.fetchUsers();
+    this.fetchOrders();
+
   },
   methods: {
     changeUserDetails(user, field) {
       this.modifyingUser = user;
       this.editingField = field;
       this.showModalUser = true
-      console.log(this.showModalUser)
     },
     showCategory(category) {
       this.currentCategory = category;
@@ -535,22 +303,54 @@ export default {
         this.showModal = true;
       }
     },
+    handleAutorizacionChange(state, id) {
 
+      const dataToSend = {
+        functionName: "admin_toggle_client_state",
+        cid: id,
+        cstate: state
+      };
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     saveUserChanges() {
-      // Aquí debes realizar la lógica para guardar los cambios en el usuario en tu base de datos (usando PHP y MariaDB).
-      // Puedes enviar una solicitud al servidor PHP para realizar la actualización de los datos.
 
-      // Una vez que los cambios se hayan guardado exitosamente, cierra el modal y actualiza la lista de usuarios si es necesario.
       this.showModal = false;
 
-      // Llamar a una función para actualizar la lista de usuarios si es necesario.
       this.updateUserList();
     },
     fetchUsers() {
       const dataToSend = {
         functionName: "admin_show_user_list",
-        a: "",
-        b: ''
+
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          console.log(response.data)
+
+          if (Array.isArray(response.data)) {
+            this.users = response.data
+            console.log(this.users)
+            this.searchUsers();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    fetchOrders() {
+      const dataToSend = {
+        functionName: "admin_get_orders",
       };
 
       this.$http
@@ -558,7 +358,9 @@ export default {
         .then((response) => {
           console.log(response.data)
           if (Array.isArray(response.data)) {
-            this.users = response.data[0]
+            this.orders = response.data
+            console.log(this.users)
+            this.searchOrders();
           }
         })
         .catch((error) => {
@@ -568,7 +370,6 @@ export default {
     searchUsers() {
       this.closeModal();
 
-      this.fetchUsers();
 
       const query = this.searchQuery.toLowerCase().trim();
 
@@ -579,30 +380,83 @@ export default {
         })
       } else {
         this.filteredUsers = this.users.filter((user) => {
-          const idMatch = user.Cliente_ID.toString().includes(query);
-          const telefonoMatch = user.Telefono.toString().includes(query);
-          const tipoDocumentoMatch = user.Documento_tipo.toLowerCase().includes(query);
-          const numeroDocumentoMatch = user.Documento_numero.toString().includes(query);
-          const primerNombreMatch = user.Primer_nombre.toLowerCase().includes(query);
-          const segundoNombreMatch = user.Segundo_nombre.toLowerCase().includes(query);
-          const primerApellidoMatch = user.Primer_apellido.toLowerCase().includes(query);
-          const segundoApellidoMatch = user.Segundo_apellido.toLowerCase().includes(query);
+          const idMatch = user[0].toString().includes(query);
+          const telefonoMatch = user[5].toString().includes(query);
+          const tipoDocumentoMatch = user[3].toLowerCase().includes(query);
+          const numeroDocumentoMatch = user[4].toString().includes(query);
+          const nombre = user[2].toLowerCase().includes(query);
+
 
           return (
             idMatch ||
             telefonoMatch ||
             tipoDocumentoMatch ||
             numeroDocumentoMatch ||
-            primerNombreMatch ||
-            segundoNombreMatch ||
-            primerApellidoMatch ||
-            segundoApellidoMatch
+            nombre
+
           );
         });
         if (this.filteredUsers.length === 0) {
           this.filteredUsers = [];
         }
       }
+    },
+    searchOrders() {
+      const query = this.searchQuery.toLowerCase().trim();
+
+      if (query === "") {
+        this.filteredOrders = this.orders;
+        this.filteredOrders = this.orders.map((order) => {
+          return { ...order };
+        })
+      } else {
+        this.filteredOrders = this.orders.filter((order) => {
+          const id = order.pedido_id.toString().includes(query);
+          const nombre = order.nombre.toLowerCase().includes(query);
+          const estado = order.estados[0].estado.toLowerCase().includes(query);
+          const documento = order.documento.toString().includes(query);
+          const nombreMenu = Array.isArray(order.menus) && order.menus.some(menu => menu.nombre.toLowerCase().includes(query));
+
+          return (
+            id ||
+            nombre ||
+            estado ||
+            documento ||
+            nombreMenu
+
+          );
+        });
+        if (this.filteredUsers.length === 0) {
+          this.filteredUsers = [];
+        }
+      }
+    },
+    registerBussines() {
+      if (this.passwd !== this.confirmPasswd) {
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
+        return;
+      }
+
+      const dataToSend = {
+        functionName: "admin_register_business",
+        name: this.nameb,
+        doc: this.rut,
+        mail: this.mailb,
+        passwd: this.passwdb,
+      };
+
+      this.$http
+        .post("http://localhost/Back-End/server.php", dataToSend)
+        .then((response) => {
+          if (response.data == "Error 404") {
+            this.errorMessage = 'Error creando la empresa'
+          } else {
+            this.succesMessage = "Cuenta creada"
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
 };
@@ -638,6 +492,51 @@ body {
 
 *::-webkit-scrollbar-thumb:hover {
   background-color: #888888;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+button {
+
+  background-color: white;
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 
 .nav {
