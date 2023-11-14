@@ -98,44 +98,43 @@ function admin_toggle_food_diet($state, $food_id, $diet)
     global $tORM;
     return toggle_food_diet($tORM, $state, $food_id, $diet); //State es para determinar si se quiere agregar (true) o quitar (false)
 }
-
-function admin_create_menu($name,  $frequency,  $description,  $foods)
+function admin_create_menu($name, $frequency, $description, $foods)
 {
 
     global $tORM;
-    create_menu($tORM,  $name,  $frequency,  $description,  $foods);
+    return create_menu($tORM, $name, $frequency, $description, $foods);
 }
-function  admin_delete_menu($menu_id)
+function admin_delete_menu($menu_id)
 {
 
     global $tORM;
-    delete_menu($tORM,  $menu_id);
+    return delete_menu($tORM, $menu_id);
 }
-function  admin_modify_menu($menu_id,  $name = "",  $frequency = 0,  $description = "")
+function admin_modify_menu($menu_id, $name = "", $frequency = 0, $description = "")
 {
 
     global $tORM;
-    modify_menu($tORM,  $menu_id,  $name,  $frequency,  $description);
+    return modify_menu($tORM, $menu_id, $name, $frequency, $description);
 }
-function  admin_change_menu_stock($menu_id,  $change)
+function admin_change_menu_stock($menu_id, $change)
 {
 
     global $tORM;
-    change_menu_stock($tORM,  $menu_id,  $change);
+    return change_menu_stock($tORM, $menu_id, $change);
 }
 
 function admin_create_phone($client_id, $phone_number)
 {
 
     global $tORM;
-    create_phone($tORM,  $client_id, $phone_number);
+    return create_phone($tORM, $client_id, $phone_number);
 }
 
 function admin_delete_phone($client_id, $phone_number)
 {
 
     global $tORM;
-    delete_phone($tORM,  $client_id, $phone_number);
+    return delete_phone($tORM, $client_id, $phone_number);
 }
 
 function admin_administration_login($name, $passwd)

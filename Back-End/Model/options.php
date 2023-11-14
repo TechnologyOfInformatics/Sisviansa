@@ -110,3 +110,9 @@ function options_get_credit_card(String $token)
     global $tORM;
     return get_credit_card($tORM, $token);
 }
+function  options_get_business($token)
+{
+
+    global $tORM;
+    return get_business($tORM,  $token);
+}
