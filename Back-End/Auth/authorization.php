@@ -1681,14 +1681,12 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
                  join menu on menu.id=compone.menu_id
                  where compone.pedido_id={$order['id']}");
 
+
         foreach ($requested_menus as &$menu) {
-            $response[$counter]['menus'][$menu[1]] = [
-                'cantidad' => $menu[0],
-                'id' => $menu[1],
+            $response[$counter]['menus'][] = [
                 'nombre' => $menu[2],
-                'frecuencia' => $menu[4],
-                'categoria' => $menu[3],
-                'precio' => $menu[5]
+                'precio' => $menu[5],
+                'cantidad' => $menu[0]
             ];
         }
         $response[$counter]['pedido_id'] = $order['id'];
