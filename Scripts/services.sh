@@ -15,7 +15,6 @@ while true; do
     echo "0. Salir"
 
     read -p "Opción seleccionada: " opcion
-    echo
 
     case $opcion in
     1)
@@ -51,6 +50,5 @@ while true; do
         ;;
     esac
 
-    echo
     read -n 1 dummy
 done
