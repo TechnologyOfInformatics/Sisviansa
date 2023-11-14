@@ -48,7 +48,7 @@ function token_generator()
     return $randomText;
 }
 
-function get_client_id(TORM $tORM, string $token)
+function get_client_id(TORM $tORM, String $token)
 {
 
     if ($token) {
@@ -66,7 +66,7 @@ function get_client_id(TORM $tORM, string $token)
     return [];
 }
 
-function session_token(TORM $tORM, string $token)
+function session_token(TORM $tORM, String $token)
 {
 
     $actual_date = date('Y-m-d H:i:s');
@@ -225,7 +225,7 @@ function session(QueryCall $ctl, $token)
     }
 }
 
-function login(QueryCall $ctl, $mail, $passwd, string $token = "")
+function login(QueryCall $ctl, $mail, $passwd, String $token = "")
 {
     $values = func_get_args();
 
@@ -388,7 +388,7 @@ function register_web(QueryCall $ctl, $first_name, $first_surname, $doc_type, $d
         return $response;
     }
 }
-function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
+function modify_web(TORM $tORM, String $token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "", $mail = "")
 {
 
     $values = func_get_args();
@@ -461,7 +461,7 @@ function modify_web(TORM $tORM, string $token, $first_name = "", $second_name = 
     }
 }
 
-function get_address(TORM $tORM, string $token)
+function get_address(TORM $tORM, String $token)
 {
 
 
@@ -538,7 +538,7 @@ function user_information_web(TORM $tORM, $token)
     }
 }
 
-function set_address(TORM $tORM, string $token, string $city, string $neighborhood, string $street, string $address)
+function set_address(TORM $tORM, String $token, String $city, String $neighborhood, String $street, String $address)
 {
     $values = func_get_args();
 
@@ -590,7 +590,7 @@ function set_address(TORM $tORM, string $token, string $city, string $neighborho
     }
 }
 
-function modify_address(TORM $tORM, string $token, int $address_id, string $city = "", string $neighborhood = "", string $street = "", string $address = "")
+function modify_address(TORM $tORM, String $token, Int $address_id, String $city = "", String $neighborhood = "", String $street = "", String $address = "")
 {
 
     $values = func_get_args();
@@ -630,7 +630,7 @@ function modify_address(TORM $tORM, string $token, int $address_id, string $city
     }
 }
 
-function toggle_default(TORM $tORM, string $token, int $address_id)
+function toggle_default(TORM $tORM, String $token, Int $address_id)
 {
 
     $values = func_get_args();
@@ -677,7 +677,7 @@ function toggle_default(TORM $tORM, string $token, int $address_id)
     }
 }
 
-function delete_address(TORM $tORM, string $token, int $address_id)
+function delete_address(TORM $tORM, String $token, Int $address_id)
 {
 
     $values = func_get_args();
@@ -742,7 +742,7 @@ function delete_address(TORM $tORM, string $token, int $address_id)
     }
 }
 
-function show_shop(TORM $tORM, string $token = '', array $order = [])
+function show_shop(TORM $tORM, String $token = '', array $order = [])
 {
     //Aqui tome otro "approach" al asunto de las sesiones, donde cree una forma diferente para chequerar que las sesion exista
     if ($token && ((strlen($token) < 15) && (strlen($token) >= 8))) {
@@ -858,7 +858,7 @@ function show_shop(TORM $tORM, string $token = '', array $order = [])
     return [$filtered_menus, (((gettype($favorites) != 'array') || empty($client_id)) ? 'ERROR 404, NOT FOUND' : array_column($favorites, 'menu_id'))];
 }
 
-function toggle_favorites(TORM $tORM, string $token, int $menu_id)
+function toggle_favorites(TORM $tORM, String $token, Int $menu_id)
 {
     // En caso de que no haya un token como el enviado se devolvera un array vacio
 
@@ -911,7 +911,7 @@ function toggle_favorites(TORM $tORM, string $token, int $menu_id)
         return $is_session;
     }
 }
-function buy_menu(TORM $tORM, $order_id, string $token, int $amount, int $menu_id)
+function buy_menu(TORM $tORM, $order_id, String $token, Int $amount, Int $menu_id)
 {
     //Esta funcion debe crear una entrada en paquete y recibe, donde se le daran sus datos
     $client_id = get_client_id($tORM, $token);
@@ -967,7 +967,7 @@ function buy_menu(TORM $tORM, $order_id, string $token, int $amount, int $menu_i
         return "ERROR 403, FORBIDDEN";
     }
 }
-function buy_multiple_menus(TORM $tORM, string $token, array $amounts, array $menus_ids)
+function buy_multiple_menus(TORM $tORM, String $token, array $amounts, array $menus_ids)
 {
     $response = 0;
     if ($token && (count($amounts) == count($menus_ids))) {
@@ -984,7 +984,7 @@ function buy_multiple_menus(TORM $tORM, string $token, array $amounts, array $me
     }
 }
 
-function get_fav_and_personal_menus(TORM $tORM, string $token)
+function get_fav_and_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
     $client_id = get_client_id($tORM, $token);
@@ -1082,7 +1082,7 @@ function get_fav_and_personal_menus(TORM $tORM, string $token)
     }
 }
 
-function get_personal_menus(TORM $tORM, string $token)
+function get_personal_menus(TORM $tORM, String $token)
 {
     //Esta funcion devolvera tanto los menues personalizados como los menues con favoritos, pero no los estandar
     $client_id = get_client_id($tORM, $token);
@@ -1163,7 +1163,7 @@ function get_personal_menus(TORM $tORM, string $token)
     }
 }
 
-function create_personal_menu(TORM $tORM, string $token, string $name, int $frequency, string $description, array $foods)
+function create_personal_menu(TORM $tORM, String $token, String $name, Int $frequency, String $description, array $foods)
 {
     $client_id = get_client_id($tORM, $token);
     $maximum = [15, 30, 11, 120];
@@ -1246,7 +1246,7 @@ function create_personal_menu(TORM $tORM, string $token, string $name, int $freq
     }
 }
 
-function delete_personal_menu(TORM $tORM, string $token, int $menu_id) //
+function delete_personal_menu(TORM $tORM, String $token, Int $menu_id) //
 {
     $client_id = get_client_id($tORM, $token);
     $maximum = [15, 11];
@@ -1322,7 +1322,7 @@ function delete_personal_menu(TORM $tORM, string $token, int $menu_id) //
     }
 }
 
-function modify_personal_menu(TORM $tORM, string $token, int $menu_id, int $frequency, string $description)
+function modify_personal_menu(TORM $tORM, String $token, Int $menu_id, Int $frequency, String $description)
 {
     $client_id = get_client_id($tORM, $token);
     $maximum = [15, 11, 11, 120];
@@ -1368,7 +1368,7 @@ function modify_personal_menu(TORM $tORM, string $token, int $menu_id, int $freq
     }
 }
 
-function change_password(TORM $tORM, QueryCall $ctl, string $token, string $actual_passwd, string $passwd, string $confirm_passwd)
+function change_password(TORM $tORM, QueryCall $ctl, String $token, String $actual_passwd, String $passwd, String $confirm_passwd)
 {
 
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
@@ -1478,7 +1478,7 @@ function get_client_orders(TORM $tORM, $token)
     }
 }
 
-function create_credit_card(TORM $tORM, string $token, string $card_code, string $expire_date, string $name)
+function create_credit_card(TORM $tORM, String $token, String $card_code, String $expire_date, String $name)
 {
 
     if (in_array('', func_get_args()) || !in_array(strlen(strval($card_code)), range(5, 30)) || count(explode(" ", $name)) < 2) {
@@ -1500,7 +1500,7 @@ function create_credit_card(TORM $tORM, string $token, string $card_code, string
     }
 }
 
-function get_credit_card(TORM $tORM, string $token)
+function get_credit_card(TORM $tORM, String $token)
 {
 
     if (in_array('', func_get_args())) {
@@ -1522,7 +1522,7 @@ function get_credit_card(TORM $tORM, string $token)
     }
 }
 
-function delete_credit_card(TORM $tORM, string $token, string $verification_code, string $expire_date, string $name)
+function delete_credit_card(TORM $tORM, String $token, String $verification_code, String $expire_date, String $name)
 {
 
     if (in_array('', func_get_args())) {
@@ -1549,7 +1549,7 @@ function delete_credit_card(TORM $tORM, string $token, string $verification_code
 //
 //
 
-function administration_login(string $name, string $passwd) //Funcion admin INCOMPLETA
+function administration_login(String $name, String $passwd) //Funcion admin INCOMPLETA
 {
     $tORM = new TORM("localhost", $name, $passwd, "sisviansa_techin_v1", 3306);
     $result = $tORM->from('SISVIANSA_USER')->columns('SISVIANSA_USER.rol')->where('SISVIANSA_USER.nombre', 'eq', $name)->do('select');
@@ -1631,7 +1631,7 @@ function get_foods(TORM $tORM) //Funcion admin 1
     return [$filtered_menus];
 }
 
-function get_orders(TORM $tORM, QueryCall $ctl, string $mail = "", string $passwd = "") //Funcion admin 1
+function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passwd = "") //Funcion admin 1
 {
 
     $session = login($ctl, $mail, $passwd);
@@ -1804,7 +1804,7 @@ function change_order_state(TORM $tORM, $order_id, $new_state) //Funcion admin
     return ($change_prev == $set_actual ? "OK, 200" : "ERROR 500, SERVER ERROR");
 }
 
-function register_business(QueryCall $ctl, string $rut, string $name, string $mail, string $password) //Funcion admin
+function register_business(QueryCall $ctl, String $rut, String $name, String $mail, String $password) //Funcion admin
 {
     $values = func_get_args();
 
@@ -1863,7 +1863,7 @@ function register_business(QueryCall $ctl, string $rut, string $name, string $ma
     }
 }
 
-function change_business_mail(TORM $tORM, QueryCall $ctl, string $new_mail, string $mail, string $password) //Funcion admin
+function change_business_mail(TORM $tORM, QueryCall $ctl, String $new_mail, String $mail, String $password) //Funcion admin
 {
     $session = login($ctl, $mail, $password);
     if ((gettype($session) == "string")) {
@@ -1913,7 +1913,7 @@ function change_business_mail(TORM $tORM, QueryCall $ctl, string $new_mail, stri
     }
 }
 
-function get_business(TORM $tORM, string $token)
+function get_business(TORM $tORM, String $token)
 {
     if (!$token) {
         return "ERROR 400, BAD REQUEST";
@@ -1930,7 +1930,7 @@ function get_business(TORM $tORM, string $token)
         return 'ERROR 404, NOT FOUND';
     }
 }
-function show_user_list(TORM $tORM, string $type = "" /* web/empresa */, string $identificator = "", string $id_type = "") //Funcion admin
+function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") //Funcion admin
 {
 
     switch (strtolower($type)) {
@@ -1938,13 +1938,19 @@ function show_user_list(TORM $tORM, string $type = "" /* web/empresa */, string 
             if ($identificator && !$id_type) {
                 $result = $tORM
                     ->do(query: "
-                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id WHERE empresa.rut = '$identificator'");
             } else {
 
                 $result = $tORM
                     ->do(query: "
-                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente.email
+                    SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id");
             }
             break;
@@ -1952,11 +1958,31 @@ function show_user_list(TORM $tORM, string $type = "" /* web/empresa */, string 
             if ($id_type && $identificator) {
                 $result = $tORM
                     ->do(query: "
-                    SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
-                    FROM web JOIN cliente ON cliente.id = web.cliente_id WHERE documento_tipo='$id_type' AND documento_numero=$identificator");
+                    SELECT 
+                    cliente_ID,
+                    'Web' AS Tipo,
+                     CONCAT(primer_nombre, ' ', primer_apellido),
+                     documento_tipo,
+                     documento_numero,
+                     (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                     FROM cliente_telefono
+                     WHERE cliente_telefono.cliente_id = cliente.id),
+                     cliente.email
+                    FROM web JOIN cliente ON cliente.id = web.cliente_id 
+                    WHERE documento_tipo='$id_type' 
+                    AND documento_numero=$identificator");
             } else {
                 $result = $tORM
-                    ->do(query: "SELECT 'Web' AS Tipo,cliente_ID, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero), cliente.email
+                    ->do(query: "SELECT 
+                    cliente_ID, 
+                    'Web' AS Tipo, 
+                    CONCAT(primer_nombre, ' ', primer_apellido), 
+                    documento_tipo,  
+                    documento_numero,
+                    (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                    FROM cliente_telefono
+                    WHERE cliente_telefono.cliente_id = cliente.id),
+                    cliente.email
                     FROM web JOIN cliente ON cliente.id = web.cliente_id");
             }
             break;
@@ -1969,17 +1995,23 @@ function show_user_list(TORM $tORM, string $type = "" /* web/empresa */, string 
                             SELECT 
                             cliente.id,
                             personas.Tipo,
-                            personas.Primer_nombre AS Nombre,
-                            personas.Identificador,
+                            personas.Nombre,
+                            personas.Numero_tipo,
+                            personas.Numero,
+                            (SELECT GROUP_CONCAT(cliente_telefono.telefono)
+                                FROM cliente_telefono
+                                WHERE cliente_telefono.cliente_id = cliente.id),
                             cliente.Email
                             FROM cliente
                             INNER JOIN (
-                            SELECT 'Web' AS Tipo, primer_nombre, CONCAT(documento_tipo,': ',  documento_numero) as Identificador, cliente_ID
+                            SELECT 'Web' AS Tipo, CONCAT(primer_nombre, ' ', primer_apellido) as Nombre, documento_tipo as Numero_tipo,  documento_numero as Numero, cliente_ID
                             FROM web
                             UNION ALL
-                            SELECT 'Empresa' AS Tipo, nombre, CONCAT('RUT: ',rut), cliente_ID
+                            SELECT 'Empresa' AS Tipo, nombre, 'RUT' as Numero_tipo, rut as Numero, cliente_ID
                             FROM empresa
-                            ) personas ON personas.cliente_id = cliente.id;
+                            ) personas ON personas.cliente_id = cliente.id
+                            JOIN cliente_telefono on cliente_telefono.cliente_id = cliente.id
+                            GROUP BY cliente.id;
                             ");
             break;
     }
@@ -1990,7 +2022,8 @@ function show_user_list(TORM $tORM, string $type = "" /* web/empresa */, string 
     return $result;
 }
 
-function change_business_password(TORM $tORM, QueryCall $ctl, string $mail, string $actual_passwd, string $passwd, string $confirm_passwd) //Funcion admin
+
+function change_business_password(TORM $tORM, QueryCall $ctl, String $mail, String $actual_passwd, String $passwd, String $confirm_passwd) //Funcion admin
 {
 
     $length_verificator = (strlen($passwd) < 30) && (strlen($passwd) > 8);
@@ -2051,7 +2084,7 @@ function change_business_password(TORM $tORM, QueryCall $ctl, string $mail, stri
     }
 }
 
-function create_food(TORM $tORM, string $name, string $time, string $products, int $calories, float $price) //Funcion admin
+function create_food(TORM $tORM, String $name, String $time, String $products, Int $calories, float $price) //Funcion admin
 {
 
     $values = func_get_args();
@@ -2072,7 +2105,7 @@ function create_food(TORM $tORM, string $name, string $time, string $products, i
     return ($response = "OK, 200" ? $response : "ERROR 409, CONFLICT"); //CAMBIE ACA ÉSTO PARA QUE RESPONSE SEA IGUAL A ESO Y NO UN BOOLEANO, NO SE SI ESTA BIEN
 }
 
-function delete_food(TORM $tORM, int $food_id) //Funcion admin
+function delete_food(TORM $tORM, Int $food_id) //Funcion admin
 {
     if (in_array('', func_get_args())) {
         return "ERROR 400, BAD REQUEST";
@@ -2097,7 +2130,7 @@ function delete_food(TORM $tORM, int $food_id) //Funcion admin
     return ($response = !($tORM->from("vianda")->where("vianda.id", "eq", $food_id)->do("select")) ? $response : "ERROR 500, SERVER ERROR");
 }
 
-function modify_food($tORM, int $food_id, string $name = "", string $time = "", string $products = "", int $calories = 0, int $price = 0) //Funcion admin
+function modify_food($tORM, Int $food_id, String $name = "", String $time = "", String $products = "", Int $calories = 0, Int $price = 0) //Funcion admin
 {
     //Se parte de la suposicion que nada puede tener 0 calrias
     $food_existence = $tORM
@@ -2111,24 +2144,24 @@ function modify_food($tORM, int $food_id, string $name = "", string $time = "", 
         $time = intval($time);
         $result =
             $tORM
-                ->from("vianda")
-                ->columns(
-                    "vianda.nombre",
-                    "vianda.tiempo_de_coccion",
-                    "vianda.productos",
-                    "vianda.calorias",
-                    "vianda.precio",
-                )
-                ->values(
-                    "vianda",
-                    $name ? $name : $food_existence[0]['nombre'],
-                    $time ? $time : intval($food_existence[0]['tiempo_de_coccion']),
-                    $products ? $products : $food_existence[0]['productos'],
-                    $calories ? $calories : intval($food_existence[0]['calorias']),
-                    $price ? $price : doubleval($food_existence[0]['precio'])
-                )
-                ->where("vianda.id", "eq", intval($food_id))
-                ->do("update");
+            ->from("vianda")
+            ->columns(
+                "vianda.nombre",
+                "vianda.tiempo_de_coccion",
+                "vianda.productos",
+                "vianda.calorias",
+                "vianda.precio",
+            )
+            ->values(
+                "vianda",
+                $name ? $name : $food_existence[0]['nombre'],
+                $time ? $time : intval($food_existence[0]['tiempo_de_coccion']),
+                $products ? $products : $food_existence[0]['productos'],
+                $calories ? $calories : intval($food_existence[0]['calorias']),
+                $price ? $price : doubleval($food_existence[0]['precio'])
+            )
+            ->where("vianda.id", "eq", intval($food_id))
+            ->do("update");
 
         return $result;
     } else {
@@ -2136,7 +2169,7 @@ function modify_food($tORM, int $food_id, string $name = "", string $time = "", 
     }
 }
 
-function toggle_food_diet($tORM, bool $state, int $food_id, string $diet) //Funcion admin
+function toggle_food_diet($tORM, bool $state, Int $food_id, String $diet) //Funcion admin
 {
     $result = "";
     if (gettype($state) == "boolean") {
@@ -2146,10 +2179,10 @@ function toggle_food_diet($tORM, bool $state, int $food_id, string $diet) //Func
             case true:
                 if (
                     $tORM
-                        ->from("vianda_dieta")
-                        ->where("vianda_dieta.dieta", "eq", $diet)
-                        ->where("vianda_dieta.vianda_id", "eq", intval($food_id))
-                        ->do("select")
+                    ->from("vianda_dieta")
+                    ->where("vianda_dieta.dieta", "eq", $diet)
+                    ->where("vianda_dieta.vianda_id", "eq", intval($food_id))
+                    ->do("select")
                 ) {
                     return "ERROR 409, CONFLICT";
                 }
@@ -2181,7 +2214,7 @@ function toggle_food_diet($tORM, bool $state, int $food_id, string $diet) //Func
     }
 }
 
-function create_menu(TORM $tORM, string $name, int $frequency, string $description, array $foods) //Funcion admin
+function create_menu(TORM $tORM, String $name, Int $frequency, String $description, array $foods) //Funcion admin
 {
 
     $maximum = [30, 11, 120];
@@ -2253,7 +2286,7 @@ function create_menu(TORM $tORM, string $name, int $frequency, string $descripti
     }
 }
 
-function delete_menu(TORM $tORM, int $menu_id) //Funcion admin
+function delete_menu(TORM $tORM, Int $menu_id) //Funcion admin
 {
 
     $values = func_get_args();
@@ -2283,7 +2316,7 @@ function delete_menu(TORM $tORM, int $menu_id) //Funcion admin
     }
 }
 
-function modify_menu(TORM $tORM, int $menu_id, string $name, int $frequency = 0, string $description = "") //Funcion admin
+function modify_menu(TORM $tORM, Int $menu_id, String $name, Int $frequency = 0, String $description = "") //Funcion admin
 {
     $maximum = [11, 50, 11, 120];
 
@@ -2327,7 +2360,7 @@ function modify_menu(TORM $tORM, int $menu_id, string $name, int $frequency = 0,
     }
 }
 
-function change_menu_stock(TORM $tORM, int $menu_id, int $change) //Funcion admin
+function change_menu_stock(TORM $tORM, Int $menu_id, Int $change) //Funcion admin
 {
     $maximum = [11, 11];
 
@@ -2360,7 +2393,7 @@ function change_menu_stock(TORM $tORM, int $menu_id, int $change) //Funcion admi
     return $result;
 }
 
-function get_client_phone(TORM $tORM, string $type = "" /* web/empresa */, string $identificator = "", string $id_type = "") // Funcion admin
+function get_client_phone(TORM $tORM, String $type = "" /* web/empresa */, String $identificator = "", String $id_type = "") // Funcion admin
 {
     //Funcion para recibir TODOS los telefonos, es una funcion para admin
 
@@ -2406,7 +2439,7 @@ function get_client_phone(TORM $tORM, string $type = "" /* web/empresa */, strin
 
     return [$result];
 }
-function create_phone(TORM $tORM, int $client_id, string $phone_number) // Funcion admin
+function create_phone(TORM $tORM, Int $client_id, String $phone_number) // Funcion admin
 {
     $values = func_get_args();
     unset($values[0]);
@@ -2429,7 +2462,7 @@ function create_phone(TORM $tORM, int $client_id, string $phone_number) // Funci
 
     return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
 }
-function delete_phone(TORM $tORM, int $client_id, string $phone_number) // Funcion admin
+function delete_phone(TORM $tORM, Int $client_id, String $phone_number) // Funcion admin
 {
     if (in_array('', func_get_args())) {
         return "ERROR 400, BAD REQUEST";
@@ -2466,7 +2499,7 @@ function delete_phone(TORM $tORM, int $client_id, string $phone_number) // Funci
 
     return ($response = !($web_p_existence && $business_p_existence) ? $response : "ERROR 500, SERVER ERROR");
 }
-function toggle_client_state(TORM $tORM, int $client_id, string $state) // Funcion admin
+function toggle_client_state(TORM $tORM, Int $client_id, String $state) // Funcion admin
 {
 
     $values = func_get_args();
