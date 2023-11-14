@@ -1940,8 +1940,10 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                     ->do(query: "
                     SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
                     (SELECT GROUP_CONCAT(cliente_telefono.telefono)
-                    FROM cliente_telefono
-                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
+                        FROM cliente_telefono
+                        WHERE cliente_telefono.cliente_id = cliente.id),
+                    cliente.Email,
+                    cliente.Autorizacion
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id WHERE empresa.rut = '$identificator'");
             } else {
 
@@ -1949,8 +1951,10 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                     ->do(query: "
                     SELECT cliente_ID, 'Empresa' AS Tipo, nombre, 'RUT' as tipo_rut, rut,
                     (SELECT GROUP_CONCAT(cliente_telefono.telefono)
-                    FROM cliente_telefono
-                    WHERE cliente_telefono.cliente_id = cliente.id), cliente.email
+                        FROM cliente_telefono
+                        WHERE cliente_telefono.cliente_id = cliente.id),
+                    cliente.Email,
+                    cliente.Autorizacion
                     FROM empresa JOIN cliente ON cliente.id = empresa.cliente_id");
             }
             break;
@@ -1965,9 +1969,10 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                      documento_tipo,
                      documento_numero,
                      (SELECT GROUP_CONCAT(cliente_telefono.telefono)
-                     FROM cliente_telefono
-                     WHERE cliente_telefono.cliente_id = cliente.id),
-                     cliente.email
+                        FROM cliente_telefono
+                        WHERE cliente_telefono.cliente_id = cliente.id),
+                     cliente.Email,
+                     cliente.Autorizacion
                     FROM web JOIN cliente ON cliente.id = web.cliente_id 
                     WHERE documento_tipo='$id_type' 
                     AND documento_numero=$identificator");
@@ -1980,9 +1985,10 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                     documento_tipo,  
                     documento_numero,
                     (SELECT GROUP_CONCAT(cliente_telefono.telefono)
-                    FROM cliente_telefono
-                    WHERE cliente_telefono.cliente_id = cliente.id),
-                    cliente.email
+                        FROM cliente_telefono
+                        WHERE cliente_telefono.cliente_id = cliente.id),
+                    cliente.Email,
+                    cliente.Autorizacion
                     FROM web JOIN cliente ON cliente.id = web.cliente_id");
             }
             break;
@@ -2001,7 +2007,8 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
                             (SELECT GROUP_CONCAT(cliente_telefono.telefono)
                                 FROM cliente_telefono
                                 WHERE cliente_telefono.cliente_id = cliente.id),
-                            cliente.Email
+                                cliente.Email,
+                                cliente.Autorizacion
                             FROM cliente
                             INNER JOIN (
                             SELECT 'Web' AS Tipo, CONCAT(primer_nombre, ' ', primer_apellido) as Nombre, documento_tipo as Numero_tipo,  documento_numero as Numero, cliente_ID
@@ -2018,7 +2025,16 @@ function show_user_list(TORM $tORM, String $type = "" /* web/empresa */, String 
 
 
 
+    if ($result) {
+        foreach ($result as &$client) {
+            if ($client[5]) {
 
+                $client[5] = explode(',', $client[5]);
+            } else {
+                $client[5] = [];
+            }
+        }
+    }
     return $result;
 }
 
