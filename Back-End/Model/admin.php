@@ -40,7 +40,6 @@ function admin_change_order_state($order_id, $new_state)
     global $tORM;
     return change_order_state($tORM, $order_id, $new_state);
 }
-
 function admin_register_business($rut, $name, $mail, $password)
 {
 

@@ -1647,7 +1647,7 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
         $orders = $tORM
             ->from("pedido")
             ->where("pedido.cliente_id", "eq", ($client_id[0]['cliente_id']))
-            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad")
+            ->columns("pedido.id", "pedido.fecha_del_pedido", "pedido.direccion", "pedido.calle", "pedido.barrio", "pedido.ciudad", "pedido.cliente_id")
             ->do("select");
     }
     $response = [];
@@ -1659,7 +1659,12 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
     foreach ($orders as $order) {
 
         $states = $tORM
-            ->do(query: "select pedido_esta.*, estado.estado from pedido_esta join estado on estado.id = pedido_esta.estado_id where pedido_esta.pedido_id={$order['id']} order by pedido_esta.final_del_estado DESC limit 1")[0];
+            ->do(query: "select pedido_esta.*,
+             estado.estado
+             from pedido_esta
+              join estado on estado.id = pedido_esta.estado_id
+               where pedido_esta.pedido_id={$order['id']}
+                order by pedido_esta.final_del_estado DESC limit 1")[0];
 
         $requested_menus = $tORM
             ->do(query: "SELECT 
@@ -1690,6 +1695,15 @@ function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passw
         $response[$counter]['fecha_del_pedido'] = date_format(date_create($order['fecha_del_pedido']), "d/m/Y H:i");
         $response[$counter]['direccion'] = array_values(array_slice($order, 2, 4));
         $response[$counter]['estados'] = [['id' => $order['id'], 0, 'estado' => $states[4], 'inicio_del_estado' => $states[2], 'final_del_estado' => $states[3]]];
+        $web = $tORM->from('web')->where('web.cliente_id', 'eq', $order['cliente_id'])->do('select');
+        $business = $tORM->from('empresa')->where('empresa.cliente_id', 'eq', $order['cliente_id'])->do('select');
+        if ($business) {
+            $response[$counter]['nombre'] = $business[0]['nombre'];
+            $response[$counter]['documento'] = 'RUT' . ': ' . strval($business[0]['rut']);
+        } else {
+            $response[$counter]['nombre'] = $web[0]['primer_nombre'] . ' ' . $web[0]['primer_apellido'];
+            $response[$counter]['documento'] = strval($web[0]['documento_tipo']) . ': ' . strval($web[0]['documento_numero']);
+        }
         $counter += 1;
     }
     return $response;
@@ -1858,8 +1872,9 @@ function register_business(QueryCall $ctl, String $rut, String $name, String $ma
     if ($ctl->insert("cliente", [$mail, md5($password), "Autorizado"], ["email", "contrasenia", "autorizacion"])->call() === ["OK", 200]) {
         $id = $ctl->select("cliente", ["id"], [$mail], ["email"])->call();
         $ctl->insert("empresa", [$rut, $name, $id[0]], ["rut", "nombre", "cliente_id"])->call();
-        $response = login($ctl, $mail, $password, "");
-        return $response;
+        return 'OK, 200';
+    } else {
+        return '409, CONFLICT';
     }
 }
 
