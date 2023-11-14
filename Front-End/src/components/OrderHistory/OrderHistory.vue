@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <div v-for="(pedido, pedidoId) in pedidos" :key="pedidoId" class="order-container">
-        <span class="value">{{ pedido.pedido_id || 'N/A' }} </span>
+        <span class="value">ID: {{ pedido.pedido_id || 'N/A' }} </span>
         <div class="container">
           <div class="menu-data menu-top">
             <div>
@@ -14,7 +14,7 @@
             </div>
             <div>
               <span class="label">Estado Actual: </span>
-              <span class="value">{{ pedido.estados[0] && pedido.estados[0].estado || 'N/A' }} </span>
+              <span class="value">{{ pedido.estados[1] || 'N/A' }} </span>
             </div>
           </div>
           <div class="menu-container">
@@ -91,7 +91,6 @@ export default {
       const menuKeys = Object.keys(menus);
       for (const menuKey of menuKeys) {
         totalPrecio += menus[menuKey].precio * menus[menuKey].cantidad || 0;
-        console.log(totalPrecio);
       }
       return totalPrecio;
     },
@@ -104,10 +103,8 @@ export default {
       this.$http
         .post("http://localhost/Back-End/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
           if (Array.isArray(response.data)) {
             this.pedidos = response.data;
-            console.log(this.pedidos)
           }
         })
         .catch((error) => {

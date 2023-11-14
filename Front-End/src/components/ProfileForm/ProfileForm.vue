@@ -48,7 +48,7 @@
                 </div>
                 <div>
                     <label for="mailb">Correo:</label>
-                    <input type="mailb" id="mailb" v-model="mailb" />
+                    <input type="text" id="mailb" v-model="mailb" />
                 </div>
             </div>
             <div class="user-form-id">
@@ -133,7 +133,7 @@ export default {
             }
             else {
                 const dataToSend = {
-                    functionName: "options_bussines_info",
+                    functionName: "options_get_business",
                     token: sessionStorage.getItem('miToken') || 0,
                 };
 
@@ -141,10 +141,10 @@ export default {
                     .post("http://localhost/Back-End/server.php", dataToSend)
                     .then((response) => {
                         console.log(response.data);
-                        this.name = response.data.nombre;
-                        this.rut = response.data.rut;
-                        this.mailb = response.data.correo;
-                        
+                        this.name = response.data[2];
+                        this.rut = response.data[4];
+                        this.mailb = response.data[5];
+
                     })
                     .catch((error) => {
                         console.error(error);

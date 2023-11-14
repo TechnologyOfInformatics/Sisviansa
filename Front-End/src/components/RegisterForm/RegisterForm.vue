@@ -1,8 +1,5 @@
 <template>
   <div class="sign-up" v-if="web">
-    <div class="toggle-btn">
-      <label for="toggle" @click="toggleOption">¿Eres una empresa?</label>
-    </div>
     <form @submit.prevent="registerWeb">
 
       <h1>Crear cuenta de Usuario</h1>
@@ -25,34 +22,6 @@
       </div>
       <button type="submit">Registrate</button>
     </form>
-  </div>
-  <div class="sign-up" v-else-if="!web">
-    <div class="toggle-btn">
-      <label for="toggle">Eres una empresa?</label>
-      <input type="checkbox" @click="toggleOption" id="toggle">
-    </div>
-    <form @submit.prevent="registerBussines">
-
-      <h1>Crear cuenta de Empresa</h1>
-      <input v-model="nameb" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="nameb" />
-      <input v-model="rut" type="text" name="txt" placeholder="Rut" required id="rut" />
-      <input v-model="mailb" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email"
-        id="mailb" />
-      <input v-model="passwdb" type="password" name="passwdb" placeholder="Contraseña" required
-        autocomplete="new-password" id="passwdb" />
-      <input v-model="confirmPasswdb" type="password" name="confirmPasswdb" placeholder="Confirma la contraseña" required
-        autocomplete="new-password" id="confirmPasswdb" />
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <div v-if="succesMessage" class="succes-message">
-        {{ succesMessage }}
-      </div>
-      <button type="submit">Registrate</button>
-
-    </form>
-
-
   </div>
 </template>
 <script>

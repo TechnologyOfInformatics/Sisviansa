@@ -186,8 +186,8 @@
   </div>
   <div v-if="modalCreateCustom" class="modal" @click="modalCreateCustomMenu">
     <div class="modal-content modal-custom" @click.stop>
-      
-  aaaw
+
+      aaaw
     </div>
   </div>
 </template>
@@ -220,6 +220,7 @@ export default {
   created() {
     this.fetchUserData()
     this.handleRouteLogic()
+    console.log(this.menus)
   },
   computed: {
     favoriteMenus() {
@@ -227,23 +228,17 @@ export default {
     },
     showSinGlutenButton() {
       return this.menus.some((menu) =>
-        menu.viandas && menu.viandas.some((vianda) =>
-          vianda.diets && vianda.diets.includes('Sin Gluten')
-        )
+        menu.diets && menu.diets.includes('Sin Gluten')
       );
     },
     showVeganoButton() {
       return this.menus.some((menu) =>
-        menu.viandas && menu.viandas.some((vianda) =>
-          vianda.diets && vianda.diets.includes('Vegano')
-        )
+        menu.diets && menu.diets.includes('Vegana')
       );
     },
     showVegetarianoButton() {
       return this.menus.some((menu) =>
-        menu.viandas && menu.viandas.some((vianda) =>
-          vianda.diets && vianda.diets.includes('Vegetariano')
-        )
+        menu.diets && menu.diets.includes('Vegetariana')
       );
     }
   },
@@ -380,7 +375,9 @@ export default {
           description: menuData.descripcion,
           price: this.calculateTotalPrice(viandas),
           viandas: viandas,
+          diets: menuData.dietas
         };
+
       });
     },
 
