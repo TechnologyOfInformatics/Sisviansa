@@ -137,7 +137,8 @@ function admin_delete_phone($client_id, $phone_number)
     return delete_phone($tORM, $client_id, $phone_number);
 }
 
-function admin_administration_login($name, $passwd)
+function admin_toggle_client_state($client_id, $state)
 {
-    return administration_login($name, $passwd);
+    global $tORM;
+    return toggle_client_state($tORM, $client_id, $state);
 }

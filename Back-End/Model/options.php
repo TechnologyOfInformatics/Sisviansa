@@ -116,3 +116,10 @@ function  options_get_business($token)
     global $tORM;
     return get_business($tORM,  $token);
 }
+
+function  options_create_client_phone(String $token, Int $number)
+{
+
+    global $tORM;
+    return create_client_phone($tORM,  $token, $number);
+}

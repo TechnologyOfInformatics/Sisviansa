@@ -67,11 +67,6 @@ $pedido = array(
     ),
 );*/
 
-print_r(show_user_list($tORM)[0]);
-print_r(show_user_list($tORM, 'web')[0]);
-print_r(show_user_list($tORM, 'empresa')[0]);
-print_r(show_user_list($tORM, 'web', '12345678', 'DNI')[0]);
-print_r(show_user_list($tORM, 'empresa', '98765432109', 'RUT')[0]);
 
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 

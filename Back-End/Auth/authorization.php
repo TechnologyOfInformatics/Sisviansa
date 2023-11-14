@@ -2478,6 +2478,31 @@ function create_phone(TORM $tORM, Int $client_id, String $phone_number) // Funci
 
     return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
 }
+
+function create_client_phone(TORM $tORM, Int $token, String $phone_number) // Funcion admin
+{
+    $client_id = get_client_id($tORM, $token);
+    $values = func_get_args();
+    unset($values[0]);
+    $values = array_values($values);
+    if (in_array('', func_get_args())) {
+        return "ERROR 400, BAD REQUEST";
+    }
+
+    $phone_counter = $tORM
+        ->do(query: "select count(telefono) from cliente_telefono where cliente_id = {$client_id}");
+
+    if (($phone_counter[0][0]) >= 3) {
+        return "422, UNPROCESSABLE ENTITY";
+    }
+
+    $response = $tORM
+        ->from("cliente_telefono")
+        ->values("cliente_telefono", intval($client_id[0]['cliente_id']), $phone_number)
+        ->do("insert");
+
+    return ($response == "OK, 200" ? $response : "ERROR 409, CONFLICT");
+}
 function delete_phone(TORM $tORM, Int $client_id, String $phone_number) // Funcion admin
 {
     if (in_array('', func_get_args())) {
