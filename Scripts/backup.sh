@@ -38,10 +38,10 @@ determinar_carpeta_objetivo() {
 }
 
 recuperar() {
-    mv "${BACKUP_FOLDER}/mariadb_backup.tar" '${BACKUP_ORIGIN}/..'
+    mv "${BACKUP_FOLDER}/mariadb_backup.tgz" '${BACKUP_ORIGIN}/..'
     rm -r "${BACKUP_FOLDER}"
-    tar -xf "${BACKUP_FOLDER}/mariadb_backup.tar"
-    rm "${BACKUP_FOLDER}/mariadb_backup.tar"
+    tar -xf "${BACKUP_FOLDER}/mariadb_backup.tgz"
+    rm "${BACKUP_FOLDER}/mariadb_backup.tgz"
 
 }
 
@@ -74,7 +74,7 @@ while true; do
         sh ./usr/local/bin/compress.sh
         ;;
     4)
-        tar -tvf "${BACKUP_FOLDER}/mariadb_backup.tar"
+        tar -tvf "${BACKUP_FOLDER}/mariadb_backup.tgz"
         ;;
     5)
         crontab -e
