@@ -1,10 +1,7 @@
 <?php
-include_once "Data/database_model.php";
-include_once "Data/ORM-V1.php";
-header("Access-Control-Allow-Origin: http://localhost:8080");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Credentials: true");
+
+require_once("Data/database_model.php");
+require_once("Data/ORM-V1.php");
 
 $authorization = __FILE__;
 
@@ -1551,7 +1548,7 @@ function delete_credit_card(TORM $tORM, String $token, String $verification_code
 
 function administration_login(String $name, String $passwd) //Funcion admin INCOMPLETA
 {
-    $tORM = new TORM("localhost", $name, $passwd, "sisviansa_techin_v1", 3306);
+    $tORM = new TORM('sisviansa_mariadb', $name, $passwd, "sisviansa_techin_v1", 3306);
     $result = $tORM->from('SISVIANSA_USER')->columns('SISVIANSA_USER.rol')->where('SISVIANSA_USER.nombre', 'eq', $name)->do('select');
     return (isset($result->error) ? $result->error : $tORM);
 }
