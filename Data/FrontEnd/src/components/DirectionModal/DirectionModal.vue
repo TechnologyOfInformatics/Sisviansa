@@ -83,8 +83,8 @@ export default {
             this.$http
                 .post("http://localhost:9000/server.php", dataToSend)
                 .then((response) => {
-                    if (Array.isArray(response.data))
-                        this.directions = response.data;
+                    if(Array.isArray(response.data))
+                    this.directions = response.data;
 
                 })
                 .catch((error) => {

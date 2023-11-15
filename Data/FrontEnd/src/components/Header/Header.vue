@@ -119,7 +119,7 @@ export default {
                 this.isAuthenticated = true;
                 this.web = false;
               }
-            } else {
+            } else{
               this.isAuthenticated = false
               this.$router.push("/login");
             }
