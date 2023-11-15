@@ -227,8 +227,6 @@
               </tr>
               <tr>
                 <td>Telefonos:</td>
-              </tr>
-              <tr>
                 <td>
                   <p v-for="(telefono, index) in selectedUser[5]" :key="index"> {{ telefono }}</p>
                 </td>

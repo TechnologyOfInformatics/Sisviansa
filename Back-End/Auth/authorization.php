@@ -1628,7 +1628,7 @@ function get_foods(TORM $tORM) //Funcion admin 1
     $filtered_menus = array_values($foods);
 
 
-    return [$filtered_menus];
+    return $filtered_menus;
 }
 
 function get_orders(TORM $tORM, QueryCall $ctl, String $mail = "", String $passwd = "") //Funcion admin 1
