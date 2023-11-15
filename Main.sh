@@ -1,25 +1,24 @@
-#!/bin/bash
-if test -f "/usr/local/bin/compress.sh"; then
+#!/bin/bash 
+#i
+#!/bin/bash 
+if [ test -f "/usr/local/bin/compress.sh" ]; then
     cat >/etc/apk/repositories <<EOL
-#/media/cdrom/apks
-http://alpinelinux.c3sl.ufpr.br/v3.18/main
-http://alpinelinux.c3sl.ufpr.br/v3.18/community
+    #/media/cdrom/apks
+    http://alpinelinux.c3sl.ufpr.br/v3.18/main
+    http://alpinelinux.c3sl.ufpr.br/v3.18/community
 
 EOL
-    apk add xz iptables ip6tables iptable_nat linux-headers alpine-sdk git
-    chmod +x compress.sh >/dev/null
-    wget "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --no-check-certificate '1jF7h_hTirptWjffZKCT-PRrnmZwdPGPA' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\
-1\n/p')&id=1jF7h_hTirptWjffZKCT-PRrnmZwdPGPA" -O Scripts.tar
-    tar -xf "Scripts.tar" -C /Sisviansa
-    rm Scripts.tar
-    mv Scripts/compress.sh /usr/local/bin/ >/dev/null
+    apk add xz iptables ip6tables linux-headers alpine-sdk git 
+
+    chmod +x Sisviansa/Scripts/compress.sh >/dev/null
+    mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
 
     echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
     echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
     read -n 1 dummy
-    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciará"
+    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
 
-    # Debido al hecho que éste script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
+    # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
 
     reboot
 else
@@ -33,11 +32,15 @@ else
         echo "5. Acceder a Scripts de Servicios"
         echo "6. Ver logs del servidor DHCP"
         echo "0. Salir"
+        echo "Si se quiere determinar un equipo como servidor dhcp debe"
+        echo " ejecutar el script dentro de Sisviansa/Scripts llamado dhcp.sh."
+        echo "Si se quiere determinar un equipo como cliente dhcp debe ejecutar"
+        echo " el script dentro de Sisviansa/Scripts llamado client_setter.sh."
 
-        echo "---------------Selecciona una opción-----------------"
+        echo "---------------Selecciona una opcion-----------------"
         read opcion
 
-        case $opcion in
+        case "$opcion" in
         1)
             ./Sisviansa/Scripts/ssh.sh
             ;;
@@ -58,11 +61,11 @@ else
             ;;
 
         0)
-            echo "Saliendo del menú."
+            echo "Saliendo del menu."
             exit 0
             ;;
         *)
-            echo "Opción no válida. Por favor, ingrese un número de opción válido."
+            echo "Opcion no valida. Por favor, ingrese un numero de opcion valido."
             ;;
         esac
         read -n 1 dummy

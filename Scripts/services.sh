@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #Quiero: Iniciar el compose, bajar el compose, fijarme los contenedores, fijarme las networks, ver el url de la pagina web de sisviansa, ver el url a (por ahora) prueba.php de php
-#Llevo esuchando Psychosocial las últimas 6 horas, estoy, efectivamente, como lokita
+#Llevo esuchando Psychosocial las ultimas 6 horas, estoy, efectivamente, como lokita
 
 while true; do
 
-    echo "---------------Selecciona una opción-----------------"
+    echo "---------------Selecciona una opcion-----------------"
     echo "1. Subir compose"
     echo "2. Bajar compose"
     echo "3. Ver contenedores activos"
@@ -14,7 +14,7 @@ while true; do
     echo "6. Ver url a Backend"
     echo "0. Salir"
 
-    read -p "Opción seleccionada: " opcion
+    read -p "Opcion seleccionada: " opcion
 
     case $opcion in
     1)
@@ -46,7 +46,7 @@ while true; do
         exit 0
         ;;
     *)
-        echo "Opcion inválida"
+        echo "Opcion invalida"
         ;;
     esac
 

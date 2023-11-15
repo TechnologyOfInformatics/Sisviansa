@@ -8,7 +8,7 @@ apk update
 apk upgrade
 apk add iptables ip6tables
 #Establezco la NAT
-## "lo" es LOOPBACK el cual es una forma de decirle al localhost, la red interna, en éste caso se le dice que haga forward a los paquetes
+## "lo" es LOOPBACK el cual es una forma de decirle al localhost, la red interna, en este caso se le dice que haga forward a los paquetes
 iptables -A FORWARD -i lo -j ACCEPT
 ## eth0 es la red local externa, ahora mismo le pido que enmascare los paquetes para el forwarding
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -27,7 +27,7 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
   option routers 192.168.1.1;
 }
 EOL
-echo "Las redes disponibles serán desde 192.168.1.100 hasta 192.168.1.150"
+echo "Las redes disponibles seran desde 192.168.1.100 hasta 192.168.1.150"
 ## Aplico cambios
 rc-update add dhcp
 rc-update add dhcpd

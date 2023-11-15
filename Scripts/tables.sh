@@ -48,7 +48,7 @@ restaurar_ipe_teibols() {
 #seccion de opciones
 while true; do
     clear
-    echo "---------------Selecciona una opción-----------------"
+    echo "---------------Selecciona una opcion-----------------"
     echo "1. Agregar una regla"
     echo "2. Eliminar una regla"
     echo "3. Crear regla de servicio"
@@ -88,7 +88,7 @@ while true; do
         ;;
 
     5)
-        read -p "Archivo (El archivo debe estar en éste mismo directorio): " archivo
+        read -p "Archivo (El archivo debe estar en este mismo directorio): " archivo
         restaurar_ipe_teibols "$archivo"
         ;;
 
@@ -106,7 +106,7 @@ while true; do
         exit 0
         ;;
     *)
-        echo "Opcion no válida."
+        echo "Opcion no valida."
         ;;
     esac
 

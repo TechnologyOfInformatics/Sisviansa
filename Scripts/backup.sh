@@ -3,7 +3,7 @@
 #    ● tar -cf archivo.tar menu.sh abm.sh
 #Empaqueta dentro del archivo.tar los archivos menu.sh y abm.sh
 #    ● tar -tvf archivo.tar
-#Lista todos los archivos que están dentro de archivo.tar
+#Lista todos los archivos que estan dentro de archivo.tar
 #    ● tar -xf archivo.tar
 #Extrae los archivos desde archivo.tar
 
@@ -14,16 +14,16 @@
 #3 Corro el script compress.sh dentro de usr/local/bin
 #4 Uso tar -tvf en el archivo para listar su contenido
 #5 Simplemente abro el crontab (tambien anacron?)
-#6 ñaña
-#7 lo pensé y creo que los pasos serán: traigo el .tar, borro la carpeta, extraigo el .tar y lo borro
-#Nota: Sería lindo tener algo que diga hace cuánto fue el último respaldo, hmmmm
+#6 niania
+#7 lo pense y creo que los pasos seran: traigo el .tar, borro la carpeta, extraigo el .tar y lo borro
+#Nota: Sería lindo tener algo que diga hace cuanto fue el ultimo respaldo, hmmmm
 
 determinar_carpeta_origen() {
     local carpeta="$1"
     echo "export BACKUP_FOLDER=$BACKUP_FOLDER" >/etc/profile.d/backup_data.sh
     echo "export BACKUP_ORIGIN=$1" >>/etc/profile.d/backup_data.sh
     echo "Se ha modificado el origen"
-    echo "Se reiniciará el sistema para aplicar los cambios"
+    echo "Se reiniciara el sistema para aplicar los cambios"
     reboot
 }
 
@@ -32,7 +32,7 @@ determinar_carpeta_objetivo() {
     echo "export BACKUP_ORIGIN=$BACKUP_ORIGIN" >/etc/profile.d/backup_data.sh
     echo "export BACKUP_FOLDER=$1" >>/etc/profile.d/backup_data.sh
     echo "Se ha modificado el destino"
-    echo "Se reiniciará el sistema para aplicar los cambios"
+    echo "Se reiniciara el sistema para aplicar los cambios"
     reboot
 
 }
@@ -50,7 +50,7 @@ while true; do
     echo "CARPETA ORIGEN ACTUAL:$BACKUP_ORIGIN"
     echo "CARPETA DESTINO ACTUAL:$BACKUP_FOLDER"
     echo
-    echo "---------------Selecciona una opción-----------------"
+    echo "---------------Selecciona una opcion-----------------"
     echo "1. Determinar carpeta de origen"
     echo "2. Determinar carpeta objetivo"
     echo "3. Forzar respaldo"
@@ -59,7 +59,7 @@ while true; do
     echo "6. Determinar frecuencia de respaldo"
     echo "7. Recuperar"
     echo "0. Salir"
-    read -p "Seleccione una opción: " opcion
+    read -p "Seleccione una opcion: " opcion
 
     case $opcion in
     1)
@@ -80,9 +80,9 @@ while true; do
         crontab -e
         ;;
     6)
-        echo "¿Con que frecuencia quiere que se respalden sus datos?" #No pude instalar Anacron, veré algun sustituto
+        echo "¿Con que frecuencia quiere que se respalden sus datos?" #No pude instalar Anacron, vere algun sustituto
 
-        echo "---------------Selecciona una opción-----------------"
+        echo "---------------Selecciona una opcion-----------------"
         echo "1. Anualmente"
         echo "2. Mensualmente"
         echo "3. Cada semana"
@@ -121,7 +121,7 @@ while true; do
         exit 0
         ;;
     *)
-        echo "Opción no válida."
+        echo "Opcion no valida."
         ;;
     esac
 

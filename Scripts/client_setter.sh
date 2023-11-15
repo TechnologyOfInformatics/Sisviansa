@@ -41,13 +41,13 @@ rc-service lightdm start
 echo "XFCE se ha instalado correctamente"
 
 read -p "Nombre de usuario para crear: " username
-read -s -p "Contraseña para el nuevo usuario: " password
+read -s -p "Contrasenia para el nuevo usuario: " password
 echo
 
 # Crear un nuevo usuario no root, para el puesto de trabajo
 adduser "$username" -D
 echo "$username:$password" | chpasswd
-# No voy a mentir, le pedi a chatgpt que me hiciera el crear usuario y no se para que es chpasswd (change password, se usa para alterar la contraseña de los usuarios, o en éste caso darle una)
+# No voy a mentir, le pedi a chatgpt que me hiciera el crear usuario y no se para que es chpasswd (change password, se usa para alterar la contrasenia de los usuarios, o en este caso darle una)
 
 
 # Determina las reglas para el firewall, para bloquear el acceso a internet

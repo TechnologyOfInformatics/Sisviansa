@@ -17,7 +17,7 @@ ese_ese_hache_pa_los_pibes() {
             echo "clave? ssh creada para mi mismo" #Porque una clave no se usa nunca, no entiendo
         fi
 
-        ssh-copy-id -i ~/.ssh/id_rsa.pub "$usuario_ssh@$ip_cliente" >/dev/null 2>&1 #Según gpt el redireccionamiento del final lo manda al vacio, no me acordaba de eso jaja
+        ssh-copy-id -i ~/.ssh/id_rsa.pub "$usuario_ssh@$ip_cliente" >/dev/null 2>&1 #Segun gpt el redireccionamiento del final lo manda al vacio, no me acordaba de eso jaja
 
     fi
 
@@ -43,7 +43,7 @@ ese_ese_hache_pero_no() {
 
     if grep -E -q "(^|\s)Host\s$alias_ssh" "$config_file"; then #Pero porque funciona??????????
 
-        sed -i "/Host $alias_ssh/,/^\s*$/d" ~/.ssh/config #Una forma cómoda (no el mueble) de eliminar los datos sobre el alias
+        sed -i "/Host $alias_ssh/,/^\s*$/d" ~/.ssh/config #Una forma comoda (no el mueble) de eliminar los datos sobre el alias
 
         rm -f ~/.ssh/id_rsa_${alias_ssh}*
         rm -f ~/.ssh/id_rsa_${alias_ssh}*.pub
@@ -51,7 +51,7 @@ ese_ese_hache_pero_no() {
         echo "'$alias_ssh' no existe"
         exit 1
     fi
-    echo "Se eliminó a '$alias_ssh'"
+    echo "Se elimino a '$alias_ssh'"
 }
 #ese_ese_hache_pero_no "maxi"
 #ese_ese_hache_pa_los_pibes "192.168.1.48" "maxi" "root"
@@ -59,12 +59,12 @@ ese_ese_hache_pero_no() {
 #Seccion de eleccion
 while true; do
 
-    echo "---------------Selecciona una opción-----------------"
+    echo "---------------Selecciona una opcion-----------------"
     echo "1. Crear SSH y alias"
     echo "2. Eliminar SSH a alias"
     echo "0. Salir"
 
-    read -p "Opción seleccionada: " opcion
+    read -p "Opcion seleccionada: " opcion
     echo
 
     case $opcion in
@@ -84,7 +84,7 @@ while true; do
         exit 0
         ;;
     *)
-        echo "Opcion inválida"
+        echo "Opcion invalida"
         ;;
     esac
 

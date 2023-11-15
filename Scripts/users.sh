@@ -71,10 +71,10 @@ eliminar_grupo() {
     echo "Grupo $nombre_de_grupo eliminado correctamente."
 }
 
-#Seccion de menú
+#Seccion de menu
 while true; do
     clear
-    echo "---------------Selecciona una opción-----------------"
+    echo "---------------Selecciona una opcion-----------------"
     echo "1. Crear usuario"
     echo "2. Ver grupos de un usuario"
     echo "3. Modificar grupo de un usuario"
@@ -86,14 +86,14 @@ while true; do
     echo "9. Eliminar grupo"
     echo "0. Salir"
 
-    read -p "Opción seleccionada: " opcion
+    read -p "Opcion seleccionada: " opcion
     echo
 
     case $opcion in
     1)
         read -p "Ingresa el nombre del usuario: " nombre_de_usuario
-        read -sp "Ingresa la contraseña: " contrasenia
-        #usé la s para que no mostrara la contraseña, creía que era la h de hidden y no sé porqué :/
+        read -sp "Ingresa la contrasenia: " contrasenia
+        #use la s para que no mostrara la contrasenia, creía que era la h de hidden y no se porque :/
         echo
         crear_usuario "$nombre_de_usuario" "$contrasenia"
         ;;
@@ -136,7 +136,7 @@ while true; do
         exit 0
         ;;
     *)
-        echo "Opcion inválida"
+        echo "Opcion invalida"
         ;;
     esac
 
