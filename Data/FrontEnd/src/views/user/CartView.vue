@@ -172,11 +172,11 @@
             <p>Descripción: {{ item.description }}</p>
             <div>
               Cantidad:
-              <button @click="decrementQuantity(item)" :disabled="item.quantity === 1">-</button>
+              <button @click="decrementQuantity(item)" :disabled="item.quantity === 1" class="quantity">-</button>
               {{ item.quantity }}
-              <button @click="incrementQuantity(item)">+</button>
+              <button @click="incrementQuantity(item)" class="quantity">+</button>
             </div>
-            <button @click="removeFromCart(item)">Eliminar</button>
+            <button @click="removeFromCart(item)" class="button-checkout">Eliminar</button>
           </div>
         </div>
         <div class="cart-summary">
@@ -493,9 +493,10 @@ form .submit-btn:hover {
 
 .cart {
   width: 40vw;
-  height: 66vh;
+  height: 78vh;
   padding: 20px;
   background-color: #243328;
+  color: white;
 }
 
 .empty-cart {
@@ -512,6 +513,26 @@ form .submit-btn:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: black;
+}
+
+.quantity{
+  padding: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: black;
+  border-radius: 15px;
+}
+.button-checkout{
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: .5em .8em;
+
+}
+.button-checkout:hover{
+  background-color: #ccc;
+  border: 1px solid black;
 }
 
 .item-details {
