@@ -97,7 +97,7 @@ function admin_toggle_food_diet($state, $food_id, $diet)
     global $tORM;
     return toggle_food_diet($tORM, $state, $food_id, $diet); //State es para determinar si se quiere agregar (true) o quitar (false)
 }
-function admin_create_menu($name, $frequency, $description, $foods)
+function admin_create_menu(String $name, Int $frequency, String $description, array $foods)
 {
 
     global $tORM;
