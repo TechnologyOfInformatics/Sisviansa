@@ -14,9 +14,9 @@
         <div class="footer-border"></div>
         <ul class="footer-links">
           <li><router-link to="/" class="link">Inicio</router-link></li>
-          <li><router-link to="/" class="link">Inicio</router-link></li>
-          <li><router-link to="/" class="link">Inicio</router-link></li>
-          <li><router-link to="/" class="link">Inicio</router-link></li>
+          <li><router-link to="/login" class="link">Iniciar Sesion</router-link></li>
+          <li><router-link to="/shop" class="link">Tienda</router-link></li>
+          <li><router-link to="/faq" class="link">Preguntas Frecuentes</router-link></li>
         </ul>
       </div>
 
