@@ -5,8 +5,24 @@
         <div class="header__logo">
           <h2>Sisviansa</h2>
         </div>
+        <nav class="nav">
+          <li :class="{ selected: $route.path === '/admin/user' }">
+            <router-link to="/admin/user" class="link">Usuarios</router-link>
+          </li>
+          <li :class="{ selected: $route.path === '/admin/menu' }">
+            <router-link to="/admin/menu" class="link">Menu</router-link>
+          </li>
+          <li :class="{ selected: $route.path === '/admin/chef' }">
+            <router-link to="/admin/chef" class="link">Chef</router-link>
+          </li>
+        </nav>
         <div class="header__user-info">
-          <span>Welcome, {{ username }}</span>
+          <span>Bienvenido, {{ username }}</span>
+          <router-link v to="/admin/auth" class="link" @click="logout">
+            <div class="action__button">
+              <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+          </router-link>
         </div>
       </nav>
     </header>
@@ -14,66 +30,188 @@
       <aside class="sidebar">
         <nav class="sidebar__nav">
           <ul class="sidebar__list">
-            <li><a href="#" @click="showCategory('orders')">Orders</a></li>
-            <li><a href="#" @click="showCategory('users')">Users</a></li>
-            <li><a href="#" @click="showCategory('admin')">Admin</a></li>
+            <li><a @click="showCategory('users')" class="aside-link">Lista de Usuarios</a></li>
+            <li><a @click="showCategory('auth')" class="aside-link">Autorizar Usuarios</a></li>
+            <li><a @click="showCategory('createB')" class="aside-link">Crear empresa</a></li>
+            <li><a @click="showCategory('orders')" class="aside-link">Pedidos</a></li>
           </ul>
         </nav>
         <footer class="sidebar__footer">Sisviansa</footer>
       </aside>
       <section class="main__section">
         <div v-if="currentCategory === 'users'" class="category-content">
-          <h1 class="category-content__title">User Information</h1>
+          <h1 class="category-content__title">Información de Usuarios</h1>
 
           <div class="search-bar">
             <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
             <button @click="searchUsers">Buscar</button>
           </div>
 
-            <div v-if="filteredUsers.length === 0" class="no-results">
-              <p>No se encontraron resultados.</p>
-            </div>
-            <table class="user-table" v-else>
-              <div class="table-container">
+          <div v-if="filteredUsers.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
 
               <thead>
                 <tr>
                   <th>Cliente ID</th>
-                  <th>Teléfono</th>
+                  <th>Cliente tipo</th>
+                  <th>Nombre</th>
                   <th>Documento Tipo</th>
-                  <th>Documento Número</th>
-                  <th>Primer Nombre</th>
-                  <th>Segundo Nombre</th>
-                  <th>Primer Apellido</th>
-                  <th>Segundo Apellido</th>
-                  <th>Autorización</th>
-                  <th>Dirección</th>
+                  <th>Documento</th>
+                  <th>Teléfono</th>
+                  <th>Correo</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
-                  <td>{{ user.Cliente_ID }}</td>
-                  <td>{{ user.Telefono }}</td>
-                  <td>{{ user.Documento_tipo }}</td>
-                  <td>{{ user.Documento_numero }}</td>
-                  <td>{{ user.Primer_nombre }}</td>
-                  <td>{{ user.Segundo_nombre }}</td>
-                  <td>{{ user.Primer_apellido }}</td>
-                  <td>{{ user.Segundo_apellido }}</td>
-                  <td>{{ user.Autorizacion }}</td>
-                  <td>
-                    <button @click="toggleUserDetails(user)">
-                      {{ user.showDetails ? '-' : '+' }}
-                    </button>
-                  </td>
+                  <td>{{ user[0] }}</td>
+                  <td>{{ user[1] }}</td>
+                  <td>{{ user[2] }}</td>
+                  <td>{{ user[3] }}</td>
+                  <td>{{ user[4] }}</td>
+                  <td v-if="user[5].length === 1">{{ user[5] }}</td>
+                  <td v-else> <button @click="toggleUserDetails(user)">
+                      {{ user.showDetails ? '-' : '+' }} </button></td>
+                  <td>{{ user[6] }}</td>
+
+
                 </tr>
-              </tbody>        
+              </tbody>
             </div>
-            </table>
+          </table>
+        </div>
+        <div v-if="currentCategory === 'auth'" class="category-content">
+          <h1 class="category-content__title">Autorización de Usuarios</h1>
+
+          <div class="search-bar">
+            <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
+            <button @click="searchUsers">Buscar</button>
           </div>
+
+          <div v-if="filteredUsers.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
+
+              <thead>
+                <tr>
+                  <th>Cliente ID</th>
+                  <th>Cliente tipo</th>
+                  <th>Nombre</th>
+                  <th>Documento Tipo</th>
+                  <th>Documento</th>
+                  <th>Correo</th>
+                  <th>Autorizacion</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="user in filteredUsers" :key="user.Cliente_ID">
+                  <td>{{ user[0] }}</td>
+                  <td>{{ user[1] }}</td>
+                  <td>{{ user[2] }}</td>
+                  <td>{{ user[3] }}</td>
+                  <td>{{ user[4] }}</td>
+
+                  <td>{{ user[6] }}</td>
+                  <select v-model="user[7]" @change="handleAutorizacionChange(user[7], user[0])">
+                    <option value="Autorizado">Autorizado</option>
+                    <option value="En espera">En espera</option>
+                    <option value="No autorizado">No autorizado</option>
+                  </select>
+
+                </tr>
+              </tbody>
+            </div>
+          </table>
+        </div>
+        <div v-if="currentCategory === 'createB'" class="category-content">
+          <form @submit.prevent="registerBussines">
+
+            <h1>Crear cuenta de Empresa</h1>
+            <input v-model="nameb" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="nameb" />
+            <input v-model="rut" type="text" name="txt" placeholder="Rut" required id="rut" />
+            <input v-model="mailb" type="email" name="email" placeholder="Correo electrónico" required
+              autocomplete="email" id="mailb" />
+            <input v-model="passwdb" type="password" name="passwdb" placeholder="Contraseña" required
+              autocomplete="new-password" id="passwdb" />
+            <input v-model="confirmPasswdb" type="password" name="confirmPasswdb" placeholder="Confirma la contraseña"
+              required autocomplete="new-password" id="confirmPasswdb" />
+            <div v-if="errorMessage" class="error-message">
+              {{ errorMessage }}
+            </div>
+            <div v-if="succesMessage" class="succes-message">
+              {{ succesMessage }}
+            </div>
+
+            <button type="submit">Registrate</button>
+
+          </form>
+
+        </div>
+
+        <div v-if="currentCategory === 'orders'" class="category-content">
+          <h1 class="category-content__title">Pedidos de los clientes</h1>
+
+          <div class="search-bar">
+            <input type="text" v-model="searchQuery" placeholder="Buscar por ID, nombre o apellido">
+            <button @click="searchOrders">Buscar</button>
+          </div>
+
+          <div v-if="filteredOrders.length === 0" class="no-results">
+            <p>No se encontraron resultados.</p>
+          </div>
+          <table class="user-table" v-else>
+            <div class="table-container">
+
+              <thead>
+                <tr>
+                  <th>Pedido ID</th>
+                  <th>Pedido Fecha</th>
+                  <th>Menus</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Nombre Comprador</th>
+                  <th>Documento Comprador</th>
+                  <th>Precio del Pedido</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="order in filteredOrders" :key="order.pedido_id">
+                  <td>{{ order.pedido_id }}</td>
+                  <td>{{ order.fecha_del_pedido }}</td>
+                  <td>
+                    <span v-for="(menu, index) in order.menus" :key="index">
+                      {{ menu.nombre }}
+                      <span v-if="index < order.menus.length - 1"> <br> </span>
+                    </span>
+                  </td>
+                  <td> <span v-for="(menu, index) in order.menus" :key="index">
+                      {{ menu.cantidad }}
+                      <span v-if="index < order.menus.length - 1"><br> </span>
+                    </span></td>
+                  <td>{{ order.estados[0].estado }}</td>
+                  <td>{{ order.nombre }}</td>
+                  <td>{{ order.documento }}</td>
+                  <td>
+                    {{ order.menus ? Object.values(order.menus).reduce((total, menu) => total + (menu.precio ?
+                                        parseFloat(menu.precio) : 0), 0).toFixed(2) : 0 }}
+                  </td>
+
+                </tr>
+              </tbody>
+            </div>
+          </table>
+        </div>
       </section>
-      <!-- Modal para mostrar detalles del usuario -->
+
+
+      <!-- modals -->
       <div v-if="showModal" class="modal">
         <div class="modal-content">
           <h2>Detalles del Usuario</h2>
@@ -81,26 +219,25 @@
             <tbody>
               <tr>
                 <td>Cliente ID:</td>
-                <td>{{ selectedUser.Cliente_ID }}</td>
+                <td>{{ selectedUser[0] }}</td>
               </tr>
               <tr>
                 <td>Documento Número:</td>
-                <td>{{ selectedUser.Documento_numero }}</td>
+                <td>{{ selectedUser[4] }}</td>
               </tr>
               <tr>
-                <td>Dirección:</td>
+                <td>Telefonos:</td>
                 <td>
-                  {{ selectedUser.Direccion.Numero }},
-                  {{ selectedUser.Direccion.Calle }},
-                  {{ selectedUser.Direccion.Barrio }},
-                  {{ selectedUser.Direccion.Ciudad }}
+                  <p v-for="(telefono, index) in selectedUser[5]" :key="index"> {{ telefono }}</p>
                 </td>
               </tr>
-              <!-- Agrega más detalles del usuario aquí -->
             </tbody>
           </table>
+          <button @click="showModal = false; showModalUser = false">Cerrar</button>
+
         </div>
       </div>
+
     </main>
   </div>
 </template>
@@ -112,209 +249,46 @@ export default {
     return {
       currentCategory: null,
       username: "Nombre de Usuario",
-      users: [
-        {
-          Cliente_ID: 1,
-          Telefono: "1234567890",
-          Documento_tipo: "Cédula",
-          Documento_numero: "123456789",
-          Primer_nombre: "John",
-          Segundo_nombre: "Doe",
-          Primer_apellido: "Smith",
-          Segundo_apellido: "Johnson",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "123",
-            Calle: "Main St",
-            Barrio: "Barrio Ejemplo",
-            Ciudad: "Ciudad Ejemplo"
-          },
-        },
-        {
-
-          Cliente_ID: 2,
-          Telefono: "9876543210",
-          Documento_tipo: "Cédula",
-          Documento_numero: "987654321",
-          Primer_nombre: "Alice",
-          Segundo_nombre: "Jane",
-          Primer_apellido: "Brown",
-          Segundo_apellido: "Davis",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "456",
-            Calle: "Oak St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 3,
-          Telefono: "5555555555",
-          Documento_tipo: "Pasaporte",
-          Documento_numero: "555555555",
-          Primer_nombre: "Eduardo",
-          Segundo_nombre: "Pablo",
-          Primer_apellido: "López",
-          Segundo_apellido: "González",
-          Contrasenia: "********",
-          Autorizacion: "No",
-          Direccion: {
-            Numero: "789",
-            Calle: "Maple St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 4,
-          Telefono: "1111111111",
-          Documento_tipo: "Cédula",
-          Documento_numero: "111111111",
-          Primer_nombre: "Maria",
-          Segundo_nombre: "Isabel",
-          Primer_apellido: "Martínez",
-          Segundo_apellido: "López",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "567",
-            Calle: "Pine St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 5,
-          Telefono: "2222222222",
-          Documento_tipo: "Cédula",
-          Documento_numero: "222222222",
-          Primer_nombre: "Carlos",
-          Segundo_nombre: "Andrés",
-          Primer_apellido: "Ramirez",
-          Segundo_apellido: "Gómez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "101",
-            Calle: "Cedar St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 6,
-          Telefono: "3333333333",
-          Documento_tipo: "Cédula",
-          Documento_numero: "333333333",
-          Primer_nombre: "Laura",
-          Segundo_nombre: "Isabel",
-          Primer_apellido: "Perez",
-          Segundo_apellido: "González",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "222",
-            Calle: "Elm St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 7,
-          Telefono: "4444444444",
-          Documento_tipo: "Pasaporte",
-          Documento_numero: "444444444",
-          Primer_nombre: "Javier",
-          Segundo_nombre: "Andrés",
-          Primer_apellido: "Hernandez",
-          Segundo_apellido: "López",
-          Contrasenia: "********",
-          Autorizacion: "No",
-          Direccion: {
-            Numero: "333",
-            Calle: "Sycamore St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 8,
-          Telefono: "5555555555",
-          Documento_tipo: "Cédula",
-          Documento_numero: "555555555",
-          Primer_nombre: "Sofia",
-          Segundo_nombre: "Valentina",
-          Primer_apellido: "García",
-          Segundo_apellido: "Ramirez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "444",
-            Calle: "Birch St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        {
-          Cliente_ID: 9,
-          Telefono: "6666666666",
-          Documento_tipo: "Cédula",
-          Documento_numero: "666666666",
-          Primer_nombre: "Luis",
-          Segundo_nombre: "Fernando",
-          Primer_apellido: "Perez",
-          Segundo_apellido: "Hernandez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "555",
-            Calle: "Aspen St",
-            Barrio: "Barrio de Prueba",
-            Ciudad: "Ciudad de Prueba"
-          },
-        },
-        {
-          Cliente_ID: 10,
-          Telefono: "7777777777",
-          Documento_tipo: "Cédula",
-          Documento_numero: "777777777",
-          Primer_nombre: "Ana",
-          Segundo_nombre: "Maria",
-          Primer_apellido: "Gómez",
-          Segundo_apellido: "Ramirez",
-          Contrasenia: "********",
-          Autorizacion: "Si",
-          Direccion: {
-            Numero: "666",
-            Calle: "Chestnut St",
-            Barrio: "Barrio de Ejemplo",
-            Ciudad: "Ciudad de Ejemplo"
-          },
-        },
-        // Puedes agregar más usuarios aquí
-      ],
-
+      users: [],
+      orders: [],
       searchQuery: "",
       selectedUser: null, // Para almacenar el usuario seleccionado para mostrar en el modal
       showModal: false, // Para controlar la visibilidad del modal
       filteredUsers: [],
-      searchTerm: ""
+      filteredOrders: [],
+      searchTerm: "",
+      modifyingUser: null,
+      editingField: null,
+      showModalUser: false,
+      errorMessage: '',
+      succesMessage: '',
+      nameb: "",
+      rut: "",
+      mailb: "",
+      passwdb: "",
+      confirmPasswdb: "",
 
     };
   },
   mounted() {
-    // Llamar a searchUsers para mostrar todos los usuarios por defecto
-    this.searchUsers();
+    this.fetchUsers();
+    this.fetchOrders();
+
   },
   methods: {
-
+    changeUserDetails(user, field) {
+      this.modifyingUser = user;
+      this.editingField = field;
+      this.showModalUser = true
+    },
     showCategory(category) {
       this.currentCategory = category;
     },
     closeModal() {
       this.showModal = false;
+
+    },
+    logout() {
 
     },
     toggleUserDetails(user) {
@@ -327,46 +301,160 @@ export default {
         this.showModal = true;
       }
     },
+    handleAutorizacionChange(state, id) {
+
+      const dataToSend = {
+        functionName: "admin_toggle_client_state",
+        cid: id,
+        cstate: state
+      };
+      this.$http
+        .post("http://localhost:9000/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    saveUserChanges() {
+
+      this.showModal = false;
+
+      this.updateUserList();
+    },
+    fetchUsers() {
+      const dataToSend = {
+        functionName: "admin_show_user_list",
+
+      };
+
+      this.$http
+        .post("http://localhost:9000/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          console.log(response.data)
+
+          if (Array.isArray(response.data)) {
+            this.users = response.data
+            console.log(this.users)
+            this.searchUsers();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    fetchOrders() {
+      const dataToSend = {
+        functionName: "admin_get_orders",
+      };
+
+      this.$http
+        .post("http://localhost:9000/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          if (Array.isArray(response.data)) {
+            this.orders = response.data
+            console.log(this.users)
+            this.searchOrders();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     searchUsers() {
       this.closeModal();
+
 
       const query = this.searchQuery.toLowerCase().trim();
 
       if (query === "") {
-        // Si la consulta está vacía, mostrar todos los usuarios
         this.filteredUsers = this.users;
         this.filteredUsers = this.users.map((user) => {
           return { ...user, showDetails: false };
         })
       } else {
-        // Filtrar usuarios que coincidan con la consulta
         this.filteredUsers = this.users.filter((user) => {
-          const idMatch = user.Cliente_ID.toString().includes(query);
-          const telefonoMatch = user.Telefono.toString().includes(query);
-          const tipoDocumentoMatch = user.Documento_tipo.toLowerCase().includes(query);
-          const numeroDocumentoMatch = user.Documento_numero.toString().includes(query);
-          const primerNombreMatch = user.Primer_nombre.toLowerCase().includes(query);
-          const segundoNombreMatch = user.Segundo_nombre.toLowerCase().includes(query);
-          const primerApellidoMatch = user.Primer_apellido.toLowerCase().includes(query);
-          const segundoApellidoMatch = user.Segundo_apellido.toLowerCase().includes(query);
+          const idMatch = user[0].toString().includes(query);
+          const telefonoMatch = user[5].toString().includes(query);
+          const tipoDocumentoMatch = user[3].toLowerCase().includes(query);
+          const numeroDocumentoMatch = user[4].toString().includes(query);
+          const nombre = user[2].toLowerCase().includes(query);
 
-          // Verificar si hay alguna coincidencia en cualquiera de los campos
+
           return (
             idMatch ||
             telefonoMatch ||
             tipoDocumentoMatch ||
             numeroDocumentoMatch ||
-            primerNombreMatch ||
-            segundoNombreMatch ||
-            primerApellidoMatch ||
-            segundoApellidoMatch
+            nombre
+
           );
         });
-        // Verificar si no se encontraron resultados
         if (this.filteredUsers.length === 0) {
-          this.filteredUsers = []; // Vaciar la lista de resultados
+          this.filteredUsers = [];
         }
       }
+    },
+    searchOrders() {
+      const query = this.searchQuery.toLowerCase().trim();
+
+      if (query === "") {
+        this.filteredOrders = this.orders;
+        this.filteredOrders = this.orders.map((order) => {
+          return { ...order };
+        })
+      } else {
+        this.filteredOrders = this.orders.filter((order) => {
+          const id = order.pedido_id.toString().includes(query);
+          const nombre = order.nombre.toLowerCase().includes(query);
+          const estado = order.estados[0].estado.toLowerCase().includes(query);
+          const documento = order.documento.toString().includes(query);
+          const nombreMenu = Array.isArray(order.menus) && order.menus.some(menu => menu.nombre.toLowerCase().includes(query));
+
+          return (
+            id ||
+            nombre ||
+            estado ||
+            documento ||
+            nombreMenu
+
+          );
+        });
+        if (this.filteredUsers.length === 0) {
+          this.filteredUsers = [];
+        }
+      }
+    },
+    registerBussines() {
+      if (this.passwd !== this.confirmPasswd) {
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
+        return;
+      }
+
+      const dataToSend = {
+        functionName: "admin_register_business",
+        name: this.nameb,
+        doc: this.rut,
+        mail: this.mailb,
+        passwd: this.passwdb,
+      };
+
+      this.$http
+        .post("http://localhost:9000/server.php", dataToSend)
+        .then((response) => {
+          if (response.data == "Error 404") {
+            this.errorMessage = 'Error creando la empresa'
+          } else {
+            this.succesMessage = "Cuenta creada"
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
 };
@@ -385,7 +473,91 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: 'Arial', sans-serif;
+}
 
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #999999;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #888888;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+button {
+
+  background-color: white;
+  color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.nav li {
+  text-decoration: none;
+  list-style: none;
+  padding-left: 10px;
+}
+
+.nav li .link {
+  color: white;
+  text-decoration: none;
+}
+
+.aside-link {
+  color: black;
 }
 
 .container {
@@ -421,6 +593,23 @@ body {
 
 .header__user-info span {
   font-weight: bold;
+}
+
+.header__user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.header__user-info div i {
+  margin-left: 10px;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  border: 1px solid white;
+  border-radius: 30px;
 }
 
 .modal {
@@ -530,10 +719,6 @@ body {
   margin-bottom: 10px;
 }
 
-.category-content__article {
-  font-size: 16px;
-  line-height: 1.5;
-}
 
 /* Estilos para la tabla de usuarios */
 .user-table {
@@ -543,7 +728,7 @@ body {
 
 .table-container {
   height: 60vh;
-    overflow-y: auto;
+  overflow-y: auto;
 
 }
 
@@ -552,6 +737,11 @@ body {
   padding: 10px;
   text-align: center;
   border: 1px solid #ddd;
+}
+
+.user-table .modify:hover {
+  background-color: #999999;
+  cursor: pointer;
 }
 
 .user-table th {
@@ -568,6 +758,17 @@ body {
   border-collapse: collapse;
   background-color: #fff;
 }
+
+.user-table tbody select {
+  width: 100%;
+  cursor: pointer;
+  height: 6vh;
+  background-color: transparent;
+  outline: none;
+  border: 1px solid #ddd;
+
+}
+
 
 .user-details-table td {
   padding: 10px;

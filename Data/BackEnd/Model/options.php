@@ -1,9 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Credentials: true");
-require_once(dirname(__FILE__) . '/' .  "../Auth/authorization.php");
+
+require_once("Auth/authorization.php");
+
 $login = __FILE__;
 
 function options_modify_web($token, $first_name = "", $second_name = "", $first_surname = "", $second_surname = "",  $mail = "")
@@ -52,9 +50,15 @@ function options_get_special_menus($token)
 {
 
     global $tORM;
-    return get_fav_and_personal_menus($tORM, $token);
+    return get_personal_menus($tORM, $token);
 }
 
+function options_get_personal_menus($token)
+{
+
+    global $tORM;
+    return get_personal_menus($tORM, $token);
+}
 function options_create_personal_menu(String $token, String $name, Int $frequency, String $description, array $foods)
 {
     global $tORM;
@@ -84,7 +88,7 @@ function options_change_password(String $token, String $actual_passwd, String $p
 function options_get_orders(String $token)
 {
     global $tORM;
-    return get_orders($tORM, $token);
+    return get_client_orders($tORM, $token);
 }
 
 function options_create_credit_card(String $token, String $card_code, String $expire_date, String $name)
@@ -103,4 +107,17 @@ function options_get_credit_card(String $token)
 {
     global $tORM;
     return get_credit_card($tORM, $token);
+}
+function  options_get_business($token)
+{
+
+    global $tORM;
+    return get_business($tORM,  $token);
+}
+
+function  options_create_client_phone(String $token, Int $number)
+{
+
+    global $tORM;
+    return create_client_phone($tORM,  $token, $number);
 }

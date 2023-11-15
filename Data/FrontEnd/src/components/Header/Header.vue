@@ -3,18 +3,13 @@
     <nav>
       <div class="nav__top" v-if="showTop">
         <div>
-          <p v-if="isAuthenticated" class="nav__welcome">
-            Bienvenido {{ user }}
-          </p>
+          <p v-if="isAuthenticated" class="nav__welcome">Bienvenido {{ user }}</p>
           <router-link v-else to="/login" class="link nav__welcome">
-            <p>Bienvenido (<span>Inicia sesión</span>)</p>
+            <p>Bienvenido (<span>Inicia sesión</span>) </p>
           </router-link>
         </div>
         <div class="nav__logo">
-          <img
-            src="@/assets/icons/logotipo-header.png"
-            alt="Logotipo ilustrativo de la empresa"
-          />
+          <img src="@/assets/icons/logotipo-header.png" alt="Logotipo ilustrativo de la empresa" />
           <p>Sisviansa</p>
         </div>
         <router-link v-if="isAuthenticated" to="/" class="link">
@@ -42,18 +37,13 @@
             <router-link to="/shop" class="link">Tienda</router-link>
           </li>
           <li :class="{ selected: $route.path === '/faq' }">
-            <router-link to="/faq" class="link"
-              >Preguntas Frecuentes</router-link
-            >
+            <router-link to="/faq" class="link">Preguntas Frecuentes</router-link>
           </li>
           <div v-if="isAuthenticated">
             <li :class="{ selected: $route.path === '/profile' }" v-if="web">
               <router-link to="/profile" class="link">Perfil</router-link>
             </li>
-            <li
-              :class="{ selected: $route.path === '/bussines' }"
-              v-else-if="!web"
-            >
+            <li :class="{ selected: $route.path === '/bussines' }" v-else-if="!web">
               <router-link to="/bussines" class="link">Empresa</router-link>
             </li>
           </div>
@@ -102,8 +92,10 @@ export default {
     $route: "checkRoutePath",
   },
   methods: {
+
     fetchUserData() {
-      const token = sessionStorage.getItem("miToken");
+      const token = sessionStorage.getItem('miToken');
+
 
       if (token) {
         const dataToSend = {
@@ -112,9 +104,9 @@ export default {
         };
 
         this.$http
-          .post("http://sisviansa_php/server.php", dataToSend)
+          .post("http://localhost:9000/server.php", dataToSend)
           .then((response) => {
-            console.log(response.data);
+            console.log(response.data)
             if (Array.isArray(response.data)) {
               if (response.data[0] == false) {
                 const userData = response.data;
@@ -128,16 +120,16 @@ export default {
                 this.web = false;
               }
             } else {
-              this.isAuthenticated = false;
+              this.isAuthenticated = false
               this.$router.push("/login");
             }
+
           })
           .catch((error) => {
             console.error(error);
           });
       }
-    },
-    toggleMenu() {
+    }, toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
     checkRoutePath() {
@@ -157,7 +149,7 @@ export default {
     },
 
     logout() {
-      sessionStorage.removeItem("miToken");
+      sessionStorage.removeItem('miToken');
       this.isAuthenticated = false;
       this.$router.push("/");
     },

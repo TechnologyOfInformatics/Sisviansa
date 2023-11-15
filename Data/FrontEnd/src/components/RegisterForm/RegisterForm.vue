@@ -1,132 +1,19 @@
 <template>
   <div class="sign-up" v-if="web">
-    <div class="toggle-btn">
-      <label for="toggle">Eres una empresa?</label>
-      <input type="checkbox" @click="toggleOption" id="toggle" />
-    </div>
     <form @submit.prevent="registerWeb">
+
       <h1>Crear cuenta de Usuario</h1>
-      <input
-        v-model="name"
-        type="text"
-        name="txt"
-        placeholder="Nombre"
-        required
-        autocomplete="name"
-        id="first_name"
-      />
-      <input
-        v-model="surname"
-        type="text"
-        name="txt"
-        placeholder="Apellido"
-        required
-        autocomplete="name"
-        id="first_surname"
-      />
-      <input
-        v-model="doc"
-        type="text"
-        name="txt"
-        placeholder="Cedula"
-        required
-        id="doc"
-      />
-      <input
-        v-model="doc_type"
-        type="text"
-        name="txt"
-        placeholder="Tipo de cedula"
-        required
-        id="doc_type"
-      />
-      <input
-        v-model="mail"
-        type="email"
-        name="email"
-        placeholder="Correo electrónico"
-        required
-        autocomplete="email"
-        id="mail"
-      />
-      <input
-        v-model="passwd"
-        type="password"
-        name="pswd"
-        placeholder="Contraseña"
-        required
-        autocomplete="new-password"
-        id="passwd"
-      />
-      <input
-        v-model="confirmPasswd"
-        type="password"
-        name="cmpswd"
-        placeholder="Confirma la contraseña"
-        required
-        autocomplete="new-password"
-        id="cmfpasswd"
-      />
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <div v-if="succesMessage" class="succes-message">
-        {{ succesMessage }}
-      </div>
-      <button type="submit">Registrate</button>
-    </form>
-  </div>
-  <div class="sign-up" v-else-if="!web">
-    <div class="toggle-btn">
-      <label for="toggle">Eres una empresa?</label>
-      <input type="checkbox" @click="toggleOption" id="toggle" />
-    </div>
-    <form @submit.prevent="registerBussines">
-      <h1>Crear cuenta de Empresa</h1>
-      <input
-        v-model="nameb"
-        type="text"
-        name="txt"
-        placeholder="Nombre"
-        required
-        autocomplete="name"
-        id="nameb"
-      />
-      <input
-        v-model="rut"
-        type="text"
-        name="txt"
-        placeholder="Rut"
-        required
-        id="rut"
-      />
-      <input
-        v-model="mailb"
-        type="email"
-        name="email"
-        placeholder="Correo electrónico"
-        required
-        autocomplete="email"
-        id="mailb"
-      />
-      <input
-        v-model="passwdb"
-        type="password"
-        name="passwdb"
-        placeholder="Contraseña"
-        required
-        autocomplete="new-password"
-        id="passwdb"
-      />
-      <input
-        v-model="confirmPasswdb"
-        type="password"
-        name="confirmPasswdb"
-        placeholder="Confirma la contraseña"
-        required
-        autocomplete="new-password"
-        id="confirmPasswdb"
-      />
+      <input v-model="name" type="text" name="txt" placeholder="Nombre" required autocomplete="name" id="first_name" />
+      <input v-model="surname" type="text" name="txt" placeholder="Apellido" required autocomplete="name"
+        id="first_surname" />
+      <input v-model="doc" type="text" name="txt" placeholder="Cedula" required id="doc" />
+      <input v-model="doc_type" type="text" name="txt" placeholder="Tipo de cedula" required id="doc_type" />
+      <input v-model="mail" type="email" name="email" placeholder="Correo electrónico" required autocomplete="email"
+        id="mail" />
+      <input v-model="passwd" type="password" name="pswd" placeholder="Contraseña" required autocomplete="new-password"
+        id="passwd" />
+      <input v-model="confirmPasswd" type="password" name="cmpswd" placeholder="Confirma la contraseña" required
+        autocomplete="new-password" id="cmfpasswd" />
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
@@ -138,6 +25,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -149,8 +37,8 @@ export default {
       passwd: "",
       confirmPasswd: "",
 
-      nameb: "",
-      rut: "",
+      nameb: '',
+      rut: '',
       mailb: "",
       passwdb: "",
       confirmPasswdb: "",
@@ -163,12 +51,14 @@ export default {
   },
 
   methods: {
+
     toggleOption() {
-      this.web = !this.web;
+
+      this.web = !this.web
     },
     registerWeb() {
       if (this.passwd !== this.confirmPasswd) {
-        this.errorMessage = "Error, las contrase;as no coinciden.";
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
         return;
       }
 
@@ -183,21 +73,17 @@ export default {
       };
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
-          console.log(typeof response.data);
-          if (
-            response.data ==
-            "403, FORBIDDEN: You are not allowed to enter the system"
-          ) {
-            this.succesMessage = "Se ha registrado, aguarde a ser autorizado.";
-          } else if (typeof response.data == "string") {
-            this.errorMessage = "Error, intente nuevamente.";
+          if (response.data == '403, FORBIDDEN: You are not allowed to enter the system') {
+            this.succesMessage = 'Se ha registrado, aguarde a ser autorizado.'
+          } else if (typeof (response.data) == 'string') {
+            this.errorMessage = 'Error, intente nuevamente.'
           } else {
             let token = response.data[1];
             if (token) {
-              sessionStorage.setItem("miToken", token);
+              sessionStorage.setItem('miToken', token);
               window.history.back();
             }
           }
@@ -208,7 +94,7 @@ export default {
     },
     registerBussines() {
       if (this.passwd !== this.confirmPasswd) {
-        this.errorMessage = "Error, las contrase;as no coinciden.";
+        this.errorMessage = 'Error, las contrase;as no coinciden.'
         return;
       }
 
@@ -221,13 +107,13 @@ export default {
       };
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
           console.log(response.data);
           if (Array.isArray(response.data)) {
             let token = response.data[1];
             if (token) {
-              sessionStorage.setItem("miToken", token);
+              sessionStorage.setItem('miToken', token);
               window.history.back();
             }
           }
@@ -298,7 +184,7 @@ a {
   margin: 15px 0;
 }
 
-button[type="submit"] {
+button[type='submit'] {
   border: 1px solid #ebeadf;
   color: white;
   background: #243328;
@@ -314,11 +200,11 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-button[type="submit"]:active {
+button[type='submit']:active {
   transform: scale(0.9);
 }
 
-button[type="submit"]:hover {
+button[type='submit']:hover {
   background: #304035;
 }
 
@@ -330,11 +216,12 @@ button[type="submit"]:hover {
   align-items: center;
   background-color: transparent;
   position: absolute;
-  transform: translate(0.5vw, 0.2vh);
+  transform: translate(.5vw, .2vh);
 }
 
 .toggle-btn label {
   width: 95%;
+
 }
 
 .toggle-btn input {
@@ -367,6 +254,7 @@ button[type="submit"]:hover {
   input {
     width: 190%;
     padding: 12px 8px;
+
   }
 
   a {

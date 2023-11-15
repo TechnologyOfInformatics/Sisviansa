@@ -1,8 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Credentials: true");
+
 
 //
 ///
@@ -101,7 +98,7 @@ class TORM //Techin Object-Relation Model (Basic)
         //Funcion encargada de verificar que una tabla dada exista
         //
         //
-        $connect = new mysqli($this->host, $this->user, $this->passwd, 'information_schema', $this->port);
+        $connect = new mysqli($this->host, 'root', '12345', 'information_schema', $this->port);
         if ($connect->connect_error) {
             die("Connection failed: " . $connect->connect_error);
         }
@@ -117,7 +114,12 @@ class TORM //Techin Object-Relation Model (Basic)
         //
         //
         $column_info = array();
-        $result = mysqli_query(new mysqli($this->host, $this->user, $this->passwd, $this->database, $this->port), "DESCRIBE {$table}");
+        $result = array();
+        try {
+            $result = mysqli_query(new mysqli($this->host, $this->user, $this->passwd, $this->database, $this->port), "DESCRIBE {$table}");
+        } catch (Exception $e) {
+            $this->error = $e->getMessage();
+        }
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $column_name = $row['Field'];
@@ -352,6 +354,8 @@ class TORM //Techin Object-Relation Model (Basic)
         //
         //
         $args = func_get_args();
+        unset($args[2]);
+        $args = array_values($args);
         if (in_array(null, $args) || in_array('', $args) || empty($args)) {
             $this->error .= strtoupper(__FUNCTION__) . " STEP: All arguments must not be null or empty" . "</br>";
             return $this;
@@ -417,7 +421,7 @@ class TORM //Techin Object-Relation Model (Basic)
             $current_table_columns = $this->table_columns($this->current_table);
             $possible_order = ["ASC", "DESC"];
             $column_array = explode(".", $column);
-            if (in_array(strtolower($column_array[1]), array_keys($current_table_columns)) && in_array(strtoupper($order), $possible_order)) {
+            if (in_array(strtoupper($order), $possible_order)) {
                 $this->sentenced_data['order'] = " ORDER BY {$column} {$order}";
             } else {
                 $this->error .= strtoupper(__FUNCTION__) . " STEP: The column or order are not valid" . "</br>";
@@ -658,7 +662,7 @@ class TORM //Techin Object-Relation Model (Basic)
 
 /*
 // Uso de TORM:
-$tORM = new TORM("localhost", "root", "", "sisviansa_techin_v1", 3306);
+$tORM = new TORM('sisviansa_mariadb', "root", "", "sisviansa_techin_v1", 3306);
 
 
 $menus = $tORM

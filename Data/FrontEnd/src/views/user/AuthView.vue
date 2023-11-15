@@ -1,11 +1,8 @@
 <template>
   <MainHeader />
   <main>
-    <div
-      class="container"
-      :class="{ 'right-panel-active': isSignUp }"
-      id="main"
-    >
+
+    <div class="container" :class="{ 'right-panel-active': isSignUp }" id="main">
       <LoginForm />
       <RegisterForm />
       <div class="overlay-container">
@@ -17,6 +14,7 @@
               registrarte!
             </p>
             <button @click="isSignUp = false">Inicia sesión</button>
+
           </div>
           <div class="overlay-right">
             <h1>Hola denuevo!</h1>
@@ -48,23 +46,21 @@ export default {
   },
   methods: {
     validateUserData() {
-      const token = sessionStorage.getItem("miToken") || 12345678;
+      const token = sessionStorage.getItem('miToken') || 12345678;
       const dataToSend = {
         functionName: "base_session",
         token: token,
       };
 
-      return this.$http.post(
-        "http://sisviansa_php/server.php",
-        dataToSend
-      );
+      return this.$http.post("http://localhost:9000/server.php", dataToSend);
     },
     handleRouteLogic() {
       this.validateUserData()
         .then((response) => {
           if (this.login) {
             if (response.data[0] === true) {
-              this.$router.push("/");
+              this.$router.push('/');
+
             }
           }
         })
@@ -149,6 +145,7 @@ button:active {
 }
 
 @keyframes show {
+
   0%,
   49.99% {
     opacity: 0;
@@ -235,6 +232,7 @@ button:active {
 }
 
 @media (max-width: 768px) {
+
   .container {
     width: 98vw;
     min-height: 75vh;
@@ -255,6 +253,7 @@ button:active {
 
   p {
     font-size: 12px;
+
   }
 }
 </style>

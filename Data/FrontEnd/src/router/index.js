@@ -10,6 +10,7 @@ import BussinesView from '@/views/user/BussinesView.vue'
 
 import AdminAuthView from '@/views/admin/AuthView.vue'
 import AdminUserView from '@/views/admin/UserView.vue'
+import AdminMenuView from '@/views/admin/MenuView.vue'
 
 import TestView from '@/views/TestView.vue'
 const routes = [
@@ -59,6 +60,11 @@ const routes = [
     path: '/admin/user',
     name: 'adminUser',
     component: AdminUserView
+  },
+  {
+    path: '/admin/menu',
+    name: 'adminMenu',
+    component: AdminMenuView
   },
 
 

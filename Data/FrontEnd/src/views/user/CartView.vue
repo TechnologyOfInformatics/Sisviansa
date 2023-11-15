@@ -2,201 +2,161 @@
   <MainHeader />
   <div class="container">
     <div class="data">
-      <form @submit.prevent="checkout" v-if="cart.length == 0">
-        <div class="row">
-          <div class="col">
-            <h3 class="title">Forma de Pago</h3>
-            <div class="inputBox">
-              <span>Nombre en Tarjeta</span>
-              <input
-                type="text"
-                placeholder="Jorge Rodriguez"
-                v-model="cardData.cardholderName"
-              />
-            </div>
-            <div class="inputBox">
-              <span>Número de Tarjeta</span>
-              <input
-                type="text"
-                placeholder="2024"
-                v-model="cardData.cardNumber"
-                maxlength="16"
-                @input="validateNumericInput('cardNumber')"
-              />
-              <div
-                v-if="!isNumericInputValid.cardNumber && cardData.cardNumber"
-                class="error-message"
-              >
-                Ingresa solo números.
-              </div>
-            </div>
-            <div class="inputBox">
-              <span>Mes de Vencimiento</span>
-              <input
-                type="text"
-                placeholder="03"
-                v-model="cardData.expirationMonth"
-                maxlength="2"
-                @input="validateNumericInput('expirationMonth')"
-              />
-              <div
-                v-if="
-                  !isNumericInputValid.expirationMonth &&
-                  cardData.expirationMonth
-                "
-                class="error-message"
-              >
-                Ingresa solo números.
-              </div>
-            </div>
-            <div class="inputBox">
-              <span>Año de Vencimiento :</span>
-              <input
-                type="text"
-                placeholder="2024"
-                v-model="cardData.expirationYear"
-                maxlength="4"
-                @input="validateNumericInput('expirationYear')"
-              />
-              <div
-                v-if="
-                  !isNumericInputValid.expirationYear && cardData.expirationYear
-                "
-                class="error-message"
-              >
-                Ingresa solo números.
-              </div>
-            </div>
-            <div class="inputBox">
-              <span>CVV :</span>
+      <div class="data-card">
+        <form @submit.prevent="addCardUser" v-if="showAddCardModal || cards.length === 0">
+          <div class="row">
+            <div class="col">
 
-              <input
-                type="text"
-                placeholder="420"
-                v-model="cardData.cvv"
-                maxlength="4"
-                @input="validateNumericInput('ccv')"
-              />
-              <div
-                v-if="!isNumericInputValid.ccv && cardData.ccv"
-                class="error-message"
-              >
-                Ingresa solo números.
+              <h3 class="title">Agrega una tarjeta</h3>
+              <div class="inputBox">
+                <span>Nombre en Tarjeta</span>
+                <input type="text" placeholder="Jorge Rodriguez" v-model="cardData.cardholderName">
+              </div>
+              <div class="inputBox">
+                <span>Número de Tarjeta</span>
+                <input type="text" placeholder="1234 5678 9000 1234" v-model="cardData.cardNumber" maxlength="16"
+                  @input="validateNumericInput('cardNumber')">
+                <div v-if="!isNumericInputValid.cardNumber && cardData.cardNumber" class="error-message">
+                  Ingresa solo números.
+                </div>
+              </div>
+              <div class="inputBox">
+                <span>Mes de Vencimiento</span>
+                <input type="text" placeholder="03" v-model="cardData.expirationMonth" maxlength="2"
+                  @input="validateNumericInput('expirationMonth')">
+                <div v-if="!isNumericInputValid.expirationMonth && cardData.expirationMonth" class="error-message">
+                  Ingresa solo números.
+                </div>
+              </div>
+              <div class="inputBox">
+                <span>Año de Vencimiento :</span>
+                <input type="text" placeholder="2024" v-model="cardData.expirationYear" maxlength="4"
+                  @input="validateNumericInput('expirationYear')">
+                <div v-if="!isNumericInputValid.expirationYear && cardData.expirationYear" class="error-message">
+                  Ingresa solo números.
+                </div>
+
+              </div>
+              <div class="inputBox">
+                <span>CVV :</span>
+
+                <input type="text" placeholder="420" v-model="cardData.cvv" maxlength="4"
+                  @input="validateNumericInput('ccv')">
+                <div v-if="!isNumericInputValid.ccv && cardData.ccv" class="error-message">
+                  Ingresa solo números.
+                </div>
+              </div>
+
+            </div>
+            <div class="col">
+              <div class="card">
+                <div class="card__front card__part">
+                  <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
+                  <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
+                  <p class="card_numer">
+                    <span> {{ formattedCardNumber }}</span>
+                  </p>
+                  <div class="card__space-75">
+                    <span class="card__label">Nombre en Tarjeta</span>
+                    <p class="card__info">{{ cardData.cardholderName || 'Jorge Rodriguez' }}</p>
+                  </div>
+                  <div class="card__space-25">
+                    <span class="card__label">Expiración</span>
+                    <div class="card__info">
+                      <p>{{ cardData.expirationMonth || '03' }}{{ '/' }}{{ cardData.expirationYear || '2024' }}</p>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card__back card__part">
+                  <div class="card__black-line"></div>
+                  <div class="card__back-content">
+                    <div class="card__secret">
+                      <p class="card__secret--last">{{ cardData.cvv || '420' }}</p>
+                    </div>
+
+                    <div class="card-back-tex">
+                      <p class="card-back-text">This card is the property of the issuing institution. Misuse is a criminal
+                        offense. If found, please
+                        return to the issuing institution or to the nearest bank that accepts cards with the same card
+                        network
+                        logo.</p>
+                      <p class="card-back-text"> Use of this card is subject to the credit card agreement
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
-          <div class="col">
-            <div class="card">
-              <div class="card__front card__part">
-                <img
-                  class="card__front-square card__square"
-                  src="../../assets//page-icons/card-chip.png"
-                />
-                <img
-                  class="card__front-logo card__logo"
-                  src="../../assets/page-icons/contact-less.png"
-                />
-                <p class="card_numer">
-                  <span> {{ formattedCardNumber }}</span>
-                </p>
-                <div class="card__space-75">
-                  <span class="card__label">Nombre en Tarjeta</span>
-                  <p class="card__info">
-                    {{ cardData.cardholderName || "Jorge Rodriguez" }}
-                  </p>
-                </div>
-                <div class="card__space-25">
-                  <span class="card__label">Expiración</span>
-                  <div class="card__info">
-                    <p>
-                      {{ cardData.expirationMonth || "03" }}{{ "/"
-                      }}{{ cardData.expirationYear || "2024" }}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              <div class="card__back card__part">
-                <div class="card__black-line"></div>
-                <div class="card__back-content">
-                  <div class="card__secret">
-                    <p class="card__secret--last">
-                      {{ cardData.cvv || "420" }}
+          <input type="submit" value="Add tarjeta" class="submit-btn">
+
+        </form>
+        <div v-else>
+          <div class="carousel">
+            <button class="next-button">
+              <i class="fas fa-chevron-left" @click="prevCard" v-if="cards.length > 1"></i>
+            </button>
+            <div class="cards">
+              <transition name="fade" mode="out-in">
+                <div :key="currentIndex" class="card">
+                  <div class="card__front card__part">
+                    <img class="card__front-square card__square" src="../../assets//page-icons/card-chip.png">
+                    <img class="card__front-logo card__logo" src="../../assets/page-icons/contact-less.png">
+                    <p class="card_numer">
+                      <span> **** **** **** {{ cards[currentIndex].digitos_verificadores }}</span>
                     </p>
+                    <div class="card__space-75">
+                      <span class="card__label">Nombre en Tarjeta</span>
+                      <p class="card__info">{{ cards[currentIndex].nombre_de_titular || 'Jorge Rodriguez' }}</p>
+                    </div>
+                    <div class="card__space-25">
+                      <span class="card__label">Expiración</span>
+                      <div class="card__info">
+                        <p>{{ cards[currentIndex].fecha_de_vencimiento }}</p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="card-back-tex">
-                    <p class="card-back-text">
-                      This card is the property of the issuing institution.
-                      Misuse is a criminal offense. If found, please return to
-                      the issuing institution or to the nearest bank that
-                      accepts cards with the same card network logo.
-                    </p>
-                    <p class="card-back-text">
-                      Use of this card is subject to the credit card agreement
-                    </p>
+                  <div class="card__back card__part">
+                    <div class="card__black-line"></div>
+                    <div class="card__back-content">
+                      <div class="card__secret">
+                        <p class="card__secret--last">***</p>
+                      </div>
+
+                      <div class="card-back-text-cont">
+                        <p class="card-back-text">This card is the property of the issuing institution. Misuse is a
+                          criminal
+                          offense. If found, please
+                          return to the issuing institution or to the nearest bank that accepts cards with the same card
+                          network
+                          logo.</p>
+                        <p class="card-back-text"> Use of this card is subject to the credit card agreement
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </transition>
             </div>
+            <button class="next-button">
+              <i class="fas fa-chevron-right" @click="nextCard" v-if="cards.length > 1"></i>
+            </button>
           </div>
-        </div>
+          <button type="button" class="button" @click="showAddCardModal = true">
+            <span class="button__text">Agregar Tarjeta</span>
+            <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"
+                stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" height="24"
+                fill="none" class="svg">
+                <line y2="19" y1="5" x2="12" x1="12"></line>
+                <line y2="12" y1="12" x2="19" x1="5"></line>
+              </svg></span>
+          </button>
 
-        <input type="submit" value="Completar compra" class="submit-btn" />
-      </form>
-      <div v-else>
-        <div>
-          <div class="card">
-            <div class="card__front card__part">
-              <img
-                class="card__front-square card__square"
-                src="../../assets//page-icons/card-chip.png"
-              />
-              <img
-                class="card__front-logo card__logo"
-                src="../../assets/page-icons/contact-less.png"
-              />
-              <p class="card_numer">
-                <span> {{ formattedCardNumber }}</span>
-              </p>
-              <div class="card__space-75">
-                <span class="card__label">Nombre en Tarjeta</span>
-                <p class="card__info">
-                  {{ cardData.cardholderName || "Jorge Rodriguez" }}
-                </p>
-              </div>
-              <div class="card__space-25">
-                <span class="card__label">Expiración</span>
-                <div class="card__info">
-                  <p>
-                    {{ cardData.expirationMonth || "03" }}{{ "/"
-                    }}{{ cardData.expirationYear || "2024" }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="card__back card__part">
-              <div class="card__black-line"></div>
-              <div class="card__back-content">
-                <div class="card__secret">
-                  <p class="card__secret--last">{{ cardData.cvv || "420" }}</p>
-                </div>
-
-                <div class="card-back-tex">
-                  <p class="card-back-text">
-                    This card is the property of the issuing institution. Misuse
-                    is a criminal offense. If found, please return to the
-                    issuing institution or to the nearest bank that accepts
-                    cards with the same card network logo.
-                  </p>
-                  <p class="card-back-text">
-                    Use of this card is subject to the credit card agreement
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -212,12 +172,7 @@
             <p>Descripción: {{ item.description }}</p>
             <div>
               Cantidad:
-              <button
-                @click="decrementQuantity(item)"
-                :disabled="item.quantity === 1"
-              >
-                -
-              </button>
+              <button @click="decrementQuantity(item)" :disabled="item.quantity === 1">-</button>
               {{ item.quantity }}
               <button @click="incrementQuantity(item)">+</button>
             </div>
@@ -226,13 +181,14 @@
         </div>
         <div class="cart-summary">
           <p>Total: ${{ calculateTotalPrice() }}</p>
+          <button class="button-checkout" @click="checkout">Completar Compra</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import MainHeader from "@/components/Header/Header.vue";
+import MainHeader from '@/components/Header/Header.vue'
 export default {
   components: {
     MainHeader,
@@ -241,6 +197,8 @@ export default {
     return {
       login: true,
       cart: [],
+      cards: [],
+      showAddCardModal: false,
       cardData: {
         cardholderName: "",
         cardNumber: "",
@@ -255,6 +213,8 @@ export default {
         ccv: true,
       },
       currentDate: new Date(),
+      currentIndex: 0,
+
     };
   },
   created() {
@@ -262,22 +222,35 @@ export default {
     if (cartString) {
       this.cart = JSON.parse(cartString);
     }
-    this.fetchCardUser();
+    this.fetchCardUser()
   },
   computed: {
     formattedCardNumber() {
       const cardNumber = this.cardData.cardNumber.toString();
-      if (typeof cardNumber === "string") {
-        const cleanValue = cardNumber.replace(/-/g, "");
+      if (typeof cardNumber === 'string') {
+        const cleanValue = cardNumber.replace(/-/g, '');
         const formattedValue = cleanValue.match(/.{1,4}/g);
         if (formattedValue) {
-          return formattedValue.join("-");
+          return formattedValue.join('-');
         }
-      }
-      return "1234-5678-9000-1234";
-    },
+      } return '1234-5678-9000-1234';
+    }
   },
   methods: {
+    nextCard() {
+      if (this.currentIndex < this.cards.length - 1) {
+        this.currentIndex++;
+      } else {
+        this.currentIndex = 0;
+      }
+    },
+    prevCard() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      } else {
+        this.currentIndex = this.cards.length - 1;
+      }
+    },
     validateNumericInput(fieldName) {
       const value = this.cardData[fieldName];
       const isValid = /^[0-9]*$/.test(value);
@@ -323,40 +296,62 @@ export default {
     fetchCardUser() {
       const dataToSend = {
         functionName: "options_get_credit_card",
-        token: sessionStorage.getItem("miToken") || 0,
+        token: sessionStorage.getItem('miToken') || 0,
+
       };
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data);
+          console.log(response.data)
+          this.cards = response.data
+
         })
         .catch((error) => {
           console.error(error);
         });
     },
+    addCardUser() {
+      const dataToSend = {
+        functionName: "options_create_credit_card",
+        token: sessionStorage.getItem('miToken') || 0,
+        card_code: this.cardData.cardNumber,
+        card_expire: this.cardData.expirationMonth + '/' + this.cardData.expirationYear,
+        card_name: this.cardData.cardholderName,
 
+      };
+      console.log(dataToSend)
+
+      this.$http
+        .post("http://localhost:9000/server.php", dataToSend)
+        .then((response) => {
+          console.log(response.data)
+          this.showAddCardModal = false;
+          this.fetchCardUser();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     checkout() {
       if (this.cart.length === 0) {
         return;
       }
-      if (!this.validateExpirationDate()) {
-        alert("La fecha de vencimiento no es válida.");
-        return;
-      }
       const dataToSend = {
         functionName: "shop_buy_menu",
-        token: sessionStorage.getItem("miToken") || 0,
-        quantities: this.cart.map((item) => item.quantity),
-        menuIds: this.cart.map((item) => item.id),
+        token: sessionStorage.getItem('miToken') || 0,
+        quantities: this.cart.map(item => item.quantity),
+        menuIds: this.cart.map(item => item.id),
       };
-      console.log(dataToSend);
+      console.log(dataToSend)
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data);
+          console.log(response.data)
           this.cart = [];
+          this.updateCart();
+
         })
         .catch((error) => {
           console.error(error);
@@ -377,22 +372,23 @@ export default {
         token: token,
       };
 
-      return this.$http.post(
-        "http://sisviansa_php/server.php",
-        dataToSend
-      );
+      return this.$http.post("http://localhost:9000/server.php", dataToSend);
     },
     handleRouteLogic() {
+
       this.validateUserData()
         .then((response) => {
+
           if (this.login) {
             if (!Array.isArray(response.data)) {
               this.$router.push("/login");
+
             }
           }
         })
         .catch((error) => {
           console.error(error);
+
         });
     },
   },
@@ -401,7 +397,8 @@ export default {
       vm.handleRouteLogic();
     });
   },
-};
+}
+
 </script>
 <style scoped>
 .error-message {
@@ -409,13 +406,14 @@ export default {
 }
 
 .container {
-  transition: all 0.2s linear;
+  transition: all .2s linear;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 form {
+  border: 1px solid #ccc;
   padding: 20px;
   background-color: #f5f4ee;
 }
@@ -462,6 +460,8 @@ form .row .col .flex {
   gap: 15px;
 }
 
+
+
 form .submit-btn {
   width: 100%;
   padding: 12px;
@@ -481,6 +481,14 @@ form .submit-btn:hover {
   background-color: #ebeadf;
   width: 60vw;
   padding: 0 5vw;
+  height: 83.99vh;
+}
+
+.data-card {
+  margin: 2em;
+  margin-bottom: 0;
+  height: 70vh;
+  border: 1px solid #ccc;
 }
 
 .cart {
@@ -510,10 +518,12 @@ form .submit-btn:hover {
   flex: 1;
 }
 
+
 .cart-summary {
   margin-top: 20px;
   text-align: right;
 }
+
 
 .card {
   margin-top: 15vh;
@@ -522,6 +532,7 @@ form .submit-btn:hover {
   -webkit-perspective: 600px;
   -moz-perspective: 600px;
   perspective: 600px;
+  transition: all 1s;
 }
 
 .card__part {
@@ -533,15 +544,7 @@ form .submit-btn:hover {
   display: inline-block;
   width: 320px;
   height: 190px;
-  background-image: url("../../assets/page-icons/worldwide.png"),
-    linear-gradient(
-      to right bottom,
-      #ffd700,
-      #ffd700,
-      #ffd700,
-      #ffd700,
-      #ffd700
-    );
+  background-image: url('../../assets/page-icons/worldwide.png'), linear-gradient(to right bottom, #FFD700, #FFD700, #FFD700, #FFD700, #FFD700);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -556,6 +559,8 @@ form .submit-btn:hover {
   transform-style: preserve-3d;
   backface-visibility: hidden;
   backface-visibility: hidden;
+  transition: all 1s;
+
 }
 
 .card__part img {
@@ -655,20 +660,14 @@ form .submit-btn:hover {
 }
 
 .card__secret:before {
-  content: "";
+  content: '';
   position: absolute;
   top: -3px;
   left: -3px;
   height: calc(100% + 6px);
   width: calc(100% - 42px);
   border-radius: 4px;
-  background: repeating-linear-gradient(
-    45deg,
-    #ededed,
-    #ededed 5px,
-    #f9f9f9 5px,
-    #f9f9f9 10px
-  );
+  background: repeating-linear-gradient(45deg, #ededed, #ededed 5px, #f9f9f9 5px, #f9f9f9 10px);
 }
 
 .card__back-logo {
@@ -686,6 +685,7 @@ form .submit-btn:hover {
 .card:hover .card__front {
   transform: rotateY(180deg);
   transform: rotateY(180deg);
+
 }
 
 .card:hover .card__back {
@@ -693,11 +693,122 @@ form .submit-btn:hover {
   transform: rotateY(0deg);
 }
 
-.card-back-tex {
+.card-back-text-cont {
   margin-top: 7vh;
+
 }
 
 .card-back-text {
   font-size: 10px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.carousel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cards {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.card__slide-enter-active,
+.card__slide-leave-active {
+  transition: transform 0.5s;
+}
+
+.card__slide-enter,
+.card__slide-leave-to {
+  transform: translate(100%, 10%);
+}
+
+.next-button {
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1em;
+  margin-top: 20vh;
+
+}
+
+.next-button i {
+  font-size: 4em;
+  cursor: pointer;
+}
+
+.button {
+  margin: auto;
+  position: relative;
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #34974d;
+  background-color: #3aa856;
+  transform: translate(1vw, 10vh);
+}
+
+.button,
+.button__icon,
+.button__text {
+  transition: all 0.3s;
+}
+
+.button .button__text {
+  transform: translateX(5px);
+  color: #fff;
+  font-weight: 600;
+}
+
+.button .button__icon {
+  position: absolute;
+  transform: translateX(109px);
+  height: 100%;
+  width: 39px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button .svg {
+  width: 30px;
+  stroke: #2e8644;
+}
+
+.button:hover {
+  background: #fff;
+}
+
+.button:hover .button__text {
+  color: transparent;
+}
+
+.button:hover .button__icon {
+  width: 148px;
+  transform: translateX(0);
+}
+
+.button:active .button__icon {
+  background-color: #fff;
+}
+
+.button:active {
+  border: 1px solid #fff;
 }
 </style>

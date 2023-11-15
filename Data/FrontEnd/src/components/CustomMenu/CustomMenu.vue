@@ -3,9 +3,9 @@
     <MenuCard :custom="custom" :customMenus="customMenus" />
   </div>
 </template>
-
+  
 <script>
-import MenuCard from "@/components/MenuCard/MenuCard.vue";
+import MenuCard from '@/components/MenuCard/MenuCard.vue'
 
 export default {
   components: {
@@ -24,13 +24,13 @@ export default {
     fetchUserData() {
       const dataToSend = {
         functionName: "options_get_special_menus",
-        token: sessionStorage.getItem("miToken"),
+        token: sessionStorage.getItem('miToken'),
       };
 
       this.$http
-        .post("http://sisviansa_php/server.php", dataToSend)
+        .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data[0]);
+          console.log(response.data[0])
           this.custom = true;
           this.customMenus = response.data[0];
         })
@@ -41,3 +41,4 @@ export default {
   },
 };
 </script>
+  

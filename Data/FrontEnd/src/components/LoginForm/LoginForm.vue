@@ -3,25 +3,9 @@
     <form @submit.prevent="login">
       <h1>Inicia sesión</h1>
       <p>Coloca los datos de tu cuenta</p>
-      <input
-        v-model="mail"
-        type="email"
-        name="mail"
-        placeholder="Email"
-        required
-        autocomplete="email"
-        id="email"
-      />
-      <input
-        v-model="password"
-        type="password"
-        name="pswd"
-        placeholder="Password"
-        required
-        autocomplete="current-password"
-        id="password"
-        @input="clearErrorMessage"
-      />
+      <input v-model="mail" type="email" name="mail" placeholder="Email" required autocomplete="email" id="email" />
+      <input v-model="password" type="password" name="pswd" placeholder="Password" required
+        autocomplete="current-password" id="password" @input="clearErrorMessage" />
       <a href="#">¿Olvidaste tu contraseña?</a>
       <button type="submit">Inicia Sesión</button>
       <div v-if="errorMessage" class="error-message">
@@ -33,12 +17,14 @@
 
 <script>
 export default {
+
   data() {
     return {
       mail: "",
       password: "",
       token: sessionStorage.getItem("miToken") || 0,
       errorMessage: "",
+
     };
   },
 
@@ -52,18 +38,18 @@ export default {
           functionName: "login_login",
           mail: this.mail,
           passwd: this.password,
-          token: this.token,
+          token: this.token
         };
 
         this.$http
-          .post("http://sisviansa_php/server.php", dataToSend)
+          .post("http://localhost:9000/server.php", dataToSend)
           .then((response) => {
-            console.log(response);
+            console.log(response)
 
             if (Array.isArray(response.data)) {
               let token = response.data[1];
               if (token) {
-                sessionStorage.setItem("miToken", token);
+                sessionStorage.setItem('miToken', token);
                 window.history.back();
               } else {
                 attempts++;
@@ -77,12 +63,13 @@ export default {
                 attemptLogin();
               } else {
                 this.errorMessage = "Credenciales inválidas.";
-                this.password = "";
+                this.password = ''
+
               }
             }
           })
           .catch((error) => {
-            console.log(error);
+            console.log(error)
             this.errorMessage = "Error al conectar con el servidor.";
           });
       };
@@ -93,8 +80,11 @@ export default {
       if (this.password.length >= 4) {
         this.errorMessage = "";
       }
+
     },
+
   },
+
 };
 </script>
 
@@ -123,6 +113,7 @@ form {
   height: 100%;
   text-align: center;
   border-right: 1px solid #243328;
+
 }
 
 h1 {

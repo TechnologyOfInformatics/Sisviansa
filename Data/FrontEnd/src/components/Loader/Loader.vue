@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="loading" class="loading-overlay">
+    <div v-if="loading || isLoading" class="loading-overlay">
       <div class="banter-loader">
         <div class="banter-loader__box"></div>
         <div class="banter-loader__box"></div>
@@ -19,9 +19,11 @@
 <script>
 export default {
   name: "LoaderSpinner",
-  data() {
+  props: {
+    isLoading: Boolean, 
+  }, data() {
     return {
-      loading: false, // Estado inicial del loader
+      loading: false,
     };
   },
   methods: {
