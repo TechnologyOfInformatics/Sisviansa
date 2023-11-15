@@ -1,5 +1,5 @@
 <?php
-include_once "server.php";
+
 
 //echo $base . "<br>";
 //echo $index . "<br>";
@@ -66,7 +66,14 @@ $pedido = array(
         ),
     ),
 );*/
-print_r(proto_set_package($tORM));
+$mysqli = new mysqli('localhost', 'root', '12345', 'information_schema', 3306);
+
+if ($mysqli->connect_error) {
+    die('Error de conexión: ' . $mysqli->connect_error);
+}
+
+echo 'Conexión exitosa!';
+$mysqli->close();
 
 echo "<pre/>";
 #las peticiones se harán de forma que llegaran a los archivos definidos para cada parte, despues se enviaran a authentication.php para verificar que esten bien formados, de ahi los 

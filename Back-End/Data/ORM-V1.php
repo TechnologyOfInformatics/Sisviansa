@@ -1,5 +1,6 @@
 <?php
 
+
 //
 ///
 ////
@@ -97,7 +98,7 @@ class TORM //Techin Object-Relation Model (Basic)
         //Funcion encargada de verificar que una tabla dada exista
         //
         //
-        $connect = new mysqli($this->host, 'root', '', 'information_schema', $this->port);
+        $connect = new mysqli($this->host, 'root', '12345', 'information_schema', $this->port);
         if ($connect->connect_error) {
             die("Connection failed: " . $connect->connect_error);
         }
@@ -661,7 +662,7 @@ class TORM //Techin Object-Relation Model (Basic)
 
 /*
 // Uso de TORM:
-$tORM = new TORM("localhost", "root", "", "sisviansa_techin_v1", 3306);
+$tORM = new TORM('sisviansa_mariadb', "root", "", "sisviansa_techin_v1", 3306);
 
 
 $menus = $tORM
