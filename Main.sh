@@ -51,12 +51,12 @@ if [ test -f "/usr/local/bin/compress.sh" ]; then
 
 else
 
-    cat >/etc/apk/repositories <<EOL
+   
+cat <<EOF > /etc/apk/repositories
     #/media/cdrom/apks
     http://alpinelinux.c3sl.ufpr.br/v3.18/main
     http://alpinelinux.c3sl.ufpr.br/v3.18/community
-
-EOL
+EOF
     apk add xz iptables ip6tables linux-headers alpine-sdk git 
 
     chmod +x Sisviansa/Scripts/compress.sh >/dev/null
