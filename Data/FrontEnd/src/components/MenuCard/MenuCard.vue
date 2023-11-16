@@ -48,13 +48,13 @@
               </button>
             </div>
             <div class="footer-side-icons">
-              <button class="button-side" v-if="showSinGlutenButton">
+              <button class="button-side" v-if="showSinGlutenButton(menu)">
                 <img src="../../assets/page-icons/nogluten-iso.png" alt="Sin Gluten">
               </button>
-              <button class="button-side" v-if="showVeganoButton">
+              <button class="button-side" v-if="showVeganoButton(menu)">
                 <img src="../../assets/page-icons/vegan-iso.png" alt="Vegano">
               </button>
-              <button class="button-side" v-if="showVegetarianoButton">
+              <button class="button-side" v-if="showVegetarianoButton(menu)">
                 <img src="../../assets/page-icons/vegetarian-iso.png" alt="Vegetariano">
               </button>
             </div>
@@ -187,7 +187,7 @@
   <div v-if="modalCreateCustom" class="modal" @click="modalCreateCustomMenu">
     <div class="modal-content modal-custom" @click.stop>
 
-      aaaw
+      NO implementado.
     </div>
   </div>
 </template>
@@ -213,6 +213,7 @@ export default {
       customMenus: [],
       web: false,
       modalCreateCustom: false,
+      noDataValue: '',
     };
   },
 
@@ -220,31 +221,27 @@ export default {
   created() {
     this.fetchUserData()
     this.handleRouteLogic()
-    console.log(this.menus)
   },
   computed: {
     favoriteMenus() {
       return this.menus.filter(menu => this.isFavorite(menu.id));
     },
-    showSinGlutenButton() {
-      return this.menus.some((menu) =>
-        menu.diets && menu.diets.includes('Sin Gluten')
-      );
-    },
-    showVeganoButton() {
-      return this.menus.some((menu) =>
-        menu.diets && menu.diets.includes('Vegana')
-      );
-    },
-    showVegetarianoButton() {
-      return this.menus.some((menu) =>
-        menu.diets && menu.diets.includes('Vegetariana')
-      );
-    }
+
   },
 
   methods: {
+    showSinGlutenButton(menu) {
+      return menu.diets && menu.diets.includes('Sin Gluten')
 
+    },
+    showVeganoButton(menu) {
+      return menu.diets && menu.diets.includes('Vegana')
+
+    },
+    showVegetarianoButton(menu) {
+      return menu.diets && menu.diets.includes('Vegetariana')
+
+    },
     modalCreateCustomMenu() {
       this.modalCreateCustom = !this.modalCreateCustom
     },
@@ -266,7 +263,7 @@ export default {
       this.$http
         .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
+          this.noDataValue = response.data
 
         })
         .catch((error) => {
@@ -285,7 +282,6 @@ export default {
         functionName: "options_get_personal_menus",
         token: sessionStorage.getItem('miToken'),
       };
-      console.log(dataToSend)
       this.$http
         .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
@@ -326,12 +322,11 @@ export default {
         token: sessionStorage.getItem('miToken'),
         //        todo el menu
       };
-      console.log(dataToSend)
 
       this.$http
         .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
+          this.noDataValue = response.data
 
 
         })
@@ -390,7 +385,6 @@ export default {
       this.$http
         .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
           this.menus = this.transformMenusData(response.data[0]);
           this.menus.forEach((menu) => {
             menu.isFavorite = false;
@@ -504,7 +498,7 @@ export default {
       this.$http
         .post("http://localhost:9000/server.php", dataToSend)
         .then((response) => {
-          console.log(response.data)
+          this.noDataValue = response.data
         })
         .catch((error) => {
           console.error(error);
@@ -523,8 +517,6 @@ export default {
 
       this.validateUserData()
         .then((response) => {
-
-          console.log(response.data)
           if (response.data[0] == false) {
             this.web = true
           } else {
