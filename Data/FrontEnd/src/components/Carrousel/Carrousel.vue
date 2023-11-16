@@ -9,7 +9,7 @@
           changeImage(
             currentImageIndex - 1 >= 0 ? currentImageIndex - 1 : images.length - 1
           )
-          ">
+        ">
           <i class="fas fa-chevron-left"></i>
         </div>
         <div>
