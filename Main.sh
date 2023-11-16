@@ -53,9 +53,9 @@ else
 
    
 cat <<EOF > /etc/apk/repositories
-    #/media/cdrom/apks
-    http://alpinelinux.c3sl.ufpr.br/v3.18/main
-    http://alpinelinux.c3sl.ufpr.br/v3.18/community
+#/media/cdrom/apks
+http://alpinelinux.c3sl.ufpr.br/v3.18/main
+http://alpinelinux.c3sl.ufpr.br/v3.18/community
 EOF
     apk add xz iptables ip6tables linux-headers alpine-sdk git 
 
