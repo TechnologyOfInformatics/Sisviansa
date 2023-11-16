@@ -1,6 +1,4 @@
 #!/bin/bash 
-#i
-#!/bin/bash 
 if [ test -f "/usr/local/bin/compress.sh" ]; then
     cat >/etc/apk/repositories <<EOL
     #/media/cdrom/apks
