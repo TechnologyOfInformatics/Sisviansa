@@ -1,26 +1,6 @@
 #!/bin/bash 
 if [ test -f "/usr/local/bin/compress.sh" ]; then
-    cat >/etc/apk/repositories <<EOL
-    #/media/cdrom/apks
-    http://alpinelinux.c3sl.ufpr.br/v3.18/main
-    http://alpinelinux.c3sl.ufpr.br/v3.18/community
-
-EOL
-    apk add xz iptables ip6tables linux-headers alpine-sdk git 
-
-    chmod +x Sisviansa/Scripts/compress.sh >/dev/null
-    mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
-
-    echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
-    echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
-    read -n 1 dummy
-    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
-
-    # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
-
-    reboot
-else
-
+ 
     while true; do
         clear
         echo "1. Acceder a Scripts de SSH"
@@ -68,5 +48,27 @@ else
         esac
         read -n 1 dummy
     done
+
+else
+
+    cat >/etc/apk/repositories <<EOL
+    #/media/cdrom/apks
+    http://alpinelinux.c3sl.ufpr.br/v3.18/main
+    http://alpinelinux.c3sl.ufpr.br/v3.18/community
+
+EOL
+    apk add xz iptables ip6tables linux-headers alpine-sdk git 
+
+    chmod +x Sisviansa/Scripts/compress.sh >/dev/null
+    mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
+
+    echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
+    echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
+    read -n 1 dummy
+    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
+
+    # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
+
+    reboot
 
 fi
