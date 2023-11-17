@@ -1603,7 +1603,7 @@ GRANT SELECT,
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON sisviansa_techin_v1.conforma TO 'jefe_de_cocina_1''jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.conforma TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
