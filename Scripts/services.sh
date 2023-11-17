@@ -18,19 +18,15 @@ while true; do
 
     case $opcion in
     1)
-        cd ..
-        docker-compose up -d
+        docker-compose -f ../docker-compose.yml up -d
         ;;
     2)
-        cd ..
         docker-compose down
         ;;
     3)
-        cd ..
         docker ps -all --format '{{.Names}}  |  {{.Status}}'
         ;;
     4)
-        cd ..
         docker network ls
         ;;
     5)
