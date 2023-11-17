@@ -5,7 +5,7 @@ http://alpinelinux.c3sl.ufpr.br/v3.18/main
 http://alpinelinux.c3sl.ufpr.br/v3.18/community
 EOF
 
-cat <<EOF > /etc/apk/repositories
+cat <<EOF > /etc/motd
 /////////////////////////////////SERVIDOR ADMINISTRADOR//////////////////////////////////////
 BIENVENIDO AL SERVIDOR ADMINISTRADOR DE SISVIANSA
 ANTE CUALQUIER PROBLEMA POR FAVOR CONTACTE A APOYO TECNICO DE TECHIN
