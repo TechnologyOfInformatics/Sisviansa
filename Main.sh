@@ -3,6 +3,7 @@ if [ -e /usr/local/bin/compress.sh ]; then
  
     while true; do
         clear
+        echo "---------------Selecciona una opcion-----------------"
         echo "1. Acceder a Scripts de SSH"
         echo "2. Acceder a Scripts de Firewall"
         echo "3. Acceder a Scripts de Usuarios"
@@ -15,7 +16,6 @@ if [ -e /usr/local/bin/compress.sh ]; then
         echo "Si se quiere determinar un equipo como cliente dhcp debe ejecutar"
         echo " el script dentro de Sisviansa/Scripts llamado client_setter.sh."
 
-        echo "---------------Selecciona una opcion-----------------"
         read opcion
 
         case "$opcion" in

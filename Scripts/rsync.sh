@@ -67,5 +67,6 @@ case "$opcion" in
         echo "Opcion invalida"
         ;;
     esac
+echo "Presione cualquier tecla para continuar"
     read -n 1 dummy
 done

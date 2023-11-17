@@ -1592,153 +1592,153 @@ CREATE USER 'admin_1' @'localhost' IDENTIFIED BY '12345';
 CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
 -- asignación de permisos a los roles (grupos)
 -- Gerente
-GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.* TO 'gerente_1' @'localhost';
+GRANT ALL PRIVILEGES ON sisviansa_techin_v1.* TO 'gerente_1' @'localhost';
 -- Administración
 GRANT ALL PRIVILEGES ON *.* TO 'admin_1' @'localhost';
 -- Cocina (Jefe de cocina, ya que es el que 'Orquesta' el mambo)
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.vianda TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.vianda TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.conforma TO 'jefe_de_cocina_1''jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.conforma TO 'jefe_de_cocina_1''jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.vianda_dieta TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.vianda_dieta TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.menu TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.menu TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.compone TO 'jefe_de_cocina_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.pedido TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.compone TO 'jefe_de_cocina_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.pedido TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.stock TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.stock TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.genera TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.genera TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.asigna TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.asigna TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.paquete TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete_esta TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.paquete_esta TO 'jefe_de_cocina_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.recibe TO 'jefe_de_cocina_1' @'localhost';
-GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'jefe_de_cocina_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.recibe TO 'jefe_de_cocina_1' @'localhost';
+GRANT ALL PRIVILEGES ON sisviansa_techin_v1.SISVIANSA_USER TO 'jefe_de_cocina_1' @'localhost';
 -- Atención al publico
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.paquete TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.pedido TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.pedido TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.recibe TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.recibe TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.cliente TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.cliente TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.empresa TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.empresa TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.web TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.stock TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.menu TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.conforma TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.cliente_simplificado TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.estado TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'atencion_1' @'localhost';
+  DELETE ON sisviansa_techin_v1.web TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.stock TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.menu TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.vianda TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.conforma TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.cliente_simplificado TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.estado TO 'atencion_1' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.SISVIANSA_USER TO 'atencion_1' @'localhost';
 -- Página 
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.cliente TO 'pagina' @'localhost';
+  UPDATE ON sisviansa_techin_v1.cliente TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.web TO 'pagina' @'localhost';
+  UPDATE ON sisviansa_techin_v1.web TO 'pagina' @'localhost';
 GRANT SELECT,
-  INSERT ON SISVIANSA_TECHIN_V1.empresa TO 'pagina' @'localhost';
-GRANT SELECT,
-  INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.pedido TO 'pagina' @'localhost';
+  INSERT ON sisviansa_techin_v1.empresa TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.pedido_esta TO 'pagina' @'localhost';
+  UPDATE ON sisviansa_techin_v1.pedido TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.cliente_telefono TO 'pagina' @'localhost';
+  UPDATE ON sisviansa_techin_v1.pedido_esta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.inicia TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.cliente_telefono TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.tarjeta TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.inicia TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.pedido_esta TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.tarjeta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.favorito TO Atencion;
+  DELETE ON sisviansa_techin_v1.pedido_esta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.compone TO Atencion;
+  DELETE ON sisviansa_techin_v1.favorito TO Atencion;
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.menu TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.compone TO Atencion;
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.conforma TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.menu TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.genera TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.conforma TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.asigna TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.genera TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.stock TO 'pagina' @'localhost';
+  DELETE ON sisviansa_techin_v1.asigna TO 'pagina' @'localhost';
 GRANT SELECT,
-  DELETE ON SISVIANSA_TECHIN_V1.paquete_esta TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda_dieta TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.estado TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.paquete TO 'pagina' @'localhost';
+  INSERT,
+  UPDATE,
+  DELETE ON sisviansa_techin_v1.stock TO 'pagina' @'localhost';
+GRANT SELECT,
+  DELETE ON sisviansa_techin_v1.paquete_esta TO 'pagina' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.vianda TO 'pagina' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.vianda_dieta TO 'pagina' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.estado TO 'pagina' @'localhost';
+GRANT SELECT ON sisviansa_techin_v1.paquete TO 'pagina' @'localhost';
 FLUSH PRIVILEGES;
 -- Ingreso los usuarios a la tabla para hacerles seguimiento
 INSERT INTO `SISVIANSA_USER` (`NOMBRE`, `ROL`)

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 while true; do
+clear
     echo "---------------Selecciona una opcion-----------------"
     echo "1. Mostrar registros de eventos"
     echo "2. Mostrar conexiones de usuarios"

@@ -140,6 +140,7 @@ while true; do
         ;;
     esac
 
-    echo
+    
+echo "Presione cualquier tecla para continuar"
     read -n 1 dummy
 done
