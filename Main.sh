@@ -20,19 +20,19 @@ if [ -e /usr/local/bin/compress.sh ]; then
 
         case "$opcion" in
         1)
-            ./Sisviansa/Scripts/ssh.sh
+            sh ./Sisviansa/Scripts/ssh.sh
             ;;
         2)
-            ./Sisviansa/Scripts/firewall.sh
+            sh ./Sisviansa/Scripts/firewall.sh
             ;;
         3)
-            ./Sisviansa/Scripts/users.sh
+            sh ./Sisviansa/Scripts/users.sh
             ;;
         4)
-            ./Sisviansa/Scripts/backup.sh
+            sh ./Sisviansa/Scripts/backup.sh
             ;;
         5)
-            ./Sisviansa/Scripts/services.sh
+            sh ./Sisviansa/Scripts/services.sh
             ;;
         6)
             grep dhcp /var/log/messages | tail -50
@@ -55,8 +55,8 @@ else
     /etc/init.d/docker start
 
 
-    chmod +x Sisviansa/Scripts/compress.sh >/dev/null
-    mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
+    chmod +x ./Sisviansa/Scripts/compress.sh >/dev/null
+    mv ./Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
 
     echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
     echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
