@@ -50,7 +50,7 @@ if [ test -f "/usr/local/bin/compress.sh" ]; then
     done
 
 else
-    apk add xz iptables ip6tables linux-headers alpine-sdk git 
+    apk add xz iptables ip6tables linux-headers alpine-sdk  
 
     chmod +x Sisviansa/Scripts/compress.sh >/dev/null
     mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
