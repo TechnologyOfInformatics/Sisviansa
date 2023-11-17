@@ -18,19 +18,15 @@ while true; do
 
     case $opcion in
     1)
-        cd ..
-        docker-compose up -d
+        docker-compose -f Sisviansa/docker-compose.yml up -d
         ;;
     2)
-        cd ..
-        docker-compose down
+        docker-compose -f Sisviansa/docker-compose.yml down
         ;;
     3)
-        cd ..
         docker ps -all --format '{{.Names}}  |  {{.Status}}'
         ;;
     4)
-        cd ..
         docker network ls
         ;;
     5)
@@ -49,6 +45,7 @@ while true; do
         echo "Opcion invalida"
         ;;
     esac
+echo "Presione cualquier tecla para continuar"
     read -n 1 dummy
 done
 
