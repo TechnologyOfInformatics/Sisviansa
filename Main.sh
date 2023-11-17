@@ -1,5 +1,5 @@
 #!/bin/bash 
-if [ -e "/usr/local/bin/compress.sh" ]; then
+if [ -e /usr/local/bin/compress.sh ]; then
  
     while true; do
         clear
