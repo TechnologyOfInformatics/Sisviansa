@@ -12,7 +12,6 @@ FROM node:20-alpine
 
 #CMD ["npm", "run", "serve"]
 WORKDIR /app
-RUN apk update && apk upgrade && apk add curl py-pip make g++
 COPY package*.json ./
 COPY . .
 EXPOSE 8080
