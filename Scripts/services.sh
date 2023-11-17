@@ -18,10 +18,10 @@ while true; do
 
     case $opcion in
     1)
-        docker-compose -f ../docker-compose.yml up -d
+        docker-compose -f Sisviansa/docker-compose.yml up -d
         ;;
     2)
-        docker-compose down
+        docker-compose -f Sisviansa/docker-compose.yml down
         ;;
     3)
         docker ps -all --format '{{.Names}}  |  {{.Status}}'
