@@ -5,66 +5,66 @@ CREATE DATABASE IF NOT EXISTS sisviansa_techin_v1;
 -- Crea la base de datos sisviansa_techin_v1
 USE sisviansa_techin_v1;
 -- Utiliza la base de datos sisviansa_techin_v1
--- Creación de la tabla Cliente
-CREATE TABLE Cliente (
+-- Creación de la tabla cliente
+CREATE TABLE cliente (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT 'ID único de cliente el cual es autogenerado',
   Contrasenia VARCHAR(100) NOT NULL COMMENT 'Contraseña de la cuenta correspondiente al cliente',
-  Autorizacion ENUM('Autorizado', 'En espera', 'No autorizado') NOT NULL COMMENT 'Estado del pedido de autorizacion del administrador',
+  Autorizacion ENUM('Autorizado', 'En espera', 'No autorizado') NOT NULL COMMENT 'estado del pedido de autorizacion del administrador',
   Email VARCHAR(50) NOT NULL COMMENT 'ID único correspondiente al cliente'
 );
--- Creación de la tabla Tarjeta
-CREATE TABLE Tarjeta (
+-- Creación de la tabla tarjeta
+CREATE TABLE tarjeta (
   Numero VARCHAR(30) NOT NULL COMMENT 'Número de la tarjeta de crédito a usarse',
   Digitos_verificadores VARCHAR(4) NOT NULL COMMENT 'Últimos 4 digitos numeros de la tarjeta de crédito a usarse',
   Fecha_de_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento de la tarjeta de crédito a usarse',
   Nombre_de_titular VARCHAR(30) NOT NULL COMMENT 'Nombre del titular que figura en la tarjeta de crédito correspondiente',
-  Cliente_ID INT(11) COMMENT 'ID que pertenece a un cliente, el poseedor de esta tarjeta de crédito',
-  PRIMARY KEY(Cliente_ID, Numero),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  cliente_ID INT(11) COMMENT 'ID que pertenece a un cliente, el poseedor de esta tarjeta de crédito',
+  PRIMARY KEY(cliente_ID, Numero),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Cliente_telefono
-CREATE TABLE Cliente_telefono (
-  Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente dueño poseedor de teléfono',
+-- Creación de la tabla cliente_telefono
+CREATE TABLE cliente_telefono (
+  cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente dueño poseedor de teléfono',
   Telefono VARCHAR(15) NOT NULL COMMENT 'Teléfono correspondiente al cliente',
-  PRIMARY KEY(Cliente_ID, Telefono),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  PRIMARY KEY(cliente_ID, Telefono),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Empresa
-CREATE TABLE Empresa (
-  Cliente_ID INT(11) PRIMARY KEY COMMENT 'ID de la empresa dentro de la tabla de clientes',
+-- Creación de la tabla empresa
+CREATE TABLE empresa (
+  cliente_ID INT(11) PRIMARY KEY COMMENT 'ID de la empresa dentro de la tabla de clientes',
   RUT VARCHAR(12) NOT NULL COMMENT 'RUT de la empresa',
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre de la empresa oficial',
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Web
-CREATE TABLE Web (
-  Cliente_ID INT(11) PRIMARY KEY COMMENT 'ID del cliente web dentro de la tabla de clientes',
+-- Creación de la tabla web
+CREATE TABLE web (
+  cliente_ID INT(11) PRIMARY KEY COMMENT 'ID del cliente web dentro de la tabla de clientes',
   Documento_tipo VARCHAR(20) NOT NULL COMMENT 'Tipo de documento de identificacion del cliente web',
   Documento_numero INT(11) NOT NULL COMMENT 'Numero correspondiente al tipo de documento del cliente web',
   Primer_nombre VARCHAR(30) NOT NULL COMMENT 'Primer nombre del cliente correspondiente',
   Segundo_nombre VARCHAR(30) DEFAULT NULL COMMENT 'Segundo nombre del cliente correspondiente',
   Primer_apellido VARCHAR(30) NOT NULL COMMENT 'Primer apellido del cliente correspondiente',
   Segundo_apellido VARCHAR(30) DEFAULT NULL COMMENT 'Segundo apellido del cliente correspondiente',
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Sesion
-CREATE TABLE Sesion (
+-- Creación de la tabla sesion
+CREATE TABLE sesion (
   Token VARCHAR(15) PRIMARY KEY COMMENT 'Código único conocido como token el cual se usa para identificar una sesión',
   Inicio_de_sesion DATETIME NOT NULL COMMENT 'Fecha y hora en la cual se inicio la sesión',
   Ultima_sesion DATETIME NOT NULL COMMENT 'Fecha y hora del último inicio de sesión',
   Final_de_sesion DATETIME NOT NULL COMMENT 'Fecha y hora donde la sesión se terminará sesión',
-  Estado ENUM('Activa', 'Finalizada') NOT NULL COMMENT 'Estado de la sesión a la que se hace referencia'
+  estado ENUM('Activa', 'Finalizada') NOT NULL COMMENT 'estado de la sesión a la que se hace referencia'
 );
--- Creación de la tabla Menu
-CREATE TABLE Menu (
+-- Creación de la tabla menu
+CREATE TABLE menu (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del menú el cual es autogenerado',
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre del menú que hace referencia a las viandas que lo contienen',
   Frecuencia INT(11) COMMENT 'Frecuencia con la que el menu se entregue el menú',
   Descripcion TEXT COMMENT 'La descripcion del menu',
   Categoria ENUM('Estandar', 'Personalizado', 'Descartado') NOT NULL COMMENT 'La categoria a la que pertenece el menu, donde puede ser creado por un cliente, el sistema o ser un menu descartado'
 );
--- Creación de la tabla Vianda
-CREATE TABLE Vianda (
+-- Creación de la tabla vianda
+CREATE TABLE vianda (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único de la vianda que se crea automáticamente',
   Nombre VARCHAR(30) NOT NULL COMMENT 'Nombre de la vianda, hace referencia a la comida que tiene dentro',
   Tiempo_de_coccion INT(11) COMMENT 'Su tiempo de cocción estimado en minutos',
@@ -72,90 +72,90 @@ CREATE TABLE Vianda (
   Calorias INT(11) NOT NULL COMMENT 'Calorías totales correspondientes a la vianda',
   Precio DECIMAL(10, 2) NOT NULL COMMENT 'Precio propio de la vianda'
 );
--- Creacion de la tabla Pedido
-CREATE TABLE Pedido(
+-- Creacion de la tabla pedido
+CREATE TABLE pedido(
   ID INT(11) AUTO_INCREMENT COMMENT 'Número del pedido correspondiente',
   Fecha_del_pedido DATETIME NOT NULL COMMENT 'Fecha del pedido',
-  Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha efectuado el pedido',
-  Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
+  cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha efectuado el pedido',
+  direccion VARCHAR(8) NOT NULL COMMENT "direccion de la persona, ya sea el numero de puerta, o el solar",
   Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
   Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
   Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
-  PRIMARY KEY(ID, Cliente_ID),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  PRIMARY KEY(ID, cliente_ID),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Paquete
-CREATE TABLE Paquete (
+-- Creación de la tabla paquete
+CREATE TABLE paquete (
   ID INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único del paquete el cual se crea automáticamente',
   Fecha_vencimiento DATE NOT NULL COMMENT 'Fecha de vencimiento del paquete'
 );
--- Creación de la tabla Vianda_Dieta
-CREATE TABLE Vianda_Dieta (
-  Vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda que tiene ésta dieta',
+-- Creación de la tabla vianda_dieta
+CREATE TABLE vianda_dieta (
+  vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda que tiene ésta dieta',
   Dieta VARCHAR(100) NOT NULL COMMENT 'Nombre de la dieta, el cual normalmente hace alusión a un conjunto de comidas que tienen una misma cualidad',
-  PRIMARY KEY(Vianda_ID, Dieta),
-  FOREIGN KEY (Vianda_ID) REFERENCES Vianda(ID)
+  PRIMARY KEY(vianda_ID, Dieta),
+  FOREIGN KEY (vianda_ID) REFERENCES vianda(ID)
 );
--- Creación de la tabla Stock
-CREATE TABLE Stock (
-  Menu_ID INT(11) PRIMARY KEY COMMENT 'ID del menu en stock',
-  Minimo INT(11) COMMENT 'Stock mínimo de cajas',
-  Maximo INT(11) COMMENT 'Stock máximo de cajas',
-  Actual INT(11) COMMENT 'Stock actual de cajas',
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID)
+-- Creación de la tabla stock
+CREATE TABLE stock (
+  menu_ID INT(11) PRIMARY KEY COMMENT 'ID del menu en stock',
+  Minimo INT(11) COMMENT 'stock mínimo de cajas',
+  Maximo INT(11) COMMENT 'stock máximo de cajas',
+  Actual INT(11) COMMENT 'stock actual de cajas',
+  FOREIGN KEY (menu_ID) REFERENCES menu(ID)
 );
--- Creación de la tabla Inicia
-CREATE TABLE Inicia (
-  Sesion_token VARCHAR(15) NOT NULL COMMENT 'Token correspondiente a la sesión',
-  Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que inició la sesión',
-  FOREIGN KEY (Sesion_token) REFERENCES Sesion(Token),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+-- Creación de la tabla inicia
+CREATE TABLE inicia (
+  sesion_token VARCHAR(15) NOT NULL COMMENT 'Token correspondiente a la sesión',
+  cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que inició la sesión',
+  FOREIGN KEY (sesion_token) REFERENCES sesion(Token),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
--- Creación de la tabla Favorito
-CREATE TABLE Favorito (
-  Menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente al favorito',
-  Web_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha marcado como favorito el menú',
-  PRIMARY KEY(Menu_ID, Web_ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
-  FOREIGN KEY (Web_ID) REFERENCES Web(Cliente_ID)
+-- Creación de la tabla favorito
+CREATE TABLE favorito (
+  menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente al favorito',
+  web_ID INT(11) NOT NULL COMMENT 'ID del cliente que ha marcado como favorito el menú',
+  PRIMARY KEY(menu_ID, web_ID),
+  FOREIGN KEY (menu_ID) REFERENCES menu(ID),
+  FOREIGN KEY (web_ID) REFERENCES web(cliente_ID)
 );
--- Creación de la tabla Conforma
-CREATE TABLE Conforma (
-  Menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente a la caja',
-  Vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda correspondiente a la caja',
-  PRIMARY KEY(Menu_ID, Vianda_ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
-  FOREIGN KEY (Vianda_ID) REFERENCES Vianda(ID)
+-- Creación de la tabla conforma
+CREATE TABLE conforma (
+  menu_ID INT(11) NOT NULL COMMENT 'ID del menú correspondiente a la caja',
+  vianda_ID INT(11) NOT NULL COMMENT 'ID de la vianda correspondiente a la caja',
+  PRIMARY KEY(menu_ID, vianda_ID),
+  FOREIGN KEY (menu_ID) REFERENCES menu(ID),
+  FOREIGN KEY (vianda_ID) REFERENCES vianda(ID)
 );
--- Creación de la tabla Recibe
-CREATE TABLE Recibe (
-  Paquete_ID INT(11) PRIMARY KEY NOT NULL COMMENT 'ID del paquete que recibira el cliente',
-  Cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que recibe el paquete',
-  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+-- Creación de la tabla recibe
+CREATE TABLE recibe (
+  paquete_ID INT(11) PRIMARY KEY NOT NULL COMMENT 'ID del paquete que recibira el cliente',
+  cliente_ID INT(11) NOT NULL COMMENT 'ID del cliente que recibe el paquete',
+  FOREIGN KEY (paquete_ID) REFERENCES paquete(ID),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
-CREATE TABLE Direccion (
+CREATE TABLE direccion (
   ID INT(11) NOT NULL COMMENT "El ID unico de la direccion correspondiente",
-  Cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
-  Direccion VARCHAR(8) NOT NULL COMMENT "Direccion de la persona, ya sea el numero de puerta, o el solar",
+  cliente_ID INT(11) NOT NULL COMMENT "ID unico del cliente",
+  direccion VARCHAR(8) NOT NULL COMMENT "direccion de la persona, ya sea el numero de puerta, o el solar",
   Calle VARCHAR(30) NOT NULL COMMENT "Calle correspondiente a la direccion dada",
   Barrio VARCHAR(20) COMMENT "Barrio en donde se puede encontrar la direccion",
   Ciudad VARCHAR(30) NOT NULL COMMENT "Ciudad o Localidad en la que se encuentra la direccion dada",
   Predeterminado BOOLEAN NOT NULL COMMENT "Determina si la vianda correspondiente es la predeterminada",
-  PRIMARY KEY(Cliente_ID, ID),
-  FOREIGN KEY (Cliente_ID) REFERENCES Cliente(ID)
+  PRIMARY KEY(cliente_ID, ID),
+  FOREIGN KEY (cliente_ID) REFERENCES cliente(ID)
 );
-CREATE TABLE Compone(
-  Pedido_ID INT(11) NOT NULL COMMENT 'ID del pedido correspondiente al menú',
-  Menu_ID INT(11) NOT NULL COMMENT 'ID del menú que está en el pedido',
+CREATE TABLE compone(
+  pedido_ID INT(11) NOT NULL COMMENT 'ID del pedido correspondiente al menú',
+  menu_ID INT(11) NOT NULL COMMENT 'ID del menú que está en el pedido',
   Cantidad INT(11) NOT NULL COMMENT 'Cantidad de veces que se compro éste menu en éste pedido',
-  PRIMARY KEY(Pedido_ID, Menu_ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
-  FOREIGN KEY (Pedido_ID) REFERENCES Pedido(ID)
+  PRIMARY KEY(pedido_ID, menu_ID),
+  FOREIGN KEY (menu_ID) REFERENCES menu(ID),
+  FOREIGN KEY (pedido_ID) REFERENCES pedido(ID)
 );
-CREATE TABLE Estado (
+CREATE TABLE estado (
   ID INT(11) PRIMARY KEY AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente a un paquete o pedido',
-  Estado ENUM(
+  estado ENUM(
     'Solicitado',
     'Entregado',
     'En stock',
@@ -166,39 +166,39 @@ CREATE TABLE Estado (
     'Confirmado',
     'En camino',
     'Rechazado'
-  ) NOT NULL COMMENT "Estado en si del paquete o pedido" -- Los estados de Paquete son desde En Stock hasta Desechado, y desde Confirmado hasta Rechazado es de Pedido, se comparte "Solicitado" y "Entregado"
+  ) NOT NULL COMMENT "estado en si del paquete o pedido" -- Los estados de paquete son desde En stock hasta Desechado, y desde Confirmado hasta Rechazado es de pedido, se comparte "Solicitado" y "Entregado"
 );
-CREATE TABLE Paquete_esta (
-  Estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al paquete ',
-  Paquete_ID INT(11) NOT NULL COMMENT "ID del paquete",
+CREATE TABLE paquete_esta (
+  estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al paquete ',
+  paquete_ID INT(11) NOT NULL COMMENT "ID del paquete",
   Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del paquete inicio",
   Final_del_estado DATETIME COMMENT "Fecha en donde el estado del paquete finalizó",
-  PRIMARY KEY(Estado_ID, Paquete_ID),
-  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Estado_ID) REFERENCES Estado(ID)
+  PRIMARY KEY(estado_ID, paquete_ID),
+  FOREIGN KEY (paquete_ID) REFERENCES paquete(ID),
+  FOREIGN KEY (estado_ID) REFERENCES estado(ID)
 );
-CREATE TABLE Pedido_esta (
-  Estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al pedido',
-  Pedido_ID INT(11) NOT NULL COMMENT "ID del pedido",
+CREATE TABLE pedido_esta (
+  estado_ID INT(11) AUTO_INCREMENT COMMENT 'ID del estado en específico correspondiente al pedido',
+  pedido_ID INT(11) NOT NULL COMMENT "ID del pedido",
   Inicio_del_estado DATETIME NOT NULL COMMENT "Fecha en donde el estado del pedido inicio",
   Final_del_estado DATETIME COMMENT "Fecha en donde el estado del pedido finalizó",
-  PRIMARY KEY(Estado_ID, Pedido_ID),
-  FOREIGN KEY (Pedido_ID) REFERENCES Pedido(ID),
-  FOREIGN KEY (Estado_ID) REFERENCES Estado(ID)
+  PRIMARY KEY(estado_ID, pedido_ID),
+  FOREIGN KEY (pedido_ID) REFERENCES pedido(ID),
+  FOREIGN KEY (estado_ID) REFERENCES estado(ID)
 );
-CREATE TABLE Asigna(
-  Paquete_ID INT(11) PRIMARY KEY COMMENT "ID correspondiente al paquete",
-  Pedido_ID INT(11) NOT NULL COMMENT "ID correspondiente al pedido",
-  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID),
-  FOREIGN KEY (Pedido_ID) REFERENCES Pedido(ID)
+CREATE TABLE asigna(
+  paquete_ID INT(11) PRIMARY KEY COMMENT "ID correspondiente al paquete",
+  pedido_ID INT(11) NOT NULL COMMENT "ID correspondiente al pedido",
+  FOREIGN KEY (paquete_ID) REFERENCES paquete(ID),
+  FOREIGN KEY (pedido_ID) REFERENCES pedido(ID)
 );
-CREATE TABLE Genera(
-  Menu_ID INT(11) NOT NULL COMMENT 'Menu que representa el paquete',
-  Paquete_ID INT(11) NOT NULL COMMENT 'Paquete que consta del menu',
+CREATE TABLE genera(
+  menu_ID INT(11) NOT NULL COMMENT 'menu que representa el paquete',
+  paquete_ID INT(11) NOT NULL COMMENT 'paquete que consta del menu',
   Fecha_de_creacion DATE NOT NULL COMMENT 'Fecha de la creacion del paquete en si',
-  PRIMARY KEY(Menu_ID, Paquete_ID),
-  FOREIGN KEY (Menu_ID) REFERENCES Menu(ID),
-  FOREIGN KEY (Paquete_ID) REFERENCES Paquete(ID)
+  PRIMARY KEY(menu_ID, paquete_ID),
+  FOREIGN KEY (menu_ID) REFERENCES menu(ID),
+  FOREIGN KEY (paquete_ID) REFERENCES paquete(ID)
 );
 CREATE TABLE SISVIANSA_USER(
   ID INT(11) PRIMARY KEY AUTO_INCREMENT COMMENT "ID del usuario del sistema",
@@ -327,18 +327,18 @@ VALUES (
     'En espera',
     'cliente20@example.com'
   );
-INSERT INTO `empresa` (`Cliente_ID`, `RUT`, `Nombre`)
-VALUES (2, '98765432109', 'Empresa A'),
-  (4, '1122334455', 'Empresa B'),
-  (6, '9988776655', 'Empresa C'),
-  (8, '6677889900', 'Empresa D'),
-  (10, '5544332211', 'Empresa E'),
-  (12, '4455667788', 'Empresa F'),
-  (14, '2233445566', 'Empresa G'),
-  (16, '3322114455', 'Empresa H'),
-  (18, '5566778899', 'Empresa I'),
-  (20, '5566778899', 'Empresa J');
-INSERT INTO `estado` (`ID`, `Estado`)
+INSERT INTO `empresa` (`cliente_ID`, `RUT`, `Nombre`)
+VALUES (2, '98765432109', 'empresa A'),
+  (4, '1122334455', 'empresa B'),
+  (6, '9988776655', 'empresa C'),
+  (8, '6677889900', 'empresa D'),
+  (10, '5544332211', 'empresa E'),
+  (12, '4455667788', 'empresa F'),
+  (14, '2233445566', 'empresa G'),
+  (16, '3322114455', 'empresa H'),
+  (18, '5566778899', 'empresa I'),
+  (20, '5566778899', 'empresa J');
+INSERT INTO `estado` (`ID`, `estado`)
 VALUES (1, 'Solicitado'),
   (2, 'Entregado'),
   (3, 'En stock'),
@@ -358,21 +358,21 @@ INSERT INTO `menu` (
   )
 VALUES (
     1,
-    'Menu Clásico',
+    'menu Clásico',
     30,
     'Selección de platos tradicionales',
     'Estandar'
   ),
   (
     2,
-    'Menu Fitness',
+    'menu Fitness',
     15,
     'Platos saludables y bajos en calorías',
     'Personalizado'
   ),
   (
     3,
-    'Menu Vegano',
+    'menu Vegano',
     15,
     'Completamente basado en ingredientes veganos',
     'Estandar'
@@ -435,8 +435,8 @@ VALUES (1, '2023-11-14'),
 INSERT INTO `pedido` (
     `ID`,
     `Fecha_del_pedido`,
-    `Cliente_ID`,
-    `Direccion`,
+    `cliente_ID`,
+    `direccion`,
     `Calle`,
     `Barrio`,
     `Ciudad`
@@ -500,7 +500,7 @@ INSERT INTO `sesion` (
     `Inicio_de_sesion`,
     `Ultima_sesion`,
     `Final_de_sesion`,
-    `Estado`
+    `estado`
   )
 VALUES (
     '04veYsW0YHB',
@@ -908,7 +908,7 @@ VALUES (
     450,
     15.99
   );
-INSERT INTO `vianda_dieta` (`Vianda_ID`, `Dieta`)
+INSERT INTO `vianda_dieta` (`vianda_ID`, `Dieta`)
 VALUES (1, 'Vegetariana'),
   (2, 'Vegana'),
   (2, 'Vegetariana'),
@@ -919,7 +919,7 @@ VALUES (1, 'Vegetariana'),
   (7, 'Vegetariana'),
   (8, 'Sin gluten');
 INSERT INTO `web` (
-    `Cliente_ID`,
+    `cliente_ID`,
     `Documento_tipo`,
     `Documento_numero`,
     `Primer_nombre`,
@@ -1017,7 +1017,7 @@ VALUES (
     'López',
     'González'
   );
-INSERT INTO `cliente_telefono` (`Cliente_ID`, `Telefono`)
+INSERT INTO `cliente_telefono` (`cliente_ID`, `Telefono`)
 VALUES (1, '+54123456711'),
   (1, '+54123456789'),
   (2, '+54987654311'),
@@ -1058,7 +1058,7 @@ VALUES (1, '+54123456711'),
   (19, '+554433221266'),
   (20, '+554433221211'),
   (20, '+554433221277');
-INSERT INTO `compone` (`Pedido_ID`, `Menu_ID`, `Cantidad`)
+INSERT INTO `compone` (`pedido_ID`, `menu_ID`, `Cantidad`)
 VALUES (32, 7, 4),
   (33, 5, 2),
   (34, 4, 1),
@@ -1067,7 +1067,7 @@ VALUES (32, 7, 4),
   (35, 4, 1),
   (36, 8, 4),
   (37, 6, 3);
-INSERT INTO `conforma` (`Menu_ID`, `Vianda_ID`)
+INSERT INTO `conforma` (`menu_ID`, `vianda_ID`)
 VALUES (1, 1),
   (1, 2),
   (2, 2),
@@ -1086,8 +1086,8 @@ VALUES (1, 1),
   (8, 10);
 INSERT INTO `direccion` (
     `ID`,
-    `Cliente_ID`,
-    `Direccion`,
+    `cliente_ID`,
+    `direccion`,
     `Calle`,
     `Barrio`,
     `Ciudad`,
@@ -1408,10 +1408,10 @@ VALUES (
     'Montevideo',
     0
   );
-INSERT INTO `favorito` (`Menu_ID`, `Web_ID`)
+INSERT INTO `favorito` (`menu_ID`, `web_ID`)
 VALUES (1, 1),
   (3, 3);
-INSERT INTO `asigna` (`Paquete_ID`, `Pedido_ID`)
+INSERT INTO `asigna` (`paquete_ID`, `pedido_ID`)
 VALUES (1, 32),
   (2, 32),
   (3, 32),
@@ -1431,7 +1431,7 @@ VALUES (1, 32),
   (17, 37),
   (18, 37),
   (19, 37);
-INSERT INTO `genera` (`Menu_ID`, `Paquete_ID`, `Fecha_de_creacion`)
+INSERT INTO `genera` (`menu_ID`, `paquete_ID`, `Fecha_de_creacion`)
 VALUES (4, 12, '2023-12-24'),
   (5, 6, '2023-12-24'),
   (5, 7, '2023-12-24'),
@@ -1451,7 +1451,7 @@ VALUES (4, 12, '2023-12-24'),
   (8, 14, '2023-12-24'),
   (8, 15, '2023-12-24'),
   (8, 16, '2023-12-24');
-INSERT INTO `inicia` (`Sesion_token`, `Cliente_ID`)
+INSERT INTO `inicia` (`sesion_token`, `cliente_ID`)
 VALUES ('def456uvw789012', 2),
   ('ghi789rst012345', 3),
   ('tIN5CoVoalC', 1),
@@ -1462,8 +1462,8 @@ VALUES ('def456uvw789012', 2),
   ('Zl58TbiadtovoA', 16),
   ('5Y4eRVbiAaRKlw', 19);
 INSERT INTO `paquete_esta` (
-    `Estado_ID`,
-    `Paquete_ID`,
+    `estado_ID`,
+    `paquete_ID`,
     `Inicio_del_estado`,
     `Final_del_estado`
   )
@@ -1487,8 +1487,8 @@ VALUES (1, 1, '2023-11-14 00:00:00', NULL),
   (1, 18, '2023-11-14 00:00:00', NULL),
   (1, 19, '2023-11-14 00:00:00', NULL);
 INSERT INTO `pedido_esta` (
-    `Estado_ID`,
-    `Pedido_ID`,
+    `estado_ID`,
+    `pedido_ID`,
     `Inicio_del_estado`,
     `Final_del_estado`
   )
@@ -1498,7 +1498,7 @@ VALUES (1, 32, '2023-11-12 01:48:39', NULL),
   (1, 35, '2023-11-12 01:53:46', NULL),
   (1, 36, '2023-11-12 01:53:48', NULL),
   (1, 37, '2023-11-12 01:53:50', NULL);
-INSERT INTO `recibe` (`Paquete_ID`, `Cliente_ID`)
+INSERT INTO `recibe` (`paquete_ID`, `cliente_ID`)
 VALUES (1, 1),
   (2, 1),
   (3, 1),
@@ -1518,7 +1518,7 @@ VALUES (1, 1),
   (17, 19),
   (18, 19),
   (19, 19);
-INSERT INTO `stock` (`Menu_ID`, `Minimo`, `Maximo`, `Actual`)
+INSERT INTO `stock` (`menu_ID`, `Minimo`, `Maximo`, `Actual`)
 VALUES (1, 5, 20, 15),
   (2, 8, 25, 12),
   (3, 10, 30, 18),
@@ -1532,7 +1532,7 @@ INSERT INTO `tarjeta` (
     `Digitos_verificadores`,
     `Fecha_de_vencimiento`,
     `Nombre_de_titular`,
-    `Cliente_ID`
+    `cliente_ID`
   )
 VALUES (
     '1234567890123456',
@@ -1564,14 +1564,14 @@ FROM `cliente`;
 COMMIT;
 -- Permisos de usuarios y roles
 -- Elimino las vistas
-DROP VIEW IF EXISTS Cliente_simplificado;
+DROP VIEW IF EXISTS cliente_simplificado;
 DROP VIEW IF EXISTS Datos_de_cliente_web;
 -- Creación de las vistas
-CREATE VIEW Cliente_simplificado AS
+CREATE VIEW cliente_simplificado AS
 SELECT ID,
   Autorizacion,
   Email
-FROM Cliente;
+FROM cliente;
 -- Elimino los usuarios
 DROP USER IF EXISTS 'pagina' @'localhost';
 DROP USER IF EXISTS 'gerente_1' @'localhost';
@@ -1590,7 +1590,7 @@ CREATE USER 'gerente_1' @'localhost' IDENTIFIED BY '12345';
 CREATE USER 'atencion_1' @'localhost' IDENTIFIED BY '12345';
 CREATE USER 'admin_1' @'localhost' IDENTIFIED BY '12345';
 CREATE USER 'jefe_de_cocina_1' @'localhost' IDENTIFIED BY '12345';
--- Asignación de permisos a los roles (grupos)
+-- asignación de permisos a los roles (grupos)
 -- Gerente
 GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.* TO 'gerente_1' @'localhost';
 -- Administración
@@ -1646,99 +1646,99 @@ GRANT ALL PRIVILEGES ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'jefe_de_cocina_1'
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Paquete TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.paquete TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Pedido TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.pedido TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Recibe TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.recibe TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Cliente TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.cliente TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Empresa TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.empresa TO 'atencion_1' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Web TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Stock TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Menu TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Conforma TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Cliente_simplificado TO 'atencion_1' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Estado TO 'atencion_1' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.web TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.stock TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.menu TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.conforma TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.cliente_simplificado TO 'atencion_1' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.estado TO 'atencion_1' @'localhost';
 GRANT SELECT ON SISVIANSA_TECHIN_V1.SISVIANSA_USER TO 'atencion_1' @'localhost';
 -- Página 
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.Cliente TO 'pagina' @'localhost';
+  UPDATE ON SISVIANSA_TECHIN_V1.cliente TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.Web TO 'pagina' @'localhost';
+  UPDATE ON SISVIANSA_TECHIN_V1.web TO 'pagina' @'localhost';
 GRANT SELECT,
-  INSERT ON SISVIANSA_TECHIN_V1.Empresa TO 'pagina' @'localhost';
-GRANT SELECT,
-  INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.Pedido TO 'pagina' @'localhost';
+  INSERT ON SISVIANSA_TECHIN_V1.empresa TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE ON SISVIANSA_TECHIN_V1.Pedido_esta TO 'pagina' @'localhost';
+  UPDATE ON SISVIANSA_TECHIN_V1.pedido TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
-  UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Cliente_telefono TO 'pagina' @'localhost';
+  UPDATE ON SISVIANSA_TECHIN_V1.pedido_esta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Inicia TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.cliente_telefono TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Tarjeta TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.inicia TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Pedido_esta TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.tarjeta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Favorito TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.pedido_esta TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Compone TO Atencion;
+  DELETE ON SISVIANSA_TECHIN_V1.favorito TO Atencion;
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Menu TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.compone TO Atencion;
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Conforma TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.menu TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Genera TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.conforma TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Asigna TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.genera TO 'pagina' @'localhost';
 GRANT SELECT,
   INSERT,
   UPDATE,
-  DELETE ON SISVIANSA_TECHIN_V1.Stock TO 'pagina' @'localhost';
+  DELETE ON SISVIANSA_TECHIN_V1.asigna TO 'pagina' @'localhost';
 GRANT SELECT,
-  DELETE ON SISVIANSA_TECHIN_V1.Paquete_esta TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Vianda_dieta TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Estado TO 'pagina' @'localhost';
-GRANT SELECT ON SISVIANSA_TECHIN_V1.Paquete TO 'pagina' @'localhost';
+  INSERT,
+  UPDATE,
+  DELETE ON SISVIANSA_TECHIN_V1.stock TO 'pagina' @'localhost';
+GRANT SELECT,
+  DELETE ON SISVIANSA_TECHIN_V1.paquete_esta TO 'pagina' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda TO 'pagina' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.vianda_dieta TO 'pagina' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.estado TO 'pagina' @'localhost';
+GRANT SELECT ON SISVIANSA_TECHIN_V1.paquete TO 'pagina' @'localhost';
 FLUSH PRIVILEGES;
 -- Ingreso los usuarios a la tabla para hacerles seguimiento
 INSERT INTO `SISVIANSA_USER` (`NOMBRE`, `ROL`)

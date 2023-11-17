@@ -35,7 +35,7 @@ services:
     ports:
       - 9000:80
     volumes:
-      - ./Data/BackEnd:/app
+      - ./Data/BackEnd:/app:delegated
     depends_on:
       - sisviansa_mariadb
     networks:
