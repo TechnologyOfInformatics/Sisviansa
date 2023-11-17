@@ -57,8 +57,8 @@ else
 
     echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
     echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
-    read -n 1 dummy
     echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
+    read -n 1 dummy
 
     # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
 
