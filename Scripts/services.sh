@@ -6,12 +6,15 @@
 while true; do
 
     echo "---------------Selecciona una opcion-----------------"
+    echo "Una vez iniciado el contenedor puede acceder al mismo en el host con $(ip a show eth0 | grep -oE 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | cut -d ' ' -f 2):8081"
+    echo
     echo "1. Subir compose"
     echo "2. Bajar compose"
     echo "3. Ver contenedores activos"
     echo "4. Ver subredes activas"
     echo "5. Ver url a Sisviansa"
     echo "6. Ver url a Backend"
+    echo "7. Ver url a Backend"
     echo "0. Salir"
 
     read -p "Opcion seleccionada: " opcion
@@ -34,6 +37,10 @@ while true; do
 
         ;;
     6)
+        echo "localhost:$(docker port sisviansa_php | awk -F':' '{print $NF}' | awk -F'\n' '{print $NF}' | head -n 1)"
+
+        ;;
+    7)
         echo "localhost:$(docker port sisviansa_php | awk -F':' '{print $NF}' | awk -F'\n' '{print $NF}' | head -n 1)"
 
         ;;
