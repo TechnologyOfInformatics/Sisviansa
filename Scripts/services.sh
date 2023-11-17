@@ -45,6 +45,6 @@ while true; do
         echo "Opcion invalida"
         ;;
     esac
-
+echo "Presione cualquier tecla para continuar"
     read -n 1 dummy
 done
