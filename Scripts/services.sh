@@ -49,6 +49,7 @@ while true; do
         echo "Opcion invalida"
         ;;
     esac
-
     read -n 1 dummy
 done
+
+
