@@ -50,7 +50,10 @@ if [ -e /usr/local/bin/compress.sh ]; then
     done
 
 else
-    apk add xz iptables ip6tables linux-headers alpine-sdk  
+    apk add xz iptables ip6tables linux-headers alpine-sdk docker docker-cli-compose
+    rc-update add docker default
+    /etc/init.d/docker start
+
 
     chmod +x Sisviansa/Scripts/compress.sh >/dev/null
     mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
