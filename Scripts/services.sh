@@ -14,7 +14,7 @@ while true; do
     echo "4. Ver subredes activas"
     echo "5. Ver url a Sisviansa"
     echo "6. Ver url a Backend"
-    echo "7. Ver url a Backend"
+    echo "7. Limpiar datos de los repositorios"
     echo "0. Salir"
 
     read -p "Opcion seleccionada: " opcion
@@ -41,7 +41,8 @@ while true; do
 
         ;;
     7)
-        echo "localhost:$(docker port sisviansa_php | awk -F':' '{print $NF}' | awk -F'\n' '{print $NF}' | head -n 1)"
+        docker-compose -f Sisviansa/docker-compose.yml down
+        docker system prune -a
 
         ;;
     0)
