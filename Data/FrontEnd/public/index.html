@@ -15,10 +15,16 @@
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
+  <script>
+    document.addEventListener('contextmenu', function (e) {
+      // Cancelar el evento del clic derecho
+      e.preventDefault();
+    });
+  </script>
 </head>
 
 <body>
-  
+
   <noscript>
     <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
         Please enable it to continue.</strong>
