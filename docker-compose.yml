@@ -22,6 +22,7 @@ services:
       - ./Data/SQL/:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    restart: unless-stopped
     networks:
       - app_network
   #
@@ -35,7 +36,7 @@ services:
     ports:
       - 9000:80
     volumes:
-      - ./Data/BackEnd:/app
+      - ./Data/BackEnd:/app:delegated
     depends_on:
       - sisviansa_mariadb
     networks:

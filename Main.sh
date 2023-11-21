@@ -1,30 +1,9 @@
 #!/bin/bash 
-#i
-#!/bin/bash 
-if [ test -f "/usr/local/bin/compress.sh" ]; then
-    cat >/etc/apk/repositories <<EOL
-    #/media/cdrom/apks
-    http://alpinelinux.c3sl.ufpr.br/v3.18/main
-    http://alpinelinux.c3sl.ufpr.br/v3.18/community
-
-EOL
-    apk add xz iptables ip6tables linux-headers alpine-sdk git 
-
-    chmod +x Sisviansa/Scripts/compress.sh >/dev/null
-    mv Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
-
-    echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
-    echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
-    read -n 1 dummy
-    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
-
-    # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
-
-    reboot
-else
-
+if [ -e /usr/local/bin/compress.sh ]; then
+ 
     while true; do
         clear
+        echo "---------------Selecciona una opcion-----------------"
         echo "1. Acceder a Scripts de SSH"
         echo "2. Acceder a Scripts de Firewall"
         echo "3. Acceder a Scripts de Usuarios"
@@ -37,24 +16,23 @@ else
         echo "Si se quiere determinar un equipo como cliente dhcp debe ejecutar"
         echo " el script dentro de Sisviansa/Scripts llamado client_setter.sh."
 
-        echo "---------------Selecciona una opcion-----------------"
         read opcion
 
         case "$opcion" in
         1)
-            ./Sisviansa/Scripts/ssh.sh
+            sh ./Sisviansa/Scripts/ssh.sh
             ;;
         2)
-            ./Sisviansa/Scripts/firewall.sh
+            sh ./Sisviansa/Scripts/firewall.sh
             ;;
         3)
-            ./Sisviansa/Scripts/users.sh
+            sh ./Sisviansa/Scripts/users.sh
             ;;
         4)
-            ./Sisviansa/Scripts/backup.sh
+            sh ./Sisviansa/Scripts/backup.sh
             ;;
         5)
-            ./Sisviansa/Scripts/services.sh
+            sh ./Sisviansa/Scripts/services.sh
             ;;
         6)
             grep dhcp /var/log/messages | tail -50
@@ -70,5 +48,23 @@ else
         esac
         read -n 1 dummy
     done
+
+else
+    apk add xz iptables ip6tables linux-headers alpine-sdk docker docker-cli-compose
+    rc-update add docker default
+    /etc/init.d/docker start
+
+
+    chmod +x ./Sisviansa/Scripts/compress.sh >/dev/null
+    mv ./Sisviansa/Scripts/compress.sh /usr/local/bin/ >/dev/null
+
+    echo "export BACKUP_FOLDER=/usr/local/bin" >/etc/profile.d/backup_data.sh
+    echo "export BACKUP_ORIGIN=~/Sisviansa/Scripts/data/mariadb" >>/etc/profile.d/backup_data.sh
+    echo "Debido a la falta de componentes necesarios para funcionar el sistema se reiniciara"
+    read -n 1 dummy
+
+    # Debido al hecho que este script es del admin y que el admin debe tener el servidor dhcp a mano, debo obligar la instalacion del mismo
+
+    reboot
 
 fi

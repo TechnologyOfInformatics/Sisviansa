@@ -6,31 +6,30 @@
 while true; do
 
     echo "---------------Selecciona una opcion-----------------"
+    echo "Una vez iniciado el contenedor puede acceder al mismo en el host con $(ip a show eth0 | grep -oE 'inet ([0-9]{1,3}\.){3}[0-9]{1,3}' | cut -d ' ' -f 2):8081"
+    echo
     echo "1. Subir compose"
     echo "2. Bajar compose"
     echo "3. Ver contenedores activos"
     echo "4. Ver subredes activas"
     echo "5. Ver url a Sisviansa"
     echo "6. Ver url a Backend"
+    echo "7. Limpiar datos de los repositorios"
     echo "0. Salir"
 
     read -p "Opcion seleccionada: " opcion
 
     case $opcion in
     1)
-        cd ..
-        docker-compose up -d
+        docker-compose -f Sisviansa/docker-compose.yml up -d
         ;;
     2)
-        cd ..
-        docker-compose down
+        docker-compose -f Sisviansa/docker-compose.yml down
         ;;
     3)
-        cd ..
         docker ps -all --format '{{.Names}}  |  {{.Status}}'
         ;;
     4)
-        cd ..
         docker network ls
         ;;
     5)
@@ -41,6 +40,11 @@ while true; do
         echo "localhost:$(docker port sisviansa_php | awk -F':' '{print $NF}' | awk -F'\n' '{print $NF}' | head -n 1)"
 
         ;;
+    7)
+        docker-compose -f Sisviansa/docker-compose.yml down
+        docker system prune -a
+
+        ;;
     0)
         echo "Saliendo del menu"
         exit 0
@@ -49,6 +53,8 @@ while true; do
         echo "Opcion invalida"
         ;;
     esac
-
+echo "Presione cualquier tecla para continuar"
     read -n 1 dummy
 done
+
+
